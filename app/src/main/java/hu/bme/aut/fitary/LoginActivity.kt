@@ -22,30 +22,6 @@ class LoginActivity : BaseActivity() {
 
         btnRegister.setOnClickListener { registerClick() }
         btnLogin.setOnClickListener { loginClick() }
-
-        Log.d("DEBUG_FIREBASE", "upload hivasa")
-        uploadWorkout()
-    }
-
-    private fun uploadWorkout() {
-        Log.d("DEBUG_FIREBASE", "id generalasa")
-        val key = FirebaseDatabase.getInstance().reference
-            .child("workouts").push().key
-
-        Log.d("DEBUG_FIREBASE", "workout objektum kezelese")
-        val newWorkout = Workout(
-            "123",
-            "chest",
-            10,
-            "doit"
-        )
-        Log.d("DEBUG_FIREBASE", "workout feltoltese")
-
-        FirebaseDatabase.getInstance().reference
-            .child("workout")
-            .child(key!!)
-            .setValue(newWorkout)
-        Log.d("DEBUG_FIREBASE", "fuggveny vege")
     }
 
     private fun validateForm() = etEmail.validateNonEmpty() && etPassword.validateNonEmpty()
