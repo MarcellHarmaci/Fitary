@@ -8,9 +8,9 @@ import hu.bme.aut.fitary.data.Workout
 import hu.bme.aut.fitary.extensions.validateNonEmpty
 import kotlinx.android.synthetic.main.activity_create_workout.*
 
-class CreateWorkoutActivity : BaseActivity() {
-    val exercises: MutableList<Exercise> = mutableListOf()
-    lateinit var exercisesAdapter: ExerciseAdapter
+class CreateWorkoutActivity : BaseActivity(), ExerciseDialog.ExerciseResultHandler {
+    private val exercises: MutableList<Exercise> = mutableListOf()
+    private lateinit var exercisesAdapter: ExerciseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,58 +18,68 @@ class CreateWorkoutActivity : BaseActivity() {
 
         exercisesAdapter = ExerciseAdapter(this, exercises)
         listViewExercises.adapter = exercisesAdapter
-        listViewExercises.setOnItemClickListener {
-                parent, view, position, id ->
+        listViewExercises.setOnItemClickListener { parent, view, position, id ->
             val exercise = parent.getItemAtPosition(position) as Exercise
 
-            //TODO(Show dialog to edit exercise data)
-
-            exercises[position] = exercise
+            val exerciseDialog = ExerciseDialog(position, exercise)
+            exerciseDialog.show(supportFragmentManager, "Edit exercise")
         }
-        
-        btnAddExercise.setOnClickListener {
-            //TODO(Show dialog to enter exercise data)
-            val newExercise = Exercise("Push-up", 100)
-            exercises.add(newExercise)
 
-            exercisesAdapter.notifyDataSetChanged()
+        btnAddExercise.setOnClickListener {
+            val exerciseDialog = ExerciseDialog(-1, Exercise())
+            exerciseDialog.show(supportFragmentManager, "New exercise")
         }
 
         btnSend.setOnClickListener { sendClick() }
     }
 
-    private fun sendClick() {
-//        if (!validateForm()) return
-//
-//        uploadWorkout()
+    override fun onSuccessAddExercise(exercise: Exercise) {
+        exercises.add(exercise)
+        exercisesAdapter.notifyDataSetChanged()
     }
 
-//    private fun validateForm(): Boolean {
-//        //TODO(Validate listView - Maybe create extension function for it)
-//        return etExercise.validateNonEmpty() &&
-//                etRepCount.validateNonEmpty() &&
-//                etComment.validateNonEmpty()
-//    }
-//
-//    private fun uploadWorkout() {
-//        val key = FirebaseDatabase.getInstance().reference.child("workouts").push().key ?: return
-//
-//        val newWorkout = Workout(
-//            uid,
-//            userName,
-//            etExercise.text.toString(),
-//            etRepCount.text.toString().toInt(),
-//            etComment.text.toString()
-//        )
-//
-//        FirebaseDatabase.getInstance().reference
-//            .child("workouts")
-//            .child(key)
-//            .setValue(newWorkout)
-//            .addOnCompleteListener {
-//                toast("Workout saved")
-//                finish()
-//            }
-//    }
+    override fun onSuccessEditExercise(position: Int, exercise: Exercise) {
+        exercises[position] = exercise
+        exercisesAdapter.notifyDataSetChanged()
+    }
+
+    private fun sendClick() {
+        if (!validateForm()) return
+
+        uploadWorkout()
+    }
+
+    private fun validateForm(): Boolean {
+        if (exercises.size == 0) return false
+
+        for (exercise in exercises) {
+            if (!exercise.validate()) return false
+        }
+
+        return true
+    }
+
+    private fun uploadWorkout() {
+        showProgressDialog()
+
+        val key = FirebaseDatabase.getInstance().reference.child("workouts").push().key ?: return
+
+        val comment =
+            if (etComment.validateNonEmpty())
+                etComment.text.toString()
+            else ""
+
+        val newWorkout = Workout(uid, userName, exercises, comment)
+
+        FirebaseDatabase.getInstance().reference
+            .child("workouts")
+            .child(key)
+            .setValue(newWorkout)
+            .addOnCompleteListener {
+                hideProgressDialog()
+                toast("Workout saved")
+                finish()
+            }
+    }
 
 }
