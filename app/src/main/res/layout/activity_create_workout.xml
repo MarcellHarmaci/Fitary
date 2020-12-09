@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_write_post"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,36 +10,42 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical">
+    android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/etExercise"
+    <ListView
+        android:id="@+id/listViewExercises"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Exercise"
-        android:maxLines="1" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/etComment"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/etRepCount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Rep count"
-        android:maxLines="1"
-        android:inputType="numberDecimal"/>
 
     <EditText
         android:id="@+id/etComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Write your comment..."
+        android:hint="@string/write_a_comment"
         android:inputType="textMultiLine"
         android:maxLines="10"
-        android:scrollHorizontally="false" />
+        android:scrollHorizontally="false"
+        app:layout_constraintBottom_toTopOf="@+id/btnSend"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <Button
+        android:id="@+id/btnAddExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_exercise"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send" />
+        android:text="@string/save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

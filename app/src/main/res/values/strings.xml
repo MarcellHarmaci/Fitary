@@ -12,4 +12,9 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="menu_logout">Logout</string>
+    <string name="exercise">Exercise</string>
+    <string name="send">Send</string>
+    <string name="write_a_comment">Write a comment...</string>
+    <string name="save">Save</string>
+    <string name="add_exercise">Add exercise</string>
 </resources>
