@@ -19,7 +19,7 @@ import androidx.core.view.GravityCompat
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_workouts.*
 
-class WorkoutsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
+class WorkoutsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -34,12 +34,25 @@ class WorkoutsActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             val createWorkoutIntent = Intent(this, CreateWorkoutActivity::class.java)
             startActivity(createWorkoutIntent)
         }
+
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
-        navView.setNavigationItemSelectedListener(this)
-
+        navView.setNavigationItemSelectedListener(this)     //TODO(Has no effect)
+        val navController = findNavController(R.id.nav_host_fragment)
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        appBarConfiguration = AppBarConfiguration(setOf(
+            R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow), drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        navView.setupWithNavController(navController)
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        val navController = findNavController(R.id.nav_host_fragment)
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    //TODO(Logout does nothing)
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_logout -> {
