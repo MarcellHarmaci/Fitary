@@ -15,7 +15,7 @@
         <item
             android:id="@+id/nav_charts"
             android:icon="@drawable/ic_menu_chart_arc"
-            android:title="@string/menu_statistics" />
+            android:title="@string/menu_charts" />
     </group>
 
 </menu>

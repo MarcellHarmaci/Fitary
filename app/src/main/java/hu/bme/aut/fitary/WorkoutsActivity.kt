@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -13,11 +14,10 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
 
-class WorkoutsActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
+class WorkoutsActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -25,7 +25,6 @@ class WorkoutsActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_workouts)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
-        toolbar.setOnMenuItemClickListener(this)
         setSupportActionBar(toolbar)
 
         val fab: FloatingActionButton = findViewById(R.id.fab)
@@ -41,7 +40,7 @@ class WorkoutsActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_home, R.id.nav_social_workouts, R.id.nav_charts
+                R.id.nav_user_workouts, R.id.nav_social_workouts, R.id.nav_charts
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -59,10 +58,8 @@ class WorkoutsActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
         return true
     }
 
-    //TODO(Logout does nothing, remove Toast) This isn't getting called
-    override fun onMenuItemClick(item: MenuItem): Boolean {
-        Log.d("DEBUG_MENU", "onMenuItemClick invoked")
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_logout -> {
                 FirebaseAuth.getInstance().signOut()
@@ -71,11 +68,10 @@ class WorkoutsActivity : BaseActivity(), Toolbar.OnMenuItemClickListener {
                 return true
             }
         }
-        return false
+        return super.onOptionsItemSelected(item)
     }
 
     fun getUserId(): String {
-        return uid ?: ""
+        return FirebaseAuth.getInstance().currentUser?.uid ?: ""
     }
-
 }
