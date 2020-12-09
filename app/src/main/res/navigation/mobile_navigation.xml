@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="hu.bme.aut.fitary.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        android:name="hu.bme.aut.fitary.ui.my_workouts.UserWorkoutsFragment"
+        android:label="@string/menu_my_workouts"
+        tools:layout="@layout/fragment_workouts_user" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="hu.bme.aut.fitary.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_social_workouts"
+        android:name="hu.bme.aut.fitary.ui.social_workouts.SocialWorkoutsFragment"
+        android:label="@string/menu_social_workouts"
+        tools:layout="@layout/fragment_workouts_social" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="hu.bme.aut.fitary.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_charts"
+        android:name="hu.bme.aut.fitary.ui.charts.StatisticsFragment"
+        android:label="@string/menu_charts"
+        tools:layout="@layout/fragment_statistics" />
 </navigation>

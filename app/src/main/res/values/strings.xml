@@ -18,4 +18,8 @@
     <string name="exercise">Exercise</string>
     <string name="reps">Reps</string>
     <string name="cancel">Cancel</string>
+    <string name="menu_my_workouts">My workouts</string>
+    <string name="menu_social_workouts">Social workouts</string>
+    <string name="menu_statistics">Statistics</string>
+    <string name="menu_charts">Charts</string>
 </resources>

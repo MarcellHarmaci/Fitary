@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.slideshow
+package hu.bme.aut.fitary.ui.charts
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
