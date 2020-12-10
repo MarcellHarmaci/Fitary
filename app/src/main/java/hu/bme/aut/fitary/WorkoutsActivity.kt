@@ -2,7 +2,6 @@ package hu.bme.aut.fitary
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -15,7 +14,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_workouts.*
 
 class WorkoutsActivity : AppCompatActivity() {
 
@@ -57,7 +58,6 @@ class WorkoutsActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
