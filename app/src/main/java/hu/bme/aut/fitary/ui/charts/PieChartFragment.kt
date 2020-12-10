@@ -13,7 +13,6 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
-import com.github.mikephil.charting.utils.ColorTemplate.MATERIAL_COLORS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -27,7 +26,7 @@ import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_charts.view.*
 import kotlin.random.Random
 
-class ChartsFragment : Fragment() {
+class PieChartFragment : Fragment() {
 
     private lateinit var pieChart: PieChart
     private val pieEntries: MutableList<PieEntry> = mutableListOf()
@@ -47,7 +46,6 @@ class ChartsFragment : Fragment() {
         initWorkoutsListener()
 
         (context as WorkoutsActivity).fab.visibility = View.INVISIBLE
-
         return root
     }
 
@@ -55,13 +53,6 @@ class ChartsFragment : Fragment() {
         (context as WorkoutsActivity).fab.visibility = View.VISIBLE
         super.onPause()
     }
-
-    private fun randomColor() = Color.rgb(
-        Random.nextInt(0, 256),
-        Random.nextInt(0, 256),
-        Random.nextInt(0, 256)
-    )
-
 
     private fun updatePieChart(newWorkout: Workout) {
         for (exercise in newWorkout.exercises)
@@ -73,13 +64,7 @@ class ChartsFragment : Fragment() {
             )
 
         val dataSet = PieDataSet(pieEntries, "")
-
-        val sliceColors: MutableList<Int> = mutableListOf()
-        repeat(30) {
-            sliceColors.add(randomColor())
-        }
-
-        dataSet.setColors(MATERIAL_COLORS, 255)
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS, 255)
         dataSet.valueTextSize = 14f
 
         pieChart.data = PieData(dataSet)

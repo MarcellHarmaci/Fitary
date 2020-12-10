@@ -20,19 +20,29 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvUsername"
+                android:id="@+id/tvUserField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
+                android:paddingEnd="12dp"
+                android:text="@string/li_workout_user"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvRepetitions"
+                android:id="@+id/tvUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:text="@string/reps"
+                android:textStyle="bold"
+                card_view:layout_constraintBottom_toBottomOf="@+id/tvUserField"
+                card_view:layout_constraintStart_toEndOf="@+id/tvUserField"
+                card_view:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tvRepsField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="12dp"
+                android:text="@string/li_workout_reps"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/tvUsername" />
 
@@ -40,16 +50,26 @@
                 android:id="@+id/tvReps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                card_view:layout_constraintBottom_toBottomOf="@+id/tvRepetitions"
-                card_view:layout_constraintStart_toEndOf="@+id/tvRepetitions"
-                card_view:layout_constraintTop_toTopOf="@+id/tvRepetitions" />
+                card_view:layout_constraintBottom_toBottomOf="@+id/tvRepsField"
+                card_view:layout_constraintStart_toEndOf="@+id/tvRepsField"
+                card_view:layout_constraintTop_toTopOf="@+id/tvRepsField" />
+
+            <TextView
+                android:id="@+id/tvCommentField"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="12dp"
+                android:text="@string/li_workout_comment"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toBottomOf="@+id/tvRepsField" />
 
             <TextView
                 android:id="@+id/tvComment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toBottomOf="@+id/tvRepetitions" />
+                card_view:layout_constraintBottom_toBottomOf="@+id/tvCommentField"
+                card_view:layout_constraintStart_toEndOf="@+id/tvCommentField"
+                card_view:layout_constraintTop_toTopOf="@+id/tvCommentField" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

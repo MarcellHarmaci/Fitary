@@ -41,7 +41,7 @@ class WorkoutsActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.nav_user_workouts, R.id.nav_social_workouts, R.id.nav_charts
+                R.id.nav_user_workouts, R.id.nav_social_workouts, R.id.nav_charts, R.id.nav_bar_chart
             ), drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

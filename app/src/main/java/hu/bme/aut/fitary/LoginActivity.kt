@@ -22,6 +22,11 @@ class LoginActivity : BaseActivity() {
 
         btnRegister.setOnClickListener { registerClick() }
         btnLogin.setOnClickListener { loginClick() }
+
+        //TODO(Remove auto login to debug account)
+        etEmail.setText("z@z.zz")
+        etPassword.setText("zzzzzz")
+        btnLogin.callOnClick()
     }
 
     private fun validateForm() = etEmail.validateNonEmpty() && etPassword.validateNonEmpty()
