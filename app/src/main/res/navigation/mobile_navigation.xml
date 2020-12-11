@@ -19,13 +19,7 @@
 
     <fragment
         android:id="@+id/nav_charts"
-        android:name="hu.bme.aut.fitary.ui.charts.PieChartFragment"
+        android:name="hu.bme.aut.fitary.ui.charts.ChartsFragment"
         android:label="@string/menu_charts"
-        tools:layout="@layout/fragment_charts" />
-
-    <fragment
-        android:id="@+id/nav_bar_chart"
-        android:name="hu.bme.aut.fitary.ui.charts.BarChartFragment"
-        android:label="@string/menu_charts"
-        tools:layout="@layout/fragment_bar_chart" />
+        tools:layout="@layout/fragment_chart_bar" />
 </navigation>

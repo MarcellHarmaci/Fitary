@@ -1,12 +1,9 @@
 package hu.bme.aut.fitary.ui.charts
 
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -23,8 +20,7 @@ import hu.bme.aut.fitary.WorkoutsActivity
 import hu.bme.aut.fitary.data.Workout
 import hu.bme.aut.fitary.extensions.addEntry
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.fragment_charts.view.*
-import kotlin.random.Random
+import kotlinx.android.synthetic.main.fragment_chart_pie.view.*
 
 class PieChartFragment : Fragment() {
 
@@ -36,22 +32,17 @@ class PieChartFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_charts, container, false)
+        val root = inflater.inflate(R.layout.fragment_chart_pie, container, false)
 
         pieChart = root.pieChart
         pieChart.legend.textSize = 14f
         pieChart.setDrawEntryLabels(false)
         pieChart.description.isEnabled = false
+        pieChart.isRotationEnabled = false
 
         initWorkoutsListener()
 
-        (context as WorkoutsActivity).fab.visibility = View.INVISIBLE
         return root
-    }
-
-    override fun onPause() {
-        (context as WorkoutsActivity).fab.visibility = View.VISIBLE
-        super.onPause()
     }
 
     private fun updatePieChart(newWorkout: Workout) {

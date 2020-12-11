@@ -10,7 +10,6 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -19,7 +18,7 @@ import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.WorkoutsActivity
 import hu.bme.aut.fitary.data.Workout
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.fragment_bar_chart.view.*
+import kotlinx.android.synthetic.main.fragment_chart_bar.view.*
 
 class BarChartFragment : Fragment() {
 
@@ -33,27 +32,19 @@ class BarChartFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_bar_chart, container, false)
+        val root = inflater.inflate(R.layout.fragment_chart_bar, container, false)
 
-        labels.add("")
+//        labels.add("")
         barChart = root.barChart
         barChart.description.isEnabled = false
         barChart.legend.isEnabled = false
         barChart.setDrawValueAboveBar(false)
         barChart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
         barChart.xAxis.position = XAxis.XAxisPosition.TOP_INSIDE
-//        barChart.xAxis.yOffset = 30f
-//        barChart.xAxis.xOffset = 30f
 
         initWorkoutsListener()
 
-        (context as WorkoutsActivity).fab.visibility = View.INVISIBLE
         return root
-    }
-
-    override fun onPause() {
-        (context as WorkoutsActivity).fab.visibility = View.VISIBLE
-        super.onPause()
     }
 
     private fun updateBarChart(newWorkout: Workout) {
@@ -72,6 +63,9 @@ class BarChartFragment : Fragment() {
         barData.barWidth = 0.6f
 
         barChart.data = barData
+        // TODO("Labels don't appear to the correct bars")
+        // Tried specifying the number of labels, but
+        // it only makes them misaligned and doesn't solve the problem
         barChart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
         barChart.invalidate()
     }

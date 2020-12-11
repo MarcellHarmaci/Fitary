@@ -22,4 +22,6 @@
     <string name="li_workout_user">User:</string>
     <string name="li_workout_reps">Reps:</string>
     <string name="li_workout_comment">Comment:</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

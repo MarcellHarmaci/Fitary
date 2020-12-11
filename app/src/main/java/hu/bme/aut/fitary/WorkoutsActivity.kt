@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
@@ -21,6 +22,7 @@ import kotlinx.android.synthetic.main.activity_workouts.*
 class WorkoutsActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var fab: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +30,7 @@ class WorkoutsActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        val fab: FloatingActionButton = findViewById(R.id.fab)
+        fab = findViewById(R.id.fab)
         fab.setOnClickListener { view ->
             val createWorkoutIntent = Intent(this, CreateWorkoutActivity::class.java)
             startActivity(createWorkoutIntent)
@@ -40,12 +42,18 @@ class WorkoutsActivity : AppCompatActivity() {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_user_workouts, R.id.nav_social_workouts, R.id.nav_charts, R.id.nav_bar_chart
-            ), drawerLayout
+            setOf(R.id.nav_user_workouts, R.id.nav_social_workouts, R.id.nav_charts),
+            drawerLayout
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    fun setFloatingActionButtonVisible(isVisible: Boolean) {
+        when (isVisible) {
+            true -> fab.visibility = View.VISIBLE
+            false -> fab.visibility = View.INVISIBLE
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -69,9 +77,5 @@ class WorkoutsActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    fun getUserId(): String {
-        return FirebaseAuth.getInstance().currentUser?.uid ?: ""
     }
 }
