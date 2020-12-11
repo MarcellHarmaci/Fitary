@@ -1,12 +1,12 @@
-package hu.bme.aut.fitary.ui.social_workouts
+package hu.bme.aut.fitary.ui.workouts
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -14,26 +14,28 @@ import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.adapter.WorkoutAdapter
 import hu.bme.aut.fitary.data.Workout
-import kotlinx.android.synthetic.main.fragment_workouts_social.view.*
 import kotlinx.android.synthetic.main.fragment_workouts_user.view.*
-import kotlinx.android.synthetic.main.fragment_workouts_user.view.rvUserWorkouts
 
-class SocialWorkoutsFragment : Fragment() {
+class UserWorkoutsFragment : Fragment() {
 
     private lateinit var workoutAdapter: WorkoutAdapter
+    private var userId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_workouts_social, container, false)
+        val root = inflater.inflate(R.layout.fragment_workouts_user, container, false)
+
+        userId = FirebaseAuth.getInstance().currentUser?.uid
+
         workoutAdapter = WorkoutAdapter(context?.applicationContext)
-        root.rvSocialWorkouts.layoutManager = LinearLayoutManager(container?.context).apply {
+        root.rvUserWorkouts.layoutManager = LinearLayoutManager(container?.context).apply {
             reverseLayout = true
             stackFromEnd = true
         }
-        root.rvSocialWorkouts.adapter = workoutAdapter
+        root.rvUserWorkouts.adapter = workoutAdapter
 
         initWorkoutsListener()
 
@@ -46,7 +48,9 @@ class SocialWorkoutsFragment : Fragment() {
             .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
                     val newWorkout = dataSnapshot.getValue<Workout>(Workout::class.java)
-                    workoutAdapter.addWorkout(newWorkout)
+
+                    if (newWorkout?.uid.equals(userId))
+                        workoutAdapter.addWorkout(newWorkout)
                 }
 
                 override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
@@ -66,5 +70,4 @@ class SocialWorkoutsFragment : Fragment() {
                 }
             })
     }
-
 }
