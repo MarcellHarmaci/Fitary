@@ -15,9 +15,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.WorkoutsActivity
 import hu.bme.aut.fitary.data.Workout
-import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_chart_bar.view.*
 
 class BarChartFragment : Fragment() {
@@ -34,7 +32,6 @@ class BarChartFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_chart_bar, container, false)
 
-//        labels.add("")
         barChart = root.barChart
         barChart.description.isEnabled = false
         barChart.legend.isEnabled = false

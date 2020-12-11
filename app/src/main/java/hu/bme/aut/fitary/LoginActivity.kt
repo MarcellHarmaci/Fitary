@@ -1,13 +1,9 @@
 package hu.bme.aut.fitary
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.database.FirebaseDatabase
-import hu.bme.aut.fitary.data.Workout
 import hu.bme.aut.fitary.extensions.validateNonEmpty
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -22,11 +18,6 @@ class LoginActivity : BaseActivity() {
 
         btnRegister.setOnClickListener { registerClick() }
         btnLogin.setOnClickListener { loginClick() }
-
-        //TODO(Remove auto login to debug account)
-        etEmail.setText("z@z.zz")
-        etPassword.setText("zzzzzz")
-        btnLogin.callOnClick()
     }
 
     private fun validateForm() = etEmail.validateNonEmpty() && etPassword.validateNonEmpty()

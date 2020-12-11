@@ -15,9 +15,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.GravityCompat
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.android.synthetic.main.activity_workouts.*
 
 class WorkoutsActivity : AppCompatActivity() {
 

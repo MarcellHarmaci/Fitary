@@ -16,10 +16,8 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.WorkoutsActivity
 import hu.bme.aut.fitary.data.Workout
 import hu.bme.aut.fitary.extensions.addEntry
-import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.fragment_chart_pie.view.*
 
 class PieChartFragment : Fragment() {
