@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.fitary.data.Exercise
-import kotlinx.android.synthetic.main.activity_create_workout.view.*
-import kotlinx.android.synthetic.main.fragment_dialog_exercise.*
 import kotlinx.android.synthetic.main.fragment_dialog_exercise.view.*
 
 class ExerciseDialog(val position: Int, var exercise: Exercise) : DialogFragment() {
