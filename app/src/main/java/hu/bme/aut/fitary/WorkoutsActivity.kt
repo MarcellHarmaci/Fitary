@@ -16,6 +16,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
+import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutActivity
 
 class WorkoutsActivity : AppCompatActivity() {
 

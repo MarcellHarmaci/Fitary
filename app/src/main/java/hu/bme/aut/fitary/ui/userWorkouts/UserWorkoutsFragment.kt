@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.workouts
+package hu.bme.aut.fitary.ui.userWorkouts
 
 import android.os.Bundle
 import android.view.LayoutInflater

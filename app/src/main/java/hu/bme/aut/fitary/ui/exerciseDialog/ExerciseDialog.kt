@@ -1,10 +1,12 @@
-package hu.bme.aut.fitary
+package hu.bme.aut.fitary.ui.exerciseDialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutActivity
+import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.data.Exercise
 import kotlinx.android.synthetic.main.fragment_dialog_exercise.view.*
 

@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.charts
+package hu.bme.aut.fitary.ui.barChart
 
 import android.os.Bundle
 import android.view.LayoutInflater
