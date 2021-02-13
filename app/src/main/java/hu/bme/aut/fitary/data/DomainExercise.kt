@@ -1,6 +1,6 @@
 package hu.bme.aut.fitary.data
 
-data class Exercise(
+data class DomainExercise(
     var name: String = "",
     var reps: Int = 0
 ) {

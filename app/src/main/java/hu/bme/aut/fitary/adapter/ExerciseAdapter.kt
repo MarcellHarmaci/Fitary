@@ -6,27 +6,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.data.Exercise
+import hu.bme.aut.fitary.data.DomainExercise
 import kotlinx.android.synthetic.main.list_item_exercise.view.*
 
 class ExerciseAdapter(
     private val context: Context,
-    private val exercises: MutableList<Exercise>
+    private val domainExercises: MutableList<DomainExercise>
 ) : BaseAdapter() {
 
     private val inflater: LayoutInflater =
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
-    fun addItem(newItem: Exercise) {
-        exercises.add(newItem)
+    fun addItem(newItem: DomainExercise) {
+        domainExercises.add(newItem)
     }
 
     override fun getCount(): Int {
-        return exercises.size
+        return domainExercises.size
     }
 
     override fun getItem(position: Int): Any {
-        return exercises[position]
+        return domainExercises[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -36,7 +36,7 @@ class ExerciseAdapter(
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val exerciseRowView = inflater.inflate(R.layout.list_item_exercise, parent, false)
 
-        val exercise = exercises[position]
+        val exercise = domainExercises[position]
         exerciseRowView.tvExerciseName.text = exercise.name
         exerciseRowView.tvReps.text = exercise.reps.toString()
 

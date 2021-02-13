@@ -4,13 +4,49 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
+import co.zsmb.rainbowcake.base.RainbowCakeDialogFragment
+import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
+import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutActivity
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.data.Exercise
+import hu.bme.aut.fitary.data.DomainExercise
+import kotlinx.android.synthetic.main.fragment_dialog_exercise.*
 import kotlinx.android.synthetic.main.fragment_dialog_exercise.view.*
 
-class ExerciseDialog(val position: Int, var exercise: Exercise) : DialogFragment() {
+class ExerciseDialog(
+    val position: Int,
+    var domainExercise: DomainExercise
+) : RainbowCakeDialogFragment<ExerciseDialogViewState, ExerciseDialogViewModel>() {
+
+    override fun provideViewModel() = getViewModelFromFactory()
+    override fun getViewResource() = R.layout.fragment_dialog_exercise
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // TODO Setup views
+        //  Ask Krisztián what exactly should be done here!
+        //  Should I just call render?
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        viewModel.loadExercise()
+        // TODO load if the current operation is Add or Edit
+    }
+
+    override fun render(viewState: ExerciseDialogViewState) {
+        when (viewState) {
+            is Loading -> {
+                // TODO Show that the view is loading
+            }
+            is ExerciseDialogReady -> {
+                etExerciseName.setText(viewState.exerciseName)
+                etReps.setText(viewState.reps)
+            }
+        }.exhaustive
+    }
 
     private lateinit var resultHandler: ExerciseResultHandler
 
@@ -21,14 +57,16 @@ class ExerciseDialog(val position: Int, var exercise: Exercise) : DialogFragment
     ): View? {
         resultHandler = activity as CreateWorkoutActivity
 
-        val dialogLayout = inflater.inflate(R.layout.fragment_dialog_exercise, container, false)
-        dialogLayout.etExerciseName.setText(exercise.name)
-        dialogLayout.etReps.setText(exercise.reps.toString())
+        val dialogLayout =
+            inflater.inflate(R.layout.fragment_dialog_exercise, container, false)
+        dialogLayout.etExerciseName.setText(domainExercise.name)
+        dialogLayout.etReps.setText(domainExercise.reps.toString())
 
         dialogLayout.btnSave.setOnClickListener {
+            // TODO Replace magic numbers with symbolic constant
             if (position == -1)
                 resultHandler.onSuccessAddExercise(
-                    Exercise(
+                    DomainExercise(
                         dialogLayout.etExerciseName.text.toString(),
                         dialogLayout.etReps.text.toString().toInt()
                     )
@@ -36,7 +74,7 @@ class ExerciseDialog(val position: Int, var exercise: Exercise) : DialogFragment
             else
                 resultHandler.onSuccessEditExercise(
                     position,
-                    Exercise(
+                    DomainExercise(
                         dialogLayout.etExerciseName.text.toString(),
                         dialogLayout.etReps.text.toString().toInt()
                     )
@@ -51,7 +89,7 @@ class ExerciseDialog(val position: Int, var exercise: Exercise) : DialogFragment
     }
 
     interface ExerciseResultHandler {
-        fun onSuccessAddExercise(exercise: Exercise)
-        fun onSuccessEditExercise(position: Int, exercise: Exercise)
+        fun onSuccessAddExercise(domainExercise: DomainExercise)
+        fun onSuccessEditExercise(position: Int, domainExercise: DomainExercise)
     }
 }

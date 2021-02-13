@@ -5,44 +5,44 @@ import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.BaseActivity
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.adapter.ExerciseAdapter
-import hu.bme.aut.fitary.data.Exercise
+import hu.bme.aut.fitary.data.DomainExercise
 import hu.bme.aut.fitary.data.Workout
 import hu.bme.aut.fitary.extensions.validateNonEmpty
 import hu.bme.aut.fitary.ui.exerciseDialog.ExerciseDialog
 import kotlinx.android.synthetic.main.activity_create_workout.*
 
 class CreateWorkoutActivity : BaseActivity(), ExerciseDialog.ExerciseResultHandler {
-    private val exercises: MutableList<Exercise> = mutableListOf()
+    private val domainExercises: MutableList<DomainExercise> = mutableListOf()
     private lateinit var exercisesAdapter: ExerciseAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_workout)
 
-        exercisesAdapter = ExerciseAdapter(this, exercises)
+        exercisesAdapter = ExerciseAdapter(this, domainExercises)
         listViewExercises.adapter = exercisesAdapter
         listViewExercises.setOnItemClickListener { parent, view, position, id ->
-            val exercise = parent.getItemAtPosition(position) as Exercise
+            val exercise = parent.getItemAtPosition(position) as DomainExercise
 
             val exerciseDialog = ExerciseDialog(position, exercise)
             exerciseDialog.show(supportFragmentManager, "Edit exercise")
         }
 
         btnAddExercise.setOnClickListener {
-            val exerciseDialog = ExerciseDialog(-1, Exercise())
+            val exerciseDialog = ExerciseDialog(-1, DomainExercise())
             exerciseDialog.show(supportFragmentManager, "New exercise")
         }
 
         btnSend.setOnClickListener { sendClick() }
     }
 
-    override fun onSuccessAddExercise(exercise: Exercise) {
-        exercises.add(exercise)
+    override fun onSuccessAddExercise(domainExercise: DomainExercise) {
+        domainExercises.add(domainExercise)
         exercisesAdapter.notifyDataSetChanged()
     }
 
-    override fun onSuccessEditExercise(position: Int, exercise: Exercise) {
-        exercises[position] = exercise
+    override fun onSuccessEditExercise(position: Int, domainExercise: DomainExercise) {
+        domainExercises[position] = domainExercise
         exercisesAdapter.notifyDataSetChanged()
     }
 
@@ -53,9 +53,9 @@ class CreateWorkoutActivity : BaseActivity(), ExerciseDialog.ExerciseResultHandl
     }
 
     private fun validateForm(): Boolean {
-        if (exercises.size == 0) return false
+        if (domainExercises.size == 0) return false
 
-        for (exercise in exercises) {
+        for (exercise in domainExercises) {
             if (!exercise.validate()) return false
         }
 
@@ -72,7 +72,7 @@ class CreateWorkoutActivity : BaseActivity(), ExerciseDialog.ExerciseResultHandl
                 etComment.text.toString()
             else ""
 
-        val newWorkout = Workout(uid, userName, exercises, comment)
+        val newWorkout = Workout(uid, userName, domainExercises, comment)
 
         FirebaseDatabase.getInstance().reference
             .child("workouts")

@@ -44,7 +44,7 @@ class PieChartFragment : Fragment() {
     }
 
     private fun updatePieChart(newWorkout: Workout) {
-        for (exercise in newWorkout.exercises)
+        for (exercise in newWorkout.domainExercises)
             pieEntries.addEntry(
                 PieEntry(
                     exercise.reps.toFloat(),
