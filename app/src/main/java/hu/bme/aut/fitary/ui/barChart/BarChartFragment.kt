@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
@@ -18,7 +18,15 @@ import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.data.Workout
 import kotlinx.android.synthetic.main.fragment_chart_bar.view.*
 
-class BarChartFragment : Fragment() {
+class BarChartFragment : RainbowCakeFragment<BarChartViewState, BarChartViewModel>() {
+
+    override fun provideViewModel(): BarChartViewModel {
+        TODO("Not yet implemented")
+    }
+
+    override fun render(viewState: BarChartViewState) {
+        TODO("Not yet implemented")
+    }
 
     private lateinit var barChart: HorizontalBarChart
     private var x = 1f
@@ -46,7 +54,7 @@ class BarChartFragment : Fragment() {
 
     private fun updateBarChart(newWorkout: Workout) {
         var sumReps = 0
-        for (exercise in newWorkout.exercises)
+        for (exercise in newWorkout.domainExercises)
             sumReps += exercise.reps
 
         barEntries.add(BarEntry(x++, sumReps.toFloat()))
@@ -60,7 +68,7 @@ class BarChartFragment : Fragment() {
         barData.barWidth = 0.6f
 
         barChart.data = barData
-        // TODO("Labels don't appear to the correct bars")
+        // TODO Labels don't appear to the correct bars
         // Tried specifying the number of labels, but
         // it only makes them misaligned and doesn't solve the problem
         barChart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
