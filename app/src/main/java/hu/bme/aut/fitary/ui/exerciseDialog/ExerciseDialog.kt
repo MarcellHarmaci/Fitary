@@ -27,6 +27,7 @@ class ExerciseDialog(
         // TODO Setup views
         //  Ask Krisztián what exactly should be done here!
         //  Should I just call render?
+        //  Should listeners be set here?
     }
 
     override fun onStart() {
