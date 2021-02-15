@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
 
         fab = findViewById(R.id.fab)
         fab.setOnClickListener {
-            val createWorkoutIntent = Intent(this, CreateWorkoutActivity::class.java)
-            startActivity(createWorkoutIntent)
+            // TODO navigate to workout creation fragment
+            navController.navigate(R.id.nav_blank)
         }
     }
 

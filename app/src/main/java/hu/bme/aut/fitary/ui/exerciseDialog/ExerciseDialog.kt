@@ -19,6 +19,7 @@ class ExerciseDialog(
     val position: Int,
     var domainExercise: DomainExercise
 ) : DialogFragment() {
+// Reverted to original DF until Dagger DI is not working
 //) : RainbowCakeDialogFragment<ExerciseDialogViewState, ExerciseDialogViewModel>() {
 //
 //    override fun provideViewModel() = getViewModelFromFactory()
