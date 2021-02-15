@@ -1,15 +1,15 @@
 package hu.bme.aut.fitary.interactor
 
 import hu.bme.aut.fitary.dataSource.FirebaseDAO
+import hu.bme.aut.fitary.dataSource.FirebaseDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class WorkoutInteractor @Inject constructor(
-    private val firebaseDAO: FirebaseDAO
+    private val firebaseDataSource: FirebaseDataSource
 ) {
 
-    // TODO Mapping from data models to domain models
-    fun getWorkouts() = firebaseDAO.workouts
-    fun getUserWorkouts() = firebaseDAO.userWorkouts
+    suspend fun getWorkouts() = firebaseDataSource.getWorkouts()
+    suspend fun getUserWorkouts() = firebaseDataSource.getUserWorkouts()
 }

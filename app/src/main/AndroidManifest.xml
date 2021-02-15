@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ui.createWorkout.CreateWorkoutActivity"></activity>
         <activity
-            android:name=".WorkoutsActivity"
+            android:name=".MainActivity"
             android:label="@string/title_activity_workouts"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".LoginActivity">

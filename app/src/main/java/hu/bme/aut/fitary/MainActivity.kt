@@ -17,15 +17,16 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.widget.Toolbar
 import com.google.firebase.auth.FirebaseAuth
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutActivity
+import kotlinx.android.synthetic.main.activity_main.view.*
 
-class WorkoutsActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var fab: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_workouts)
+        setContentView(R.layout.activity_main)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -42,7 +43,7 @@ class WorkoutsActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         fab = findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener {
             val createWorkoutIntent = Intent(this, CreateWorkoutActivity::class.java)
             startActivity(createWorkoutIntent)
         }

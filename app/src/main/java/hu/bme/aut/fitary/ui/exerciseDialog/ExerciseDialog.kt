@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import co.zsmb.rainbowcake.base.RainbowCakeDialogFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
@@ -16,38 +18,39 @@ import kotlinx.android.synthetic.main.fragment_dialog_exercise.view.*
 class ExerciseDialog(
     val position: Int,
     var domainExercise: DomainExercise
-) : RainbowCakeDialogFragment<ExerciseDialogViewState, ExerciseDialogViewModel>() {
-
-    override fun provideViewModel() = getViewModelFromFactory()
-    override fun getViewResource() = R.layout.fragment_dialog_exercise
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // TODO Setup views
-        //  Ask Krisztián what exactly should be done here!
-        //  Should I just call render?
-        //  Should listeners be set here?
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        viewModel.loadExercise()
-        // TODO load if the current operation is Add or Edit
-    }
-
-    override fun render(viewState: ExerciseDialogViewState) {
-        when (viewState) {
-            is Loading -> {
-                // TODO Show that the view is loading
-            }
-            is ExerciseDialogReady -> {
-                etExerciseName.setText(viewState.exerciseName)
-                etReps.setText(viewState.reps)
-            }
-        }.exhaustive
-    }
+) : DialogFragment() {
+//) : RainbowCakeDialogFragment<ExerciseDialogViewState, ExerciseDialogViewModel>() {
+//
+//    override fun provideViewModel() = getViewModelFromFactory()
+//    override fun getViewResource() = R.layout.fragment_dialog_exercise
+//
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//
+//        // TODO Setup views
+//        //  Ask Krisztián what exactly should be done here!
+//        //  Should I just call render?
+//        //  Should listeners be set here?
+//    }
+//
+//    override fun onStart() {
+//        super.onStart()
+//
+//        viewModel.loadExercise()
+//        // TODO load if the current operation is Add or Edit
+//    }
+//
+//    override fun render(viewState: ExerciseDialogViewState) {
+//        when (viewState) {
+//            is Loading -> {
+//                // TODO Show that the view is loading
+//            }
+//            is ExerciseDialogReady -> {
+//                etExerciseName.setText(viewState.exerciseName)
+//                etReps.setText(viewState.reps)
+//            }
+//        }.exhaustive
+//    }
 
     private lateinit var resultHandler: ExerciseResultHandler
 

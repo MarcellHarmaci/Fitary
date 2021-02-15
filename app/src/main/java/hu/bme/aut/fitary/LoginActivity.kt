@@ -63,7 +63,7 @@ class LoginActivity : BaseActivity() {
             .addOnSuccessListener {
                 hideProgressDialog()
 
-                startActivity(Intent(this@LoginActivity, WorkoutsActivity::class.java))
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 finish()
             }
             .addOnFailureListener { exception ->
