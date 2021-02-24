@@ -10,6 +10,6 @@ class WorkoutInteractor @Inject constructor(
     private val firebaseDataSource: FirebaseDataSource
 ) {
 
-    suspend fun getWorkouts() = firebaseDataSource.getWorkouts()
+    suspend fun getAllWorkouts() = firebaseDataSource.getAllWorkouts()
     suspend fun getUserWorkouts() = firebaseDataSource.getUserWorkouts()
 }

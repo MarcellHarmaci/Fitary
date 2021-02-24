@@ -9,6 +9,7 @@ class ExerciseDialogViewModel @Inject constructor(
 
     // Survives configuration changes
     // Tied to the ViewModel instance, which also survives
+    // Coroutine ran on UI thread
     fun loadExercise() = execute {
         // Set the Loading state while fetching data
         viewState = Loading
