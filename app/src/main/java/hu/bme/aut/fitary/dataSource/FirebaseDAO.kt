@@ -6,7 +6,9 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import hu.bme.aut.fitary.data.Workout
+import hu.bme.aut.fitary.dataSource.model.Exercise
+import hu.bme.aut.fitary.dataSource.model.UserProfile
+import hu.bme.aut.fitary.dataSource.model.Workout
 import javax.inject.Singleton
 
 @Singleton
@@ -15,11 +17,11 @@ class FirebaseDAO {
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
-    val currentUser: FirebaseUser?
-        get() = auth.currentUser
+    val currentUser: UserProfile?
+        get() = users[auth.currentUser?.uid]
 
-    private val _users = mutableMapOf<String, FirebaseUser>()
-    val users: Map<String, FirebaseUser>
+    private val _users = mutableMapOf<String, UserProfile>()
+    val users: Map<String, UserProfile>
         get() = _users.toMap()
 
     private val _workouts = mutableListOf<Workout>()
@@ -29,6 +31,10 @@ class FirebaseDAO {
     private val _userWorkouts = mutableListOf<Workout>()
     val userWorkouts
         get() = _userWorkouts.toList()
+
+    private val _exercises = mutableMapOf<Long, Exercise>()
+    val exercises: Map<Long, Exercise>
+        get() = _exercises.toMap()
 
     init {
         initFirebaseConnection()
@@ -45,7 +51,7 @@ class FirebaseDAO {
                     newWorkout?.let {
                         _workouts += newWorkout
 
-                        if (newWorkout.uid.equals(currentUser?.uid))
+                        if (newWorkout.uid == currentUser?.id)
                             _userWorkouts += newWorkout
                     }
                 }
@@ -75,22 +81,22 @@ class FirebaseDAO {
             .addChildEventListener(object : ChildEventListener {
 
                 override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-                    val newUser = dataSnapshot.getValue(FirebaseUser::class.java)
+                    val newUser = dataSnapshot.getValue(UserProfile::class.java)
 
-                    newUser?.let { _users += Pair(it.uid, it) }
+                    newUser?.let { _users += Pair(it.id, it) }
                 }
 
                 override fun onChildChanged(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
                 ) {
-                    val user = dataSnapshot.getValue(FirebaseUser::class.java)
-                    user?.let { _users.replace(it.uid, it) }
+                    val user = dataSnapshot.getValue(UserProfile::class.java)
+                    user?.let { _users.replace(it.id, it) }
                 }
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                    val user = dataSnapshot.getValue(FirebaseUser::class.java)
-                    user?.let { _users.remove(it.uid) }
+                    val user = dataSnapshot.getValue(UserProfile::class.java)
+                    user?.let { _users.remove(it.id) }
                 }
 
                 override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
@@ -114,8 +120,8 @@ class FirebaseDAO {
             .setValue(workout)
     }
 
-    suspend fun saveUser(user: FirebaseUser) {
-        if (_users.containsKey(user.uid))
+    suspend fun saveUser(user: UserProfile) {
+        if (_users.containsKey(user.id) && _users[user.id] == user)
             return
 
         val key = database.reference
@@ -127,5 +133,7 @@ class FirebaseDAO {
             .child(key)
             .setValue(user)
     }
+
+    suspend fun getExerciseById(id: Long) = exercises[id]
 
 }
