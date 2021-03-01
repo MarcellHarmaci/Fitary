@@ -74,19 +74,19 @@ class PieChartFragment : Fragment() {
                 }
 
                 override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
+                    // "Not yet implemented"
                 }
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                    TODO("Not yet implemented")
+                    // "Not yet implemented"
                 }
 
                 override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
+                    // "Not yet implemented"
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+                    // "Not yet implemented"
                 }
             })
     }
