@@ -4,18 +4,37 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import co.zsmb.rainbowcake.base.RainbowCakeFragment
+import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
+import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.adapter.WorkoutAdapter
-import hu.bme.aut.fitary.data.DomainWorkout
 import kotlinx.android.synthetic.main.fragment_workouts_social.view.*
 
-class SocialWorkoutsFragment : Fragment() {
+class SocialWorkoutsFragment :
+    RainbowCakeFragment<SocialWorkoutsViewState, SocialWorkoutsViewModel>() {
+
+    override fun provideViewModel() = getViewModelFromFactory()
+    override fun getViewResource() = R.layout.fragment_workouts_social
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.loadWorkouts()
+    }
+
+    override fun render(viewState: SocialWorkoutsViewState) {
+        when (viewState) {
+            is Loading -> {
+                TODO("Show a progress dialog")
+            }
+            is SocialWorkoutsLoaded -> {
+                TODO("Get workouts from view state and give it to the list adapter")
+                viewState.workouts
+            }
+        }.exhaustive
+    }
+
 
     private lateinit var workoutAdapter: WorkoutAdapter
 
@@ -32,36 +51,9 @@ class SocialWorkoutsFragment : Fragment() {
         }
         root.rvSocialWorkouts.adapter = workoutAdapter
 
-        initWorkoutsListener()
+        // initWorkoutsListener() - handled data changes before
 
         return root
-    }
-
-    private fun initWorkoutsListener() {
-        FirebaseDatabase.getInstance()
-            .getReference("workouts")
-            .addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-                    val newWorkout = dataSnapshot.getValue<DomainWorkout>(DomainWorkout::class.java)
-                    workoutAdapter.addWorkout(newWorkout)
-                }
-
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                    // "Not yet implemented"
-                }
-
-                override fun onChildRemoved(snapshot: DataSnapshot) {
-                    // "Not yet implemented"
-                }
-
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                    // "Not yet implemented"
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // "Not yet implemented"
-                }
-            })
     }
 
 }

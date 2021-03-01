@@ -8,5 +8,6 @@ import javax.inject.Singleton
 class UserInteractor @Inject constructor(
     private val firebaseDataSource: FirebaseDataSource
 ) {
-    suspend fun getUsernameById(userId: String) = firebaseDataSource.getUserById(userId)?.username
+    suspend fun getUsernameById(userId: String): String? =
+        firebaseDataSource.getUserById(userId)?.username
 }

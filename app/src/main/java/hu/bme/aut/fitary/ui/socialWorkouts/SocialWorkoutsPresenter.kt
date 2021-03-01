@@ -10,19 +10,13 @@ class SocialWorkoutsPresenter @Inject constructor(
     private val userInteractor: UserInteractor
 ) {
 
-    suspend fun getUsername(): String {
-        TODO("Get username from UserInteractor")
-    }
-
     suspend fun getWorkouts(): MutableList<Workout> = withIOContext {
         val domainWorkouts = workoutInteractor.getAllWorkouts()
         val workouts = mutableListOf<Workout>()
 
         for(workout in domainWorkouts) {
-            var username: String? = null
-            if (workout.uid != null)
-                username = userInteractor.getUsernameById(workout.uid)
-            val score = workout.score ?: 0.0
+            val username = userInteractor.getUsernameById(workout.uid)
+            val score = workout.score
             val comment = workout.comment ?: "-"
 
             workouts.add(Workout(username ?: "-", score, comment))
