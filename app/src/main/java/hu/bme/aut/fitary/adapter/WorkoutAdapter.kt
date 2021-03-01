@@ -8,12 +8,12 @@ import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.data.Workout
+import hu.bme.aut.fitary.data.DomainWorkout
 import kotlinx.android.synthetic.main.list_item_workout.view.*
 
 class WorkoutAdapter(private val context: Context?) : RecyclerView.Adapter<WorkoutAdapter.ViewHolder>() {
 
-    private val workoutList: MutableList<Workout> = mutableListOf()
+    private val domainWorkoutList: MutableList<DomainWorkout> = mutableListOf()
     private var lastPosition = -1
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -30,7 +30,7 @@ class WorkoutAdapter(private val context: Context?) : RecyclerView.Adapter<Worko
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val tmpWorkout = workoutList[position]
+        val tmpWorkout = domainWorkoutList[position]
 
         var allReps = 0
         for (exercise in tmpWorkout.domainExercises)
@@ -43,12 +43,12 @@ class WorkoutAdapter(private val context: Context?) : RecyclerView.Adapter<Worko
         setAnimation(viewHolder.itemView, position)
     }
 
-    override fun getItemCount() = workoutList.size
+    override fun getItemCount() = domainWorkoutList.size
 
-    fun addWorkout(workout: Workout?) {
-        workout ?: return
+    fun addWorkout(domainWorkout: DomainWorkout?) {
+        domainWorkout ?: return
 
-        workoutList.add(workout)
+        domainWorkoutList.add(domainWorkout)
         notifyDataSetChanged()
     }
 

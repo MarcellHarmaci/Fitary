@@ -15,7 +15,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.data.Workout
+import hu.bme.aut.fitary.data.DomainWorkout
 import kotlinx.android.synthetic.main.fragment_chart_bar.view.*
 
 class BarChartFragment : RainbowCakeFragment<BarChartViewState, BarChartViewModel>() {
@@ -52,13 +52,13 @@ class BarChartFragment : RainbowCakeFragment<BarChartViewState, BarChartViewMode
         return root
     }
 
-    private fun updateBarChart(newWorkout: Workout) {
+    private fun updateBarChart(newDomainWorkout: DomainWorkout) {
         var sumReps = 0
-        for (exercise in newWorkout.domainExercises)
+        for (exercise in newDomainWorkout.domainExercises)
             sumReps += exercise.reps
 
         barEntries.add(BarEntry(x++, sumReps.toFloat()))
-        labels.add(newWorkout.userName)
+        labels.add(newDomainWorkout.userName)
 
         val dataSet = BarDataSet(barEntries, "")
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS, 255)
@@ -80,7 +80,7 @@ class BarChartFragment : RainbowCakeFragment<BarChartViewState, BarChartViewMode
             .getReference("workouts")
             .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-                    val newWorkout = dataSnapshot.getValue<Workout>(Workout::class.java)
+                    val newWorkout = dataSnapshot.getValue<DomainWorkout>(DomainWorkout::class.java)
 
                     if (newWorkout != null) {
                         updateBarChart(newWorkout)

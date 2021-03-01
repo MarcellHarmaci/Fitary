@@ -16,7 +16,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.data.Workout
+import hu.bme.aut.fitary.data.DomainWorkout
 import hu.bme.aut.fitary.extensions.addEntry
 import kotlinx.android.synthetic.main.fragment_chart_pie.view.*
 
@@ -43,8 +43,8 @@ class PieChartFragment : Fragment() {
         return root
     }
 
-    private fun updatePieChart(newWorkout: Workout) {
-        for (exercise in newWorkout.domainExercises)
+    private fun updatePieChart(newDomainWorkout: DomainWorkout) {
+        for (exercise in newDomainWorkout.domainExercises)
             pieEntries.addEntry(
                 PieEntry(
                     exercise.reps.toFloat(),
@@ -65,7 +65,7 @@ class PieChartFragment : Fragment() {
             .getReference("workouts")
             .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-                    val newWorkout = dataSnapshot.getValue<Workout>(Workout::class.java)
+                    val newWorkout = dataSnapshot.getValue<DomainWorkout>(DomainWorkout::class.java)
                     val currentUser = FirebaseAuth.getInstance().currentUser
 
                     if (newWorkout != null && newWorkout.uid == currentUser?.uid) {

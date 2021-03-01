@@ -12,7 +12,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.adapter.WorkoutAdapter
-import hu.bme.aut.fitary.data.Workout
+import hu.bme.aut.fitary.data.DomainWorkout
 import kotlinx.android.synthetic.main.fragment_workouts_social.view.*
 
 class SocialWorkoutsFragment : Fragment() {
@@ -42,7 +42,7 @@ class SocialWorkoutsFragment : Fragment() {
             .getReference("workouts")
             .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-                    val newWorkout = dataSnapshot.getValue<Workout>(Workout::class.java)
+                    val newWorkout = dataSnapshot.getValue<DomainWorkout>(DomainWorkout::class.java)
                     workoutAdapter.addWorkout(newWorkout)
                 }
 
