@@ -18,7 +18,7 @@ class WorkoutAdapter(private val context: Context?) : RecyclerView.Adapter<Worko
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvUsername: TextView = itemView.tvUsername
-        val tvReps: TextView = itemView.tvReps
+        val tvReps: TextView = itemView.tvScore
         val tvComment: TextView = itemView.tvComment
     }
 

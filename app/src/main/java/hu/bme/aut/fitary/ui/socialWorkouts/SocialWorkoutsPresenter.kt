@@ -14,7 +14,7 @@ class SocialWorkoutsPresenter @Inject constructor(
         val domainWorkouts = workoutInteractor.getAllWorkouts()
         val workouts = mutableListOf<Workout>()
 
-        for(workout in domainWorkouts) {
+        for (workout in domainWorkouts) {
             val username = userInteractor.getUsernameById(workout.uid)
             val score = workout.score
             val comment = workout.comment ?: "-"
@@ -26,5 +26,9 @@ class SocialWorkoutsPresenter @Inject constructor(
     }
 
     // Presentation model
-    class Workout(username: String, score: Double, comment: String)
+    data class Workout(
+        val username: String,
+        val score: Double,
+        val comment: String
+    )
 }

@@ -6,11 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.data.DomainWorkout
-import hu.bme.aut.fitary.data.comparator.WorkoutComparator
+import hu.bme.aut.fitary.adapter.comparator.WorkoutComparator
+import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsPresenter
 import kotlinx.android.synthetic.main.list_item_workout.view.*
 
-class WorkoutListAdapter : ListAdapter<DomainWorkout, WorkoutListAdapter.WorkoutViewHolder>(
+class WorkoutListAdapter : ListAdapter<SocialWorkoutsPresenter.Workout, WorkoutListAdapter.WorkoutViewHolder>(
     WorkoutComparator
 ) {
 
@@ -31,8 +31,8 @@ class WorkoutListAdapter : ListAdapter<DomainWorkout, WorkoutListAdapter.Workout
         private val tvScore = itemView.tvScore
         private val tvComment = itemView.tvComment
 
-        fun bind(workout: DomainWorkout) {
-            tvUsername.text = workout.userName
+        fun bind(workout: SocialWorkoutsPresenter.Workout) {
+            tvUsername.text = workout.username
             tvScore.text = workout.score.toString()
             tvComment.text = workout.comment
         }

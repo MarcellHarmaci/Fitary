@@ -38,7 +38,7 @@
                 card_view:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/tvRepsField"
+                android:id="@+id/tvScoreField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingEnd="12dp"
@@ -47,12 +47,12 @@
                 card_view:layout_constraintTop_toBottomOf="@+id/tvUsername" />
 
             <TextView
-                android:id="@+id/tvReps"
+                android:id="@+id/tvScore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                card_view:layout_constraintBottom_toBottomOf="@+id/tvRepsField"
-                card_view:layout_constraintStart_toEndOf="@+id/tvRepsField"
-                card_view:layout_constraintTop_toTopOf="@+id/tvRepsField" />
+                card_view:layout_constraintBottom_toBottomOf="@+id/tvScoreField"
+                card_view:layout_constraintStart_toEndOf="@+id/tvScoreField"
+                card_view:layout_constraintTop_toTopOf="@+id/tvScoreField" />
 
             <TextView
                 android:id="@+id/tvCommentField"
@@ -61,7 +61,7 @@
                 android:paddingEnd="12dp"
                 android:text="@string/li_workout_comment"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toBottomOf="@+id/tvRepsField" />
+                card_view:layout_constraintTop_toBottomOf="@+id/tvScoreField" />
 
             <TextView
                 android:id="@+id/tvComment"
