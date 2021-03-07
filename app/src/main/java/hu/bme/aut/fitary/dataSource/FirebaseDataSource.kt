@@ -7,15 +7,20 @@ import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
 import javax.inject.Inject
 
-// Responsibility: Mapping from data models to domain models
+/* Responsibilities:
+    Mapping from data models to domain models
+    Providing access to CRUD operations
+ */
 class FirebaseDataSource @Inject constructor(
-    private val firebaseDAO: FirebaseDAO
+    private val userDAO: UserDAO,
+    private val exerciseDAO: ExerciseDAO,
+    private val workoutDAO: WorkoutDAO
 ) {
 
     suspend fun getAllWorkouts(): List<DomainWorkout> {
         val domainWorkouts = mutableListOf<DomainWorkout>()
 
-        for (workout in firebaseDAO.workouts) {
+        for (workout in workoutDAO.workouts) {
             // Skip workout with non-existent user
             val user = getUserById(workout.uid) ?: continue
 
@@ -26,7 +31,7 @@ class FirebaseDataSource @Inject constructor(
                 domainExercises += DomainExercise(
                     id = exerciseId,
                     reps = exerciseIdAndReps.second,
-                    name = firebaseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
+                    name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
                 )
             }
 
@@ -43,10 +48,10 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun getUserWorkouts(): List<DomainWorkout> {
-        val user = firebaseDAO.currentUser ?: return listOf<DomainWorkout>()
+        val user = userDAO.currentUser ?: return listOf<DomainWorkout>()
         val domainWorkouts = mutableListOf<DomainWorkout>()
 
-        for (workout in firebaseDAO.userWorkouts) {
+        for (workout in workoutDAO.userWorkouts) {
             val domainExercises = mutableListOf<DomainExercise>()
 
             for (exerciseIdAndReps in workout.exercisesAndReps) {
@@ -54,7 +59,7 @@ class FirebaseDataSource @Inject constructor(
                 domainExercises += DomainExercise(
                     id = exerciseId,
                     reps = exerciseIdAndReps.second,
-                    name = firebaseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
+                    name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
                 )
             }
 
@@ -72,7 +77,7 @@ class FirebaseDataSource @Inject constructor(
 
     suspend fun saveWorkout(domainWorkout: DomainWorkout) {
         // User logged in to save workout
-        val user = firebaseDAO.currentUser ?: return
+        val user = userDAO.currentUser ?: return
 
         val exercises = mutableListOf<Pair<Long, Int>>()
         // Map exercises
@@ -87,7 +92,7 @@ class FirebaseDataSource @Inject constructor(
             comment = domainWorkout.comment
         )
 
-        firebaseDAO.saveWorkout(newWorkout)
+        workoutDAO.saveWorkout(newWorkout)
     }
 
     suspend fun saveUser(domainUser: DomainUser) {
@@ -97,19 +102,16 @@ class FirebaseDataSource @Inject constructor(
             domainUser.username
         )
 
-        firebaseDAO.saveUser(newUser)
+        userDAO.saveUser(newUser)
     }
 
     suspend fun getUserById(userId: String): DomainUser? {
-        for (user in firebaseDAO.users) {
-            if (user.key == userId)
-                return DomainUser(
-                    user.value.id,
-                    user.value.userMail,
-                    user.value.username
-                )
-        }
+        val user = userDAO.users[userId] ?: return null
 
-        return null
+        return DomainUser(
+            user.id,
+            user.userMail,
+            user.username
+        )
     }
 }
