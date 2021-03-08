@@ -18,52 +18,45 @@ class FirebaseDataSource @Inject constructor(
 ) {
 
     suspend fun getAllWorkouts(): List<DomainWorkout> {
-        val domainWorkouts = mutableListOf<DomainWorkout>()
 
-        for (workout in workoutDAO.workouts) {
-            // Skip workout with non-existent user
-            val user = getUserById(workout.uid) ?: continue
+        return workoutDAO.workouts.map { workout ->
 
-            val domainExercises = mutableListOf<DomainExercise>()
-
-            for (exerciseIdAndReps in workout.exercisesAndReps) {
+            val domainExercises = workout.exercisesAndReps.map { exerciseIdAndReps ->
                 val exerciseId = exerciseIdAndReps.first
-                domainExercises += DomainExercise(
+
+                DomainExercise(
                     id = exerciseId,
                     reps = exerciseIdAndReps.second,
                     name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
                 )
-            }
+            }.toMutableList()
 
-            domainWorkouts += DomainWorkout(
+            DomainWorkout(
                 uid = workout.uid,
-                userName = user.username,
+                userName = getUserById(workout.uid)?.username ?: "",
                 domainExercises = domainExercises,
                 score = workout.score,
                 comment = workout.comment
             )
         }
-
-        return domainWorkouts.toList()
     }
 
     suspend fun getUserWorkouts(): List<DomainWorkout> {
         val user = userDAO.currentUser ?: return listOf<DomainWorkout>()
-        val domainWorkouts = mutableListOf<DomainWorkout>()
 
-        for (workout in workoutDAO.userWorkouts) {
-            val domainExercises = mutableListOf<DomainExercise>()
+        return workoutDAO.userWorkouts.map { workout ->
 
-            for (exerciseIdAndReps in workout.exercisesAndReps) {
-                val exerciseId = exerciseIdAndReps.first
-                domainExercises += DomainExercise(
-                    id = exerciseId,
-                    reps = exerciseIdAndReps.second,
-                    name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
-                )
-            }
+            val domainExercises =
+                workout.exercisesAndReps.map { exerciseIdAndReps ->
+                    val exerciseId = exerciseIdAndReps.first
+                    DomainExercise(
+                        id = exerciseId,
+                        reps = exerciseIdAndReps.second,
+                        name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
+                    )
+                }.toMutableList()
 
-            domainWorkouts += DomainWorkout(
+            DomainWorkout(
                 uid = workout.uid,
                 userName = user.username,
                 domainExercises = domainExercises,
@@ -71,19 +64,15 @@ class FirebaseDataSource @Inject constructor(
                 comment = workout.comment
             )
         }
-
-        return domainWorkouts.toList()
     }
 
     suspend fun saveWorkout(domainWorkout: DomainWorkout) {
         // User logged in to save workout
         val user = userDAO.currentUser ?: return
 
-        val exercises = mutableListOf<Pair<Long, Int>>()
-        // Map exercises
-        for (domainExercise in domainWorkout.domainExercises) {
-            exercises += Pair(domainExercise.id, domainExercise.reps)
-        }
+        val exercises = domainWorkout.domainExercises.map { domainExercise ->
+            Pair(domainExercise.id, domainExercise.reps)
+        }.toMutableList()
 
         val newWorkout = Workout(
             uid = user.id,
@@ -106,12 +95,26 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun getUserById(userId: String): DomainUser? {
-        val user = userDAO.users[userId] ?: return null
 
-        return DomainUser(
-            user.id,
-            user.userMail,
-            user.username
-        )
+        return userDAO.users[userId]?.let { user ->
+            DomainUser(
+                user.id,
+                user.userMail,
+                user.username
+            )
+        }
+    }
+
+    suspend fun getExercises(): Map<Long, DomainExercise> {
+        return exerciseDAO.exercises.map { dataExercise ->
+            Pair(
+                dataExercise.key,
+                DomainExercise(
+                    id = dataExercise.key,
+                    name = dataExercise.value.name,
+                    reps = 0
+                )
+            )
+        }.toMap()
     }
 }
