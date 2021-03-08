@@ -11,16 +11,14 @@ class SocialWorkoutsPresenter @Inject constructor(
 ) {
 
     suspend fun getWorkouts(): MutableList<Workout> = withIOContext {
-        val domainWorkouts = workoutInteractor.getAllWorkouts()
-        val workouts = mutableListOf<Workout>()
 
-        for (workout in domainWorkouts) {
+        val workouts = workoutInteractor.getAllWorkouts().map { workout ->
             val username = userInteractor.getUsernameById(workout.uid)
             val score = workout.score
             val comment = workout.comment ?: "-"
 
-            workouts.add(Workout(username ?: "-", score, comment))
-        }
+            Workout(username ?: "-", score, comment)
+        }.toMutableList()
 
         return@withIOContext workouts
     }

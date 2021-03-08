@@ -3,6 +3,7 @@ package hu.bme.aut.fitary.dataSource
 import hu.bme.aut.fitary.data.DomainExercise
 import hu.bme.aut.fitary.data.DomainUser
 import hu.bme.aut.fitary.data.DomainWorkout
+import hu.bme.aut.fitary.dataSource.model.Exercise
 import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
 import javax.inject.Inject
@@ -70,8 +71,12 @@ class FirebaseDataSource @Inject constructor(
         // User logged in to save workout
         val user = userDAO.currentUser ?: return
 
+        var score = 0.0
         val exercises = domainWorkout.domainExercises.map { domainExercise ->
+
+            score += domainExercise.reps * (getExerciseScoreById(domainExercise.id) ?: 0.0)
             Pair(domainExercise.id, domainExercise.reps)
+
         }.toMutableList()
 
         val newWorkout = Workout(
@@ -117,4 +122,7 @@ class FirebaseDataSource @Inject constructor(
             )
         }.toMap()
     }
+
+    suspend fun getExerciseScoreById(id: Long) = exerciseDAO.exercises[id]?.score
+
 }
