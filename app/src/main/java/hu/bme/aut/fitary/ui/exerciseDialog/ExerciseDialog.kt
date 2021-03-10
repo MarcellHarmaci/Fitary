@@ -72,16 +72,18 @@ class ExerciseDialog(
             if (position == -1)
                 resultHandler.onSuccessAddExercise(
                     DomainExercise(
-                        dialogLayout.etExerciseName.text.toString(),
-                        dialogLayout.etReps.text.toString().toInt()
+                        0L // TODO Fetch real values
+//                        dialogLayout.etExerciseName.text.toString(),
+//                        dialogLayout.etReps.text.toString().toInt()
                     )
                 )
             else
                 resultHandler.onSuccessEditExercise(
                     position,
                     DomainExercise(
-                        dialogLayout.etExerciseName.text.toString(),
-                        dialogLayout.etReps.text.toString().toInt()
+                        0L // TODO Fetch real values
+//                        dialogLayout.etExerciseName.text.toString(),
+//                        dialogLayout.etReps.text.toString().toInt()
                     )
                 )
             dismiss()

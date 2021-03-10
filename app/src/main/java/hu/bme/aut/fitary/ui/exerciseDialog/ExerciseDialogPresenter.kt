@@ -8,14 +8,16 @@ class ExerciseDialogPresenter @Inject constructor() {
 
     // Runs on background thread pool
     suspend fun getExercise(): Exercise = withIOContext {
-        // Fetch Exercise of domain model
-        val domainExercise = DomainExercise()
+        // TODO Fetch Exercise of domain model
+        val domainExercise = DomainExercise(0L)
 
-        // Convert to Exercise of presentation model
-        val exercise: Exercise = Exercise(
-            domainExercise.name,
-            domainExercise.reps
-        )
+        // Map to Exercise of presentation model
+        val exercise = domainExercise.let {
+            Exercise(
+                domainExercise.name,
+                domainExercise.reps
+            )
+        }
 
         // Return formatted, screen specific data
         exercise

@@ -6,15 +6,16 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.Exercise
 import hu.bme.aut.fitary.dataSource.model.Workout
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ExerciseDAO {
+class ExerciseDAO @Inject constructor() {
 
     private val database = FirebaseDatabase.getInstance()
 
-    private val _exercises = mutableMapOf<Long, Exercise>()
-    val exercises: Map<Long, Exercise>
+    private val _exercises = mutableMapOf<Long?, Exercise>()
+    val exercises: Map<Long?, Exercise>
         get() = _exercises.toMap()
 
     init {

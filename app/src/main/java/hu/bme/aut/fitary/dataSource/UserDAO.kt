@@ -6,10 +6,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.UserProfile
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UserDAO {
+class UserDAO @Inject constructor() {
 
     private val database = FirebaseDatabase.getInstance()
     private val auth = FirebaseAuth.getInstance()
@@ -17,8 +18,8 @@ class UserDAO {
     val currentUser: UserProfile?
         get() = users[auth.currentUser?.uid]
 
-    private val _users = mutableMapOf<String, UserProfile>()
-    val users: Map<String, UserProfile>
+    private val _users = mutableMapOf<String?, UserProfile>()
+    val users: Map<String?, UserProfile>
         get() = _users.toMap()
 
     init {

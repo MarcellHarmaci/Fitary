@@ -33,8 +33,8 @@ class FirebaseDataSource @Inject constructor(
             }.toMutableList()
 
             DomainWorkout(
-                uid = workout.uid,
-                userName = getUserById(workout.uid)?.username ?: "",
+                uid = workout.uid ?: "Unknown user",
+                userName = getUserById(workout.uid)?.username ?: "No username",
                 domainExercises = domainExercises,
                 score = workout.score,
                 comment = workout.comment
@@ -58,7 +58,7 @@ class FirebaseDataSource @Inject constructor(
                 }.toMutableList()
 
             DomainWorkout(
-                uid = workout.uid,
+                uid = user.id!!,
                 userName = user.username,
                 domainExercises = domainExercises,
                 score = workout.score,
@@ -68,21 +68,25 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun saveWorkout(domainWorkout: DomainWorkout) {
-        // User logged in to save workout
+        // User must be logged in to save a workout
         val user = userDAO.currentUser ?: return
 
         var score = 0.0
-        val exercises = domainWorkout.domainExercises.map { domainExercise ->
+        val exercises = domainWorkout.domainExercises.mapNotNull { domainExercise ->
 
-            score += domainExercise.reps * (getExerciseScoreById(domainExercise.id) ?: 0.0)
-            Pair(domainExercise.id, domainExercise.reps)
+            score += domainExercise.reps * getExerciseScoreById(domainExercise.id)
+
+            if (domainExercise.id == null)
+                null
+            else
+                Pair(domainExercise.id, domainExercise.reps)
 
         }.toMutableList()
 
         val newWorkout = Workout(
             uid = user.id,
             exercisesAndReps = exercises,
-            score = domainWorkout.score,
+            score = score,
             comment = domainWorkout.comment
         )
 
@@ -99,7 +103,7 @@ class FirebaseDataSource @Inject constructor(
         userDAO.saveUser(newUser)
     }
 
-    suspend fun getUserById(userId: String): DomainUser? {
+    suspend fun getUserById(userId: String?): DomainUser? {
 
         return userDAO.users[userId]?.let { user ->
             DomainUser(
@@ -110,7 +114,7 @@ class FirebaseDataSource @Inject constructor(
         }
     }
 
-    suspend fun getExercises(): Map<Long, DomainExercise> {
+    suspend fun getExercises(): Map<Long?, DomainExercise> {
         return exerciseDAO.exercises.map { dataExercise ->
             Pair(
                 dataExercise.key,
@@ -120,9 +124,9 @@ class FirebaseDataSource @Inject constructor(
                     reps = 0
                 )
             )
-        }.toMap()
+        }.toMap().filter { pair -> pair.key != null }
     }
 
-    suspend fun getExerciseScoreById(id: Long) = exerciseDAO.exercises[id]?.score
+    suspend fun getExerciseScoreById(id: Long?) = exerciseDAO.exercises[id]?.score ?: 1.0
 
 }
