@@ -10,10 +10,14 @@ import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.adapter.WorkoutAdapter
+import hu.bme.aut.fitary.adapter.WorkoutListAdapter
+import kotlinx.android.synthetic.main.fragment_workouts_social.*
 import kotlinx.android.synthetic.main.fragment_workouts_social.view.*
 
 class SocialWorkoutsFragment :
     RainbowCakeFragment<SocialWorkoutsViewState, SocialWorkoutsViewModel>() {
+
+    private lateinit var workoutAdapter: WorkoutListAdapter
 
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_workouts_social
@@ -26,34 +30,24 @@ class SocialWorkoutsFragment :
     override fun render(viewState: SocialWorkoutsViewState) {
         when (viewState) {
             is Loading -> {
-                TODO("Show a progress dialog")
+                pbListLoading.visibility = View.VISIBLE
             }
             is SocialWorkoutsLoaded -> {
-                TODO("Get workouts from view state and give it to the list adapter")
-                viewState.workouts
+                pbListLoading.visibility = View.GONE
+                workoutAdapter.submitList(viewState.workouts)
             }
         }.exhaustive
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    private lateinit var workoutAdapter: WorkoutAdapter
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.fragment_workouts_social, container, false)
-        workoutAdapter = WorkoutAdapter(context?.applicationContext)
-        root.rvSocialWorkouts.layoutManager = LinearLayoutManager(container?.context).apply {
+        workoutAdapter = WorkoutListAdapter()
+        rvSocialWorkouts.adapter = workoutAdapter
+        rvSocialWorkouts.layoutManager = LinearLayoutManager(view.context).apply {
             reverseLayout = true
             stackFromEnd = true
         }
-        root.rvSocialWorkouts.adapter = workoutAdapter
-
-        // initWorkoutsListener() - handled data changes before
-
-        return root
     }
 
 }

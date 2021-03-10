@@ -12,15 +12,13 @@ class SocialWorkoutsPresenter @Inject constructor(
 
     suspend fun getWorkouts(): MutableList<Workout> = withIOContext {
 
-        val workouts = workoutInteractor.getAllWorkouts().map { workout ->
-            val username = userInteractor.getUsernameById(workout.uid)
-            val score = workout.score
-            val comment = workout.comment ?: "-"
-
-            Workout(username ?: "-", score, comment)
-        }.toMutableList()
-
-        return@withIOContext workouts
+        return@withIOContext workoutInteractor.getAllWorkouts().map { workout ->
+                Workout(
+                    username = userInteractor.getUsernameById(workout.uid) ?: "-",
+                    score = workout.score,
+                    comment = workout.comment ?: "-"
+                )
+            }.toMutableList()
     }
 
     // Presentation model
