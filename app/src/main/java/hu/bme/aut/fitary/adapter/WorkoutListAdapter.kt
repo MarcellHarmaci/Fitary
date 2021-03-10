@@ -10,9 +10,10 @@ import hu.bme.aut.fitary.adapter.comparator.WorkoutComparator
 import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsPresenter
 import kotlinx.android.synthetic.main.list_item_workout.view.*
 
-class WorkoutListAdapter : ListAdapter<SocialWorkoutsPresenter.Workout, WorkoutListAdapter.WorkoutViewHolder>(
-    WorkoutComparator
-) {
+class WorkoutListAdapter :
+    ListAdapter<SocialWorkoutsPresenter.Workout, WorkoutListAdapter.WorkoutViewHolder>(
+        WorkoutComparator
+    ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutViewHolder {
         val view = LayoutInflater

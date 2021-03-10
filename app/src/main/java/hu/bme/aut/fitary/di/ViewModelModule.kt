@@ -26,5 +26,5 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(SocialWorkoutsViewModel::class)
-    abstract fun bindExerciseDialogViewModel(socialWorkoutsViewModel: SocialWorkoutsViewModel): ViewModel
+    abstract fun bindSocialWorkoutsViewModel(socialWorkoutsViewModel: SocialWorkoutsViewModel): ViewModel
 }

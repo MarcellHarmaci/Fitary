@@ -9,8 +9,8 @@ object WorkoutComparator : DiffUtil.ItemCallback<SocialWorkoutsPresenter.Workout
         oldItem: SocialWorkoutsPresenter.Workout,
         newItem: SocialWorkoutsPresenter.Workout
     ): Boolean {
-        // Does SWPresenter.Workout needs an ID?
-        TODO("Not yet implemented")
+        // TODO("Test if SWPresenter.Workout needs an ID")
+        return oldItem === newItem
     }
 
     override fun areContentsTheSame(
