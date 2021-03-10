@@ -3,7 +3,10 @@ package hu.bme.aut.fitary
 import android.content.Intent
 import android.os.Bundle
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
+import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.extensions.validateNonEmpty
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -40,15 +43,15 @@ class LoginActivity : BaseActivity() {
                     .build()
                 firebaseUser?.updateProfile(profileChangeRequest)
 
+                saveUser(firebaseUser)
                 toast("Registration successful")
+                loginClick()
             }
             .addOnFailureListener { exception ->
                 hideProgressDialog()
 
                 toast(exception.message)
             }
-
-        loginClick()
     }
 
     private fun loginClick() {
@@ -73,4 +76,28 @@ class LoginActivity : BaseActivity() {
             }
     }
 
+    // TODO Remove when refactoring to use RainbowCake
+    private fun saveUser(firebaseUser: FirebaseUser?) {
+        val key = FirebaseDatabase
+                .getInstance()
+                .reference
+                .child("users")
+                .push().key ?: return
+
+        if (firebaseUser == null) {
+            toast("User not yet logged in")
+            return
+        }
+
+        val newUser = UserProfile(
+            id = firebaseUser.uid,
+            userMail = firebaseUser.email ?: "No mail",
+            username = firebaseUser.email?.substringBefore('@') ?: "No name"
+        )
+
+        FirebaseDatabase.getInstance().reference
+            .child("workouts")
+            .child(key)
+            .setValue(newUser)
+    }
 }
