@@ -1,6 +1,8 @@
 package hu.bme.aut.fitary.ui.createWorkout
 
+import android.app.Activity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.BaseActivity
 import hu.bme.aut.fitary.R
@@ -11,7 +13,7 @@ import hu.bme.aut.fitary.extensions.validateNonEmpty
 import hu.bme.aut.fitary.ui.exerciseDialog.ExerciseDialog
 import kotlinx.android.synthetic.main.activity_create_workout.*
 
-class CreateWorkoutActivity : BaseActivity(), ExerciseDialog.ExerciseResultHandler {
+class CreateWorkoutActivity : AppCompatActivity(), ExerciseDialog.ExerciseResultHandler {
     private val domainExercises: MutableList<DomainExercise> = mutableListOf()
     private lateinit var exercisesAdapter: ExerciseAdapter
 
@@ -29,8 +31,8 @@ class CreateWorkoutActivity : BaseActivity(), ExerciseDialog.ExerciseResultHandl
         }
 
         btnAddExercise.setOnClickListener {
-            val exerciseDialog = ExerciseDialog(-1, DomainExercise())
-            exerciseDialog.show(supportFragmentManager, "New exercise")
+//            val exerciseDialog = ExerciseDialog(-1, DomainExercise())
+//            exerciseDialog.show(supportFragmentManager, "New exercise")
         }
 
         btnSend.setOnClickListener { sendClick() }
@@ -49,7 +51,7 @@ class CreateWorkoutActivity : BaseActivity(), ExerciseDialog.ExerciseResultHandl
     private fun sendClick() {
         if (!validateForm()) return
 
-        uploadWorkout()
+//        uploadWorkout()
     }
 
     private fun validateForm(): Boolean {
@@ -62,27 +64,27 @@ class CreateWorkoutActivity : BaseActivity(), ExerciseDialog.ExerciseResultHandl
         return true
     }
 
-    private fun uploadWorkout() {
-        showProgressDialog()
-
-        val key = FirebaseDatabase.getInstance().reference.child("workouts").push().key ?: return
-
-        val comment =
-            if (etComment.validateNonEmpty())
-                etComment.text.toString()
-            else ""
-
-        val newWorkout = Workout(uid, userName, domainExercises, comment)
-
-        FirebaseDatabase.getInstance().reference
-            .child("workouts")
-            .child(key)
-            .setValue(newWorkout)
-            .addOnCompleteListener {
-                hideProgressDialog()
-                toast("Workout saved")
-                finish()
-            }
-    }
+//    private fun uploadWorkout() {
+//        showProgressDialog()
+//
+//        val key = FirebaseDatabase.getInstance().reference.child("workouts").push().key ?: return
+//
+//        val comment =
+//            if (etComment.validateNonEmpty())
+//                etComment.text.toString()
+//            else ""
+//
+//        val newWorkout = Workout(uid, userName, domainExercises, comment)
+//
+//        FirebaseDatabase.getInstance().reference
+//            .child("workouts")
+//            .child(key)
+//            .setValue(newWorkout)
+//            .addOnCompleteListener {
+//                hideProgressDialog()
+//                toast("Workout saved")
+//                finish()
+//            }
+//    }
 
 }
