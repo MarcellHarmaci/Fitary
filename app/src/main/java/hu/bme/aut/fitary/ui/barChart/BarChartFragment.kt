@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import com.google.firebase.database.ChildEventListener
@@ -58,7 +60,7 @@ class BarChartFragment : RainbowCakeFragment<BarChartViewState, BarChartViewMode
             sumReps += exercise.reps
 
         barEntries.add(BarEntry(x++, sumReps.toFloat()))
-        labels.add(newDomainWorkout.userName)
+        labels.add(newDomainWorkout.username)
 
         val dataSet = BarDataSet(barEntries, "")
         dataSet.setColors(ColorTemplate.MATERIAL_COLORS, 255)

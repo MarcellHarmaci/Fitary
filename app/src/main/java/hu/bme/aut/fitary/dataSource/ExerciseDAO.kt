@@ -5,7 +5,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.Exercise
-import hu.bme.aut.fitary.dataSource.model.Workout
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,6 +51,6 @@ class ExerciseDAO @Inject constructor() {
             })
     }
 
-    suspend fun getExerciseById(id: Long) = exercises[id]
+    fun getExerciseById(id: Long) = exercises[id]
 
 }

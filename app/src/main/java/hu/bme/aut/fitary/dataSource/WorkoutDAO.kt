@@ -1,13 +1,9 @@
 package hu.bme.aut.fitary.dataSource
 
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import hu.bme.aut.fitary.dataSource.model.Exercise
-import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
 import javax.inject.Inject
 import javax.inject.Singleton

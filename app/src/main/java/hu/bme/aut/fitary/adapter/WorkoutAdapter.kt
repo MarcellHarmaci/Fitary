@@ -36,7 +36,7 @@ class WorkoutAdapter(private val context: Context?) : RecyclerView.Adapter<Worko
         for (exercise in tmpWorkout.domainExercises)
             allReps += exercise.reps
 
-        viewHolder.tvUsername.text = tmpWorkout.userName
+        viewHolder.tvUsername.text = tmpWorkout.username
         viewHolder.tvReps.text = allReps.toString()
         viewHolder.tvComment.text = tmpWorkout.comment
 
