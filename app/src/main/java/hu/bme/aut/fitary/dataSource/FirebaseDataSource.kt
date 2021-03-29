@@ -5,6 +5,11 @@ import hu.bme.aut.fitary.data.DomainUser
 import hu.bme.aut.fitary.data.DomainWorkout
 import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /* Responsibilities:
@@ -17,10 +22,31 @@ class FirebaseDataSource @Inject constructor(
     private val workoutDAO: WorkoutDAO
 ) {
 
+    val workoutChannel = Channel<DomainWorkout>()
+
+    init {
+        CoroutineScope(Dispatchers.IO).launch {
+
+            workoutDAO.workouts.consumeEach { workout ->
+
+                workoutChannel.send(
+                    DomainWorkout(
+                        uid = workout.uid ?: "Unknown user",
+                        username = getUserById(workout.uid)?.username ?: "No username",
+                        domainExercises = mapWorkoutExercisesToDomain(workout),
+                        score = workout.score,
+                        comment = workout.comment
+                    )
+                )
+
+            }
+        }
+    }
+
     private fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
         val domainExercises = mutableListOf<DomainExercise>()
 
-        for (i in 1..workout.exercises.size) {
+        for (i in 1 until workout.exercises.size) {
             val exerciseId = workout.exercises[i]
 
             domainExercises += DomainExercise(
@@ -31,20 +57,6 @@ class FirebaseDataSource @Inject constructor(
         }
 
         return domainExercises
-    }
-
-    suspend fun getAllWorkouts(): List<DomainWorkout> {
-
-        return workoutDAO.workouts.map { workout ->
-
-            DomainWorkout(
-                uid = workout.uid ?: "Unknown user",
-                username = getUserById(workout.uid)?.username ?: "No username",
-                domainExercises = mapWorkoutExercisesToDomain(workout),
-                score = workout.score,
-                comment = workout.comment
-            )
-        }
     }
 
     suspend fun getUserWorkouts(): List<DomainWorkout> {

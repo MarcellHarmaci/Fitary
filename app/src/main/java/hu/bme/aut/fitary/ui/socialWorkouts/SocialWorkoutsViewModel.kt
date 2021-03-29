@@ -1,6 +1,7 @@
 package hu.bme.aut.fitary.ui.socialWorkouts
 
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
+import kotlinx.coroutines.channels.consumeEach
 import javax.inject.Inject
 
 class SocialWorkoutsViewModel @Inject constructor(
@@ -10,8 +11,9 @@ class SocialWorkoutsViewModel @Inject constructor(
     fun loadWorkouts() = execute {
         viewState = Loading
 
-        val workouts = socialWorkoutsPresenter.getWorkouts()
-
-        viewState = SocialWorkoutsLoaded(workouts)
+        socialWorkoutsPresenter.workoutsChannel.consumeEach {
+            viewState = SocialWorkoutsLoaded(it)
+        }
     }
+
 }

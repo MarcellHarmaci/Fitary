@@ -5,6 +5,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.Workout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,8 +20,7 @@ class WorkoutDAO @Inject constructor(
     private val database = FirebaseDatabase.getInstance()
 
     private val _workouts = mutableListOf<Workout>()
-    val workouts: List<Workout>
-        get() = _workouts.toList()
+    val workouts = Channel<Workout>()
 
     private val _userWorkouts = mutableListOf<Workout>()
     val userWorkouts
@@ -36,6 +39,11 @@ class WorkoutDAO @Inject constructor(
 
                         if (newWorkout.uid == userDAO.currentUser?.id)
                             _userWorkouts += newWorkout
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            workouts.send(newWorkout)
+                        }
+
                     }
                 }
 
@@ -72,3 +80,4 @@ class WorkoutDAO @Inject constructor(
     }
 
 }
+
