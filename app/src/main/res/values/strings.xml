@@ -20,7 +20,7 @@
     <string name="exercise">Exercise</string>
     <string name="reps">Reps</string>
     <string name="li_workout_user">User:</string>
-    <string name="li_workout_reps">Score:</string>
+    <string name="li_workout_score">Score:</string>
     <string name="li_workout_comment">Comment:</string>
 
     <!-- TODO: Remove or change this placeholder text -->

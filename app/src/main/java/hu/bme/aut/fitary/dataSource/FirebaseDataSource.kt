@@ -1,5 +1,7 @@
 package hu.bme.aut.fitary.dataSource
 
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import hu.bme.aut.fitary.data.DomainExercise
 import hu.bme.aut.fitary.data.DomainUser
 import hu.bme.aut.fitary.data.DomainWorkout
@@ -7,40 +9,43 @@ import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Singleton
 
 /* Responsibilities:
     Mapping from data models to domain models
     Providing access to CRUD operations
  */
+@Singleton
 class FirebaseDataSource @Inject constructor(
     private val userDAO: UserDAO,
     private val exerciseDAO: ExerciseDAO,
     private val workoutDAO: WorkoutDAO
 ) {
 
-    val workoutChannel = Channel<DomainWorkout>()
+    val workouts = MutableLiveData<MutableList<DomainWorkout>>()
+
+    private val workoutObserver = Observer<MutableList<Workout>> {
+        CoroutineScope(Dispatchers.IO).launch {
+            Timber.d("DataSource's observer called")
+
+            workouts.value = it.map { workout ->
+                DomainWorkout(
+                    uid = workout.uid ?: "Unknown user",
+                    username = getUserById(workout.uid)?.username ?: "No username",
+                    domainExercises = mapWorkoutExercisesToDomain(workout),
+                    score = workout.score,
+                    comment = workout.comment
+                )
+            }.toMutableList()
+        }
+    }
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-
-            workoutDAO.workouts.consumeEach { workout ->
-
-                workoutChannel.send(
-                    DomainWorkout(
-                        uid = workout.uid ?: "Unknown user",
-                        username = getUserById(workout.uid)?.username ?: "No username",
-                        domainExercises = mapWorkoutExercisesToDomain(workout),
-                        score = workout.score,
-                        comment = workout.comment
-                    )
-                )
-
-            }
-        }
+        Timber.d("DataSource's observer set")
+        workoutDAO.workouts.observeForever(workoutObserver)
     }
 
     private fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
@@ -87,6 +92,7 @@ class FirebaseDataSource @Inject constructor(
             exercises += exercise.id
             reps += exercise.reps
 
+            // TODO Compute this closer in business logic layer
             score += exercise.reps * getExerciseScoreById(exercise.id)
         }
 
