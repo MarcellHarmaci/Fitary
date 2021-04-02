@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 class SocialWorkoutsPresenter @Inject constructor(
@@ -21,6 +22,7 @@ class SocialWorkoutsPresenter @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
 
             workoutInteractor.workoutListChannel.consumeEach { consumedWorkouts ->
+                Timber.d("Size: ${consumedWorkouts.size}")
 
                 workouts = consumedWorkouts.map { it ->
                     Workout(

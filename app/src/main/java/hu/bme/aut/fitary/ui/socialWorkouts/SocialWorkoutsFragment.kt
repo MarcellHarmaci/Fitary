@@ -9,6 +9,7 @@ import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.adapter.WorkoutListAdapter
 import kotlinx.android.synthetic.main.fragment_workouts_social.*
+import timber.log.Timber
 
 class SocialWorkoutsFragment :
     RainbowCakeFragment<SocialWorkoutsViewState, SocialWorkoutsViewModel>() {
@@ -20,7 +21,9 @@ class SocialWorkoutsFragment :
 
     override fun onStart() {
         super.onStart()
+
         viewModel.loadWorkouts()
+        Timber.d("onStart ended")
     }
 
     override fun render(viewState: SocialWorkoutsViewState) {

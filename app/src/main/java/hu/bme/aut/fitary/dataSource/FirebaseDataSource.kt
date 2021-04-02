@@ -7,9 +7,6 @@ import hu.bme.aut.fitary.data.DomainUser
 import hu.bme.aut.fitary.data.DomainWorkout
 import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -28,19 +25,17 @@ class FirebaseDataSource @Inject constructor(
     val workouts = MutableLiveData<MutableList<DomainWorkout>>()
 
     private val workoutObserver = Observer<MutableList<Workout>> {
-        CoroutineScope(Dispatchers.IO).launch {
-            Timber.d("DataSource's observer called")
+        Timber.d("Size: ${it.size}")
 
-            workouts.value = it.map { workout ->
-                DomainWorkout(
-                    uid = workout.uid ?: "Unknown user",
-                    username = getUserById(workout.uid)?.username ?: "No username",
-                    domainExercises = mapWorkoutExercisesToDomain(workout),
-                    score = workout.score,
-                    comment = workout.comment
-                )
-            }.toMutableList()
-        }
+        workouts.value = it.map { workout ->
+            DomainWorkout(
+                uid = workout.uid ?: "Unknown user",
+                username = "No username", //getUserById(workout.uid)?.username ?: "No username",
+                domainExercises = mapWorkoutExercisesToDomain(workout),
+                score = workout.score,
+                comment = workout.comment
+            )
+        }.toMutableList()
     }
 
     init {

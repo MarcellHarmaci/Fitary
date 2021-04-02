@@ -2,6 +2,7 @@ package hu.bme.aut.fitary.ui.socialWorkouts
 
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import kotlinx.coroutines.channels.consumeEach
+import timber.log.Timber
 import javax.inject.Inject
 
 class SocialWorkoutsViewModel @Inject constructor(
@@ -12,8 +13,11 @@ class SocialWorkoutsViewModel @Inject constructor(
         viewState = Loading
 
         socialWorkoutsPresenter.workoutsChannel.consumeEach {
+            Timber.d("Size: ${it.size}")
             viewState = SocialWorkoutsLoaded(it)
         }
+
+        Timber.d("loadWorkouts endedz")
     }
 
 }

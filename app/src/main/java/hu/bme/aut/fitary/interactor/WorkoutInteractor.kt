@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,20 +18,33 @@ class WorkoutInteractor @Inject constructor(
 ) {
 
     val workoutListChannel = Channel<MutableList<DomainWorkout>>()
-    private val workouts = mutableListOf<DomainWorkout>()
+    private var workouts = mutableListOf<DomainWorkout>()
 
     private val workoutObserver = Observer<MutableList<DomainWorkout>> {
-        CoroutineScope(Dispatchers.IO).launch {
-            Timber.d("Interactor's observer called")
+        Timber.d("Size: ${it.size}")
 
-            workouts += it
+        CoroutineScope(Dispatchers.Default).launch {
+            workouts = it
             workoutListChannel.send(workouts)
         }
     }
 
+    suspend fun observeDataSource(currentWorkouts: MutableList<DomainWorkout>) =
+        withContext(Dispatchers.Default) {
+            Timber.d("Interactor's observer called\t Size: ${currentWorkouts.size}")
+
+            workouts = currentWorkouts
+            workoutListChannel.send(workouts)
+        }
+
     init {
-        Timber.d("Interactor's observer set")
+        Timber.d("Interactor's observer being set")
         firebaseDataSource.workouts.observeForever(workoutObserver)
+        Timber.d("Interactor's observer is set")
+
+//        val period = 60 * 1000L
+//        fixedRateTimer("UpdateWorkouts", false, 0L, period) {
+//        workoutListChannel.send(firebaseDataSource.workouts.value)
     }
 
     suspend fun getAllWorkouts() = workouts
