@@ -17,7 +17,7 @@ class SocialWorkoutsViewModel @Inject constructor(
             viewState = SocialWorkoutsLoaded(it)
         }
 
-        Timber.d("loadWorkouts endedz")
+        Timber.d("loadWorkouts ended")
     }
 
 }
