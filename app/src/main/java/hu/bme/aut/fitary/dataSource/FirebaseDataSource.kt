@@ -25,8 +25,6 @@ class FirebaseDataSource @Inject constructor(
     val workouts = MutableLiveData<MutableList<DomainWorkout>>()
 
     private val workoutObserver = Observer<MutableList<Workout>> {
-        Timber.d("Size: ${it.size}")
-
         workouts.value = it.map { workout ->
             DomainWorkout(
                 uid = workout.uid ?: "Unknown user",
@@ -39,7 +37,6 @@ class FirebaseDataSource @Inject constructor(
     }
 
     init {
-        Timber.d("DataSource's observer set")
         workoutDAO.workouts.observeForever(workoutObserver)
     }
 
@@ -59,21 +56,6 @@ class FirebaseDataSource @Inject constructor(
         return domainExercises
     }
 
-    suspend fun getUserWorkouts(): List<DomainWorkout> {
-        val user = userDAO.currentUser ?: return listOf<DomainWorkout>()
-
-        return workoutDAO.userWorkouts.map { workout ->
-
-            DomainWorkout(
-                uid = user.id ?: "Unknown user",
-                username = user.username,
-                domainExercises = mapWorkoutExercisesToDomain(workout),
-                score = workout.score,
-                comment = workout.comment
-            )
-        }
-    }
-
     suspend fun saveWorkout(domainWorkout: DomainWorkout) {
         // User must be logged in to save a workout
         val user = userDAO.currentUser ?: return
@@ -87,7 +69,7 @@ class FirebaseDataSource @Inject constructor(
             exercises += exercise.id
             reps += exercise.reps
 
-            // TODO Compute this closer in business logic layer
+            // TODO Compute this in business logic layer
             score += exercise.reps * getExerciseScoreById(exercise.id)
         }
 
@@ -111,6 +93,8 @@ class FirebaseDataSource @Inject constructor(
 
         userDAO.saveUser(newUser)
     }
+
+    suspend fun getCurrentUser() = userDAO.currentUser
 
     suspend fun getUserById(userId: String?): DomainUser? {
 

@@ -23,7 +23,6 @@ class SocialWorkoutsFragment :
         super.onStart()
 
         viewModel.loadWorkouts()
-        Timber.d("onStart ended")
     }
 
     override fun render(viewState: SocialWorkoutsViewState) {

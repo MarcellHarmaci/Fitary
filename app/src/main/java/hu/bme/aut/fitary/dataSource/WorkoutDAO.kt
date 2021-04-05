@@ -11,17 +11,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WorkoutDAO @Inject constructor(
-    private val userDAO: UserDAO
-) {
+class WorkoutDAO @Inject constructor() {
 
     private val database = FirebaseDatabase.getInstance()
 
     private val workoutMap = mutableMapOf<String?, Workout>()
     val workouts = MutableLiveData<MutableList<Workout>>()
-
-    private val userWorkoutMap = mutableMapOf<String?, Workout>()
-    val userWorkouts = MutableLiveData<MutableList<Workout>>()
 
     init {
         database
@@ -31,18 +26,12 @@ class WorkoutDAO @Inject constructor(
                 override fun onChildAdded(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) {
-                    val workout = dataSnapshot.getValue(Workout::class.java)
-                    upsert(workout, previousChildName)
-                }
+                ) = upsert(dataSnapshot, previousChildName)
 
                 override fun onChildChanged(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) {
-                    val workout = dataSnapshot.getValue(Workout::class.java)
-                    upsert(workout, previousChildName)
-                }
+                ) = upsert(dataSnapshot, previousChildName)
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                     val workout = dataSnapshot.getValue(Workout::class.java)
@@ -55,9 +44,9 @@ class WorkoutDAO @Inject constructor(
                         // That's why it's safe to remove "all" matching keys
                         for (key in keys) {
                             workoutMap.remove(key)
-                            userWorkoutMap.remove(key)
                         }
                     }
+
                 }
 
                 override fun onChildMoved(
@@ -65,8 +54,9 @@ class WorkoutDAO @Inject constructor(
                     previousChildName: String?
                 ) {
                     // Intentionally not implemented
-                    throw NotImplementedError(
-                        "onChildMoved event should not occur thus it is not implemented")
+                    throw IllegalStateException(
+                        "onChildMoved event should not occur thus it is not implemented"
+                    )
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -78,17 +68,12 @@ class WorkoutDAO @Inject constructor(
             })
     }
 
-    private fun upsert(workout: Workout?, previousChildName: String?) {
+    private fun upsert(dataSnapshot: DataSnapshot, previousChildName: String?) {
+        val workout = dataSnapshot.getValue(Workout::class.java)
 
         if (workout != null) {
             workoutMap[previousChildName] = workout
             workouts.value = workoutMap.values.toMutableList()
-
-            // Current user's workout
-            if (workout.uid == userDAO.currentUser?.id) {
-                userWorkoutMap[previousChildName] = workout
-                userWorkouts.value = userWorkoutMap.values.toMutableList()
-            }
         }
     }
 
