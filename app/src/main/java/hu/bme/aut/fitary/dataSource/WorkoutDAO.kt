@@ -26,12 +26,12 @@ class WorkoutDAO @Inject constructor() {
                 override fun onChildAdded(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) = upsert(dataSnapshot, previousChildName)
+                ) = updateLocalWorkouts(dataSnapshot, previousChildName)
 
                 override fun onChildChanged(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) = upsert(dataSnapshot, previousChildName)
+                ) = updateLocalWorkouts(dataSnapshot, previousChildName)
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                     val workout = dataSnapshot.getValue(Workout::class.java)
@@ -68,7 +68,7 @@ class WorkoutDAO @Inject constructor() {
             })
     }
 
-    private fun upsert(dataSnapshot: DataSnapshot, previousChildName: String?) {
+    private fun updateLocalWorkouts(dataSnapshot: DataSnapshot, previousChildName: String?) {
         val workout = dataSnapshot.getValue(Workout::class.java)
 
         if (workout != null) {

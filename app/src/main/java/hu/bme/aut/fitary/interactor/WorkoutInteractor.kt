@@ -22,7 +22,6 @@ class WorkoutInteractor @Inject constructor(
     private var userWorkouts = mutableListOf<DomainWorkout>()
 
     private val workoutObserver = Observer<MutableList<DomainWorkout>> { observedWorkouts ->
-
         CoroutineScope(Dispatchers.Default).launch {
             val currentUserId = firebaseDataSource.getCurrentUser()?.id ?: return@launch
 

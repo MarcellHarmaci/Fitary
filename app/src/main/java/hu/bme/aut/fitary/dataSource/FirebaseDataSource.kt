@@ -7,7 +7,6 @@ import hu.bme.aut.fitary.data.DomainUser
 import hu.bme.aut.fitary.data.DomainWorkout
 import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,9 +25,10 @@ class FirebaseDataSource @Inject constructor(
 
     private val workoutObserver = Observer<MutableList<Workout>> {
         workouts.value = it.map { workout ->
+
             DomainWorkout(
                 uid = workout.uid ?: "Unknown user",
-                username = "No username", //getUserById(workout.uid)?.username ?: "No username",
+                username =  userDAO.users[workout.uid]?.username ?: "No username",
                 domainExercises = mapWorkoutExercisesToDomain(workout),
                 score = workout.score,
                 comment = workout.comment
@@ -40,6 +40,8 @@ class FirebaseDataSource @Inject constructor(
         workoutDAO.workouts.observeForever(workoutObserver)
     }
 
+    // TODO Improve mapping code style
+    //  docs: https://rainbowcake.dev/best-practices/mapping-code-style/
     private fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
         val domainExercises = mutableListOf<DomainExercise>()
 

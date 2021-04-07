@@ -1,73 +1,52 @@
 package hu.bme.aut.fitary.ui.userWorkouts
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import co.zsmb.rainbowcake.base.RainbowCakeFragment
+import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
+import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.adapter.WorkoutAdapter
-import hu.bme.aut.fitary.data.DomainWorkout
-import kotlinx.android.synthetic.main.fragment_workouts_user.view.*
+import hu.bme.aut.fitary.adapter.WorkoutListAdapter
+import kotlinx.android.synthetic.main.fragment_workouts_user.*
 
-class UserWorkoutsFragment : Fragment() {
+class UserWorkoutsFragment :
+    RainbowCakeFragment<UserWorkoutsViewState, UserWorkoutsViewModel>() {
 
-    private lateinit var workoutAdapter: WorkoutAdapter
-    private var userId: String? = null
+    private lateinit var workoutAdapter: WorkoutListAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.fragment_workouts_user, container, false)
+    override fun provideViewModel() = getViewModelFromFactory()
+    override fun getViewResource() = R.layout.fragment_workouts_user
 
-        userId = FirebaseAuth.getInstance().currentUser?.uid
+    override fun onStart() {
+        super.onStart()
 
-        workoutAdapter = WorkoutAdapter(context?.applicationContext)
-        root.rvUserWorkouts.layoutManager = LinearLayoutManager(container?.context).apply {
+        viewModel.loadWorkouts()
+    }
+
+    override fun render(viewState: UserWorkoutsViewState) {
+        when (viewState) {
+            is Loading -> {
+                //pbListLoading.visibility = View.VISIBLE
+            }
+            is UserWorkoutsLoaded -> {
+                //pbListLoading.visibility = View.GONE
+
+                // TODO Implement user workout list adapter
+                workoutAdapter.submitList(viewState.workouts)
+            }
+        }.exhaustive
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        workoutAdapter = WorkoutListAdapter()
+        rvUserWorkouts.adapter = workoutAdapter
+        rvUserWorkouts.layoutManager = LinearLayoutManager(view.context).apply {
             reverseLayout = true
             stackFromEnd = true
         }
-        root.rvUserWorkouts.adapter = workoutAdapter
-
-        initWorkoutsListener()
-
-        return root
     }
 
-    private fun initWorkoutsListener() {
-        FirebaseDatabase.getInstance()
-            .getReference("workouts")
-            .addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-                    val newWorkout = dataSnapshot.getValue<DomainWorkout>(DomainWorkout::class.java)
-
-                    if (newWorkout?.uid.equals(userId))
-                        workoutAdapter.addWorkout(newWorkout)
-                }
-
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                    // "Not yet implemented"
-                }
-
-                override fun onChildRemoved(snapshot: DataSnapshot) {
-                    // "Not yet implemented"
-                }
-
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {
-                    // "Not yet implemented"
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // "Not yet implemented"
-                }
-            })
-    }
 }
