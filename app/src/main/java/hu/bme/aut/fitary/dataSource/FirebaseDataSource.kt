@@ -2,9 +2,9 @@ package hu.bme.aut.fitary.dataSource
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import hu.bme.aut.fitary.data.DomainExercise
-import hu.bme.aut.fitary.data.DomainUser
-import hu.bme.aut.fitary.data.DomainWorkout
+import hu.bme.aut.fitary.domainModel.DomainExercise
+import hu.bme.aut.fitary.domainModel.DomainUser
+import hu.bme.aut.fitary.domainModel.DomainWorkout
 import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
 import javax.inject.Inject
@@ -27,6 +27,7 @@ class FirebaseDataSource @Inject constructor(
         workouts.value = it.map { workout ->
 
             DomainWorkout(
+                id = workout.uid + workout.comment, // TODO create id from timestamp and uid
                 uid = workout.uid ?: "Unknown user",
                 username =  userDAO.users[workout.uid]?.username ?: "No username",
                 domainExercises = mapWorkoutExercisesToDomain(workout),

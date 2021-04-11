@@ -1,7 +1,7 @@
 package hu.bme.aut.fitary.ui.exerciseDialog
 
 import co.zsmb.rainbowcake.withIOContext
-import hu.bme.aut.fitary.data.DomainExercise
+import hu.bme.aut.fitary.domainModel.DomainExercise
 import javax.inject.Inject
 
 class ExerciseDialogPresenter @Inject constructor() {

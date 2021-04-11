@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import hu.bme.aut.fitary.ui.barChart.BarChartViewModel
 import hu.bme.aut.fitary.ui.exerciseDialog.ExerciseDialogViewModel
 import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsViewModel
+import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsViewModel
 
 @Suppress("unused")
 @Module
@@ -27,4 +28,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SocialWorkoutsViewModel::class)
     abstract fun bindSocialWorkoutsViewModel(socialWorkoutsViewModel: SocialWorkoutsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UserWorkoutsViewModel::class)
+    abstract fun bindUserWorkoutsViewModel(userWorkoutsViewModel: UserWorkoutsViewModel): ViewModel
 }

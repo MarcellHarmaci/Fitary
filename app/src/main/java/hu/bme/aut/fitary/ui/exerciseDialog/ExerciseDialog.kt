@@ -5,14 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import co.zsmb.rainbowcake.base.RainbowCakeDialogFragment
-import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
-import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutActivity
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.data.DomainExercise
-import kotlinx.android.synthetic.main.fragment_dialog_exercise.*
+import hu.bme.aut.fitary.domainModel.DomainExercise
 import kotlinx.android.synthetic.main.fragment_dialog_exercise.view.*
 
 class ExerciseDialog(

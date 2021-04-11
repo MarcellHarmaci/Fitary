@@ -15,6 +15,8 @@ class SocialWorkoutsPresenter @Inject constructor(
 ) {
 
     val workoutsChannel = Channel<MutableList<Workout>>()
+
+    // TODO move to consumeEach function
     private var workouts = mutableListOf<Workout>()
 
     init {
@@ -24,6 +26,7 @@ class SocialWorkoutsPresenter @Inject constructor(
 
                 workouts = consumedWorkouts.map {
                     Workout(
+                        id = it.id,
                         username = userInteractor.getUsernameById(it.uid) ?: "-",
                         score = it.score,
                         comment = it.comment ?: "-"
@@ -37,6 +40,7 @@ class SocialWorkoutsPresenter @Inject constructor(
 
     // Presentation model
     data class Workout(
+        val id: String,
         val username: String,
         val score: Double,
         val comment: String

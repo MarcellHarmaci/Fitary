@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.data
+package hu.bme.aut.fitary.domainModel
 
 data class DomainUser(
     val id: String?,

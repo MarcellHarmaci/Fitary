@@ -12,16 +12,17 @@ class UserWorkoutsPresenter @Inject constructor(
     private val workoutInteractor: WorkoutInteractor,
 ) {
 
-    val workoutsChannel = Channel<MutableList<UserWorkoutsPresenter.Workout>>()
-    private var workouts = mutableListOf<UserWorkoutsPresenter.Workout>()
+    val workoutsChannel = Channel<MutableList<Workout>>()
+    private var workouts = mutableListOf<Workout>()
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
 
-            workoutInteractor.workoutListChannel.consumeEach { consumedWorkouts ->
+            workoutInteractor.userWorkoutsChannel.consumeEach { consumedWorkouts ->
 
                 workouts = consumedWorkouts.map {
                     Workout(
+                        id = it.id,
                         score = it.score,
                         comment = it.comment ?: "-"
                     )
@@ -34,6 +35,7 @@ class UserWorkoutsPresenter @Inject constructor(
 
     // Presentation model
     data class Workout(
+        val id: String,
         val score: Double,
         val comment: String
     )

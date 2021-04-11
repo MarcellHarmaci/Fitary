@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.data.DomainExercise
+import hu.bme.aut.fitary.domainModel.DomainExercise
 import kotlinx.android.synthetic.main.list_item_exercise.view.*
 
 class ExerciseAdapter(

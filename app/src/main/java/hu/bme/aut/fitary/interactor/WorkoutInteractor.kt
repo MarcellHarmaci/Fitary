@@ -1,7 +1,7 @@
 package hu.bme.aut.fitary.interactor
 
 import androidx.lifecycle.Observer
-import hu.bme.aut.fitary.data.DomainWorkout
+import hu.bme.aut.fitary.domainModel.DomainWorkout
 import hu.bme.aut.fitary.dataSource.FirebaseDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

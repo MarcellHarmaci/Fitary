@@ -7,7 +7,7 @@ import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.adapter.WorkoutListAdapter
+import hu.bme.aut.fitary.ui.userWorkouts.adapter.WorkoutListAdapter
 import kotlinx.android.synthetic.main.fragment_workouts_user.*
 
 class UserWorkoutsFragment :
@@ -32,7 +32,6 @@ class UserWorkoutsFragment :
             is UserWorkoutsLoaded -> {
                 //pbListLoading.visibility = View.GONE
 
-                // TODO Implement user workout list adapter
                 workoutAdapter.submitList(viewState.workouts)
             }
         }.exhaustive

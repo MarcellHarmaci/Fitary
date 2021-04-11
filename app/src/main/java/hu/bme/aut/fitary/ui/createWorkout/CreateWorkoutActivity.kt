@@ -1,15 +1,10 @@
 package hu.bme.aut.fitary.ui.createWorkout
 
-import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.FirebaseDatabase
-import hu.bme.aut.fitary.BaseActivity
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.adapter.ExerciseAdapter
-import hu.bme.aut.fitary.data.DomainExercise
-import hu.bme.aut.fitary.dataSource.model.Workout
-import hu.bme.aut.fitary.extensions.validateNonEmpty
+import hu.bme.aut.fitary.domainModel.DomainExercise
 import hu.bme.aut.fitary.ui.exerciseDialog.ExerciseDialog
 import kotlinx.android.synthetic.main.activity_create_workout.*
 

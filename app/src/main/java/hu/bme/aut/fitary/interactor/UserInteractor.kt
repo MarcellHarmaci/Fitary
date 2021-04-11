@@ -1,7 +1,7 @@
 package hu.bme.aut.fitary.interactor
 
 import com.google.firebase.auth.FirebaseUser
-import hu.bme.aut.fitary.data.DomainUser
+import hu.bme.aut.fitary.domainModel.DomainUser
 import hu.bme.aut.fitary.dataSource.FirebaseDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
