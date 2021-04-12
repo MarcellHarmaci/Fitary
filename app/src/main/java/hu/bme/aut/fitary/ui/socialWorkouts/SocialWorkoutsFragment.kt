@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
+import co.zsmb.rainbowcake.base.ViewModelScope
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
@@ -15,7 +16,7 @@ class SocialWorkoutsFragment :
 
     private lateinit var workoutAdapter: WorkoutListAdapter
 
-    override fun provideViewModel() = getViewModelFromFactory()
+    override fun provideViewModel() = getViewModelFromFactory(scope = ViewModelScope.Activity)
     override fun getViewResource() = R.layout.fragment_workouts_social
 
     override fun onStart() {

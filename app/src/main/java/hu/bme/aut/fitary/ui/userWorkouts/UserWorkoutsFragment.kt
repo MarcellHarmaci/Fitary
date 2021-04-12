@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
+import co.zsmb.rainbowcake.base.ViewModelScope
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
@@ -15,7 +16,8 @@ class UserWorkoutsFragment :
 
     private lateinit var workoutAdapter: WorkoutListAdapter
 
-    override fun provideViewModel() = getViewModelFromFactory()
+    // VM Scope in bound to MainActivity to keep VM when this Fragment is destroyed
+    override fun provideViewModel() = getViewModelFromFactory(scope = ViewModelScope.Activity)
     override fun getViewResource() = R.layout.fragment_workouts_user
 
     override fun onStart() {
