@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
+import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutViewModel
 import kotlinx.android.synthetic.main.list_item_exercise.view.*
 
-class ExerciseListAdapter : ListAdapter<CreateWorkoutPresenter.Exercise, ExerciseListAdapter.ExerciseViewHolder>(
+class ExerciseListAdapter(
+    private val createWorkoutViewModel: CreateWorkoutViewModel
+) : ListAdapter<CreateWorkoutPresenter.Exercise, ExerciseListAdapter.ExerciseViewHolder>(
         ExerciseComparator
     ) {
 
@@ -18,11 +21,7 @@ class ExerciseListAdapter : ListAdapter<CreateWorkoutPresenter.Exercise, Exercis
             .from(parent.context)
             .inflate(R.layout.list_item_exercise, parent, false)
 
-        view.setOnClickListener {
-            TODO("Show dialog to edit list item")
-        }
-
-        return ExerciseViewHolder(view)
+        return ExerciseViewHolder(createWorkoutViewModel, view)
     }
 
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
@@ -30,10 +29,20 @@ class ExerciseListAdapter : ListAdapter<CreateWorkoutPresenter.Exercise, Exercis
         holder.bind(exercise)
     }
 
-    class ExerciseViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class ExerciseViewHolder(
+        createWorkoutViewModel: CreateWorkoutViewModel,
+        itemView: View
+    ) : RecyclerView.ViewHolder(itemView) {
+
         private val tvName = itemView.tvExerciseName
         private val tvReps = itemView.tvReps
         private val tvScore = itemView.tvScore
+
+        init {
+            itemView.setOnClickListener {
+                createWorkoutViewModel.editExercise(layoutPosition)
+            }
+        }
 
         fun bind(exercise: CreateWorkoutPresenter.Exercise) {
             tvName.text = exercise.name

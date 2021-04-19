@@ -1,7 +1,8 @@
 package hu.bme.aut.fitary.ui.createWorkout
 
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
-import hu.bme.aut.fitary.ui.createWorkout.dialog.ExerciseDialog
+import hu.bme.aut.fitary.ui.createWorkout.dialog.AddExerciseDialog
+import hu.bme.aut.fitary.ui.createWorkout.dialog.EditExerciseDialog
 import hu.bme.aut.fitary.ui.createWorkout.dialog.ResultHandler
 import javax.inject.Inject
 
@@ -16,30 +17,22 @@ class CreateWorkoutViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    fun saveWorkout() = execute {
-        viewState = SavingWorkout
-
-        TODO("Not yet implemented")
-    }
-
-    // TODO Show dialog to create a new exercise and
     fun addExercise() = execute {
-        val exercise = CreateWorkoutPresenter.Exercise() // Replace with dialog result
+        val exerciseNames = createWorkoutPresenter.getExerciseNames()
 
-        val dialog = ExerciseDialog(exercise)
+        val dialog = AddExerciseDialog(exerciseNames)
         dialog.setResultHandler(this)
 
-        exercises += exercise
+        // TODO Show dialog
     }
 
-    // TODO Show a dialog to edit this exercise
-    fun editExercise(position: Int) {
+    fun editExercise(position: Int) = execute {
         val exercise = exercises[position]
 
-        val dialog = ExerciseDialog(exercise, position)
+        val dialog = EditExerciseDialog(exercise, position)
         dialog.setResultHandler(this)
 
-        TODO("Not yet implemented")
+        // TODO Show a dialog
     }
 
     override fun onAddDialogResult(exercise: CreateWorkoutPresenter.Exercise) {
@@ -50,5 +43,10 @@ class CreateWorkoutViewModel @Inject constructor(
         exercises[position] = exercise
     }
 
+    fun saveWorkout() = execute {
+        viewState = SavingWorkout
+
+        TODO("Not yet implemented")
+    }
 
 }

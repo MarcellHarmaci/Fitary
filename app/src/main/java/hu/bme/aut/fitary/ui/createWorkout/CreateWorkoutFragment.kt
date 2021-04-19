@@ -29,7 +29,10 @@ class CreateWorkoutFragment :
             viewModel.addExercise()
             exerciseAdapter.submitList(viewModel.exercises)
         }
-        btnSaveWorkout.setOnClickListener { viewModel.saveWorkout() }
+        btnSaveWorkout.setOnClickListener {
+            // TODO validate view state
+            viewModel.saveWorkout()
+        }
     }
 
     override fun render(viewState: CreateWorkoutViewState) {
