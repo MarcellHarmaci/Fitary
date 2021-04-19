@@ -9,6 +9,8 @@ class ExerciseInteractor @Inject constructor(
 
     suspend fun getExercises() = firebaseDataSource.getExercises()
 
+    suspend fun getExerciseNames() = firebaseDataSource.getExercises().map { it.value.name }
+
     suspend fun getExerciseScoreById(id: Long) = firebaseDataSource.getExerciseScoreById(id)
 
 }

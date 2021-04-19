@@ -5,24 +5,13 @@ import co.zsmb.rainbowcake.dagger.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import hu.bme.aut.fitary.ui.barChart.BarChartViewModel
-import hu.bme.aut.fitary.ui.exerciseDialog.ExerciseDialogViewModel
+import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutViewModel
 import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsViewModel
 import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsViewModel
 
 @Suppress("unused")
 @Module
 abstract class ViewModelModule {
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(BarChartViewModel::class)
-    abstract fun bindBarChartViewModel(barChartViewModel: BarChartViewModel): ViewModel
-
-    @Binds
-    @IntoMap
-    @ViewModelKey(ExerciseDialogViewModel::class)
-    abstract fun bindExerciseDialogViewModel(exerciseDialogViewModel: ExerciseDialogViewModel): ViewModel
 
     @Binds
     @IntoMap
@@ -33,4 +22,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UserWorkoutsViewModel::class)
     abstract fun bindUserWorkoutsViewModel(userWorkoutsViewModel: UserWorkoutsViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CreateWorkoutViewModel::class)
+    abstract fun bindCreateWorkoutViewModel(createWorkoutViewModel: CreateWorkoutViewModel): ViewModel
 }
