@@ -6,18 +6,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutActivity
-import kotlinx.android.synthetic.main.activity_main.view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -44,8 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         fab = findViewById(R.id.fab)
         fab.setOnClickListener {
-            // TODO navigate to workout creation fragment
-            navController.navigate(R.id.nav_blank)
+            navController.navigate(R.id.nav_create_workout)
         }
     }
 
