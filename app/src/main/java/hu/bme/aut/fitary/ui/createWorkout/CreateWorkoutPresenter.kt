@@ -15,6 +15,10 @@ class CreateWorkoutPresenter @Inject constructor(
         exerciseInteractor.getExerciseNames()
     }
 
+    suspend fun getExerciseScores() = withIOContext {
+        exerciseInteractor.getExerciseScoresByNames()
+    }
+
     // TODO Implement on IO thread
     fun saveWorkout(workout: DomainWorkout) {}
 
@@ -22,9 +26,9 @@ class CreateWorkoutPresenter @Inject constructor(
     data class Exercise(
         var name: String = "",
         var reps: Int = 0,
-        var scorePerRep: Int = 1
+        var scorePerRep: Double = 1.0
     ) {
-        val score: Int
+        val score: Double
             get() = reps * scorePerRep
     }
 }

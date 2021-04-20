@@ -4,14 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
 import kotlinx.android.synthetic.main.dialog_edit_exercise.view.*
 
 class EditExerciseDialog(
-    var exercise: CreateWorkoutPresenter.Exercise,
-    val position: Int,
+    private var exercise: CreateWorkoutPresenter.Exercise,
+    private val position: Int,
 ) : DialogFragment() {
 
     private var resultHandler: ResultHandler? = null
@@ -32,15 +33,16 @@ class EditExerciseDialog(
             false
         )
 
+        dialogLayout.etReps.doOnTextChanged { currentText, _, _, _ ->
+            exercise.reps = currentText.toString().toInt()
+
+            // Update displayed score
+            dialogLayout.tvScore.text = exercise.score.toString()
+        }
+
         dialogLayout.btnSave.setOnClickListener {
-            resultHandler?.onEditDialogResult(
-                // TODO Fetch real values
-                CreateWorkoutPresenter.Exercise(
-//                    dialogLayout.etExerciseName.text.toString(),
-//                    dialogLayout.etReps.text.toString().toInt()
-                ),
-                position
-            )
+            resultHandler?.onEditDialogResult(exercise, position)
+
             dismissAllowingStateLoss()
         }
 

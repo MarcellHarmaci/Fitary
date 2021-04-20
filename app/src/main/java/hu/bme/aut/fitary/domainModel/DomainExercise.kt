@@ -4,10 +4,10 @@ data class DomainExercise(
     val id: Long? = null,
     var name: String = "",
     var reps: Int = 0,
-    var scorePerRep: Int = 1
+    var scorePerRep: Double = 1.0
 ) {
 
-    val score: Int
+    val score: Double
         get() = reps * scorePerRep
 
     fun validate(): Boolean {

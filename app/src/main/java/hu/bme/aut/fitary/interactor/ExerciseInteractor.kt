@@ -13,4 +13,14 @@ class ExerciseInteractor @Inject constructor(
 
     suspend fun getExerciseScoreById(id: Long) = firebaseDataSource.getExerciseScoreById(id)
 
+    suspend fun getExerciseScoresByNames(): Map<String, Double> {
+
+        return firebaseDataSource.getExercises().map {
+            val name = it.value.name
+            val score = it.value.scorePerRep
+
+            Pair(name, score)
+        }.toMap()
+    }
+
 }

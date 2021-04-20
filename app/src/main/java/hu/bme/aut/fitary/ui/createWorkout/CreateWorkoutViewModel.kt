@@ -19,8 +19,9 @@ class CreateWorkoutViewModel @Inject constructor(
 
     fun addExercise() = execute {
         val exerciseNames = createWorkoutPresenter.getExerciseNames()
+        val exerciseScores = createWorkoutPresenter.getExerciseScores()
 
-        val dialog = AddExerciseDialog(exerciseNames)
+        val dialog = AddExerciseDialog(exerciseNames, exerciseScores)
         dialog.setResultHandler(this)
 
         // TODO Show dialog
