@@ -1,27 +1,25 @@
 package hu.bme.aut.fitary.ui.createWorkout
 
-import androidx.fragment.app.DialogFragment
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
-import hu.bme.aut.fitary.ui.createWorkout.dialog.AddExerciseDialog
-import hu.bme.aut.fitary.ui.createWorkout.dialog.EditExerciseDialog
-import hu.bme.aut.fitary.ui.createWorkout.dialog.ResultHandler
+import hu.bme.aut.fitary.ui.createWorkout.dialog.*
 import javax.inject.Inject
 
 class CreateWorkoutViewModel @Inject constructor(
     private val createWorkoutPresenter: CreateWorkoutPresenter
 ) : RainbowCakeViewModel<CreateWorkoutViewState>(Loading), ResultHandler {
 
-    interface AddExerciseDialogHandler {
-        fun onDialogReadyToBeShowed(dialog: DialogFragment)
-    }
+    var comment: String? = null
+    val exercises = mutableListOf<CreateWorkoutPresenter.Exercise>()
 
     private var addExerciseDialogHandler: AddExerciseDialogHandler? = null
-    fun setDialogHandler(handler: AddExerciseDialogHandler) {
+    fun setAddExerciseDialogHandler(handler: AddExerciseDialogHandler) {
         addExerciseDialogHandler = handler
     }
 
-    var comment: String? = null
-    val exercises = mutableListOf<CreateWorkoutPresenter.Exercise>()
+    private var editExerciseDialogHandler: EditExerciseDialogHandler? = null
+    fun setEditExerciseDialogHandler(handler: EditExerciseDialogHandler) {
+        editExerciseDialogHandler = handler
+    }
 
     fun createAddExerciseDialog() = execute {
         val exerciseNames = createWorkoutPresenter.getExerciseNames()
@@ -30,19 +28,16 @@ class CreateWorkoutViewModel @Inject constructor(
         val dialog = AddExerciseDialog(exerciseNames, exerciseScores)
         dialog.setResultHandler(this)
 
-        addExerciseDialogHandler?.onDialogReadyToBeShowed(dialog)
+        addExerciseDialogHandler?.onAddExerciseDialogReady(dialog)
     }
 
-    fun createEditExerciseDialog(position: Int): EditExerciseDialog? {
-        var dialog: EditExerciseDialog? = null
-        execute {
-            val exercise = exercises[position]
+    fun createEditExerciseDialog(position: Int) = execute {
+        val exercise = exercises[position]
 
-            dialog = EditExerciseDialog(exercise, position)
-            dialog?.setResultHandler(this)
-        }
+        val dialog = EditExerciseDialog(exercise, position)
+        dialog.setResultHandler(this)
 
-        return dialog
+        editExerciseDialogHandler?.onEditExerciseDialogReady(dialog)
     }
 
     override fun onAddDialogResult(exercise: CreateWorkoutPresenter.Exercise) {

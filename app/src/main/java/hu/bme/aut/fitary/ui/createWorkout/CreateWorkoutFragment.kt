@@ -10,11 +10,12 @@ import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.createWorkout.adapter.ExerciseListAdapter
+import hu.bme.aut.fitary.ui.createWorkout.dialog.AddExerciseDialogHandler
 import kotlinx.android.synthetic.main.fragment_create_workout.*
 
 class CreateWorkoutFragment :
     RainbowCakeFragment<CreateWorkoutViewState, CreateWorkoutViewModel>(),
-    CreateWorkoutViewModel.AddExerciseDialogHandler {
+    AddExerciseDialogHandler {
 
     private lateinit var exerciseAdapter: ExerciseListAdapter
 
@@ -26,7 +27,7 @@ class CreateWorkoutFragment :
     override fun onStart() {
         super.onStart()
 
-        viewModel.setDialogHandler(this)
+        viewModel.setAddExerciseDialogHandler(this)
 
         btnAddExercise.setOnClickListener {
             viewModel.createAddExerciseDialog()
@@ -61,7 +62,7 @@ class CreateWorkoutFragment :
         rvExercises.layoutManager = LinearLayoutManager(view.context)
     }
 
-    override fun onDialogReadyToBeShowed(dialog: DialogFragment) {
+    override fun onAddExerciseDialogReady(dialog: DialogFragment) {
         dialog.show(parentFragmentManager, "Add exercise")
 
         // TODO Make exercise list some LiveData or Channel

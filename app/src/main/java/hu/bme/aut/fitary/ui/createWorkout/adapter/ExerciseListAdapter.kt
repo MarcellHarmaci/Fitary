@@ -3,12 +3,14 @@ package hu.bme.aut.fitary.ui.createWorkout.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutViewModel
+import hu.bme.aut.fitary.ui.createWorkout.dialog.EditExerciseDialogHandler
 import kotlinx.android.synthetic.main.list_item_exercise.view.*
 
 class ExerciseListAdapter(
@@ -23,7 +25,7 @@ class ExerciseListAdapter(
             .from(parent.context)
             .inflate(R.layout.list_item_exercise, parent, false)
 
-        return ExerciseViewHolder(createWorkoutViewModel, view, fragmentManager)
+        return ExerciseViewHolder(view, createWorkoutViewModel, fragmentManager)
     }
 
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
@@ -32,22 +34,20 @@ class ExerciseListAdapter(
     }
 
     class ExerciseViewHolder(
-        createWorkoutViewModel: CreateWorkoutViewModel,
         itemView: View,
-        fragmentManager: FragmentManager
-    ) : RecyclerView.ViewHolder(itemView) {
+        private val createWorkoutViewModel: CreateWorkoutViewModel,
+        private val fragmentManager: FragmentManager
+    ) : RecyclerView.ViewHolder(itemView), EditExerciseDialogHandler {
 
         private val tvName = itemView.tvExerciseName
         private val tvReps = itemView.tvReps
         private val tvScore = itemView.tvScore
 
         init {
-            itemView.setOnClickListener {
-                val dialog = createWorkoutViewModel.createEditExerciseDialog(layoutPosition)
+            createWorkoutViewModel.setEditExerciseDialogHandler(this)
 
-                // TODO Dialog is not shown because of execute block in createEditExerciseDialog
-                //  dialog is always null
-                dialog?.show(fragmentManager, "Edit exercise")
+            itemView.setOnClickListener {
+                createWorkoutViewModel.createEditExerciseDialog(layoutPosition)
             }
         }
 
@@ -55,6 +55,10 @@ class ExerciseListAdapter(
             tvName.text = exercise.name
             tvReps.text = exercise.reps.toString()
             tvScore.text = exercise.score.toString()
+        }
+
+        override fun onEditExerciseDialogReady(dialog: DialogFragment) {
+            dialog.show(fragmentManager, "Edit exercise")
         }
     }
 }
