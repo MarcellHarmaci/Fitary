@@ -3,6 +3,7 @@ package hu.bme.aut.fitary.ui.createWorkout.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.fitary.R
@@ -11,7 +12,8 @@ import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutViewModel
 import kotlinx.android.synthetic.main.list_item_exercise.view.*
 
 class ExerciseListAdapter(
-    private val createWorkoutViewModel: CreateWorkoutViewModel
+    private val createWorkoutViewModel: CreateWorkoutViewModel,
+    private val fragmentManager: FragmentManager
 ) : ListAdapter<CreateWorkoutPresenter.Exercise, ExerciseListAdapter.ExerciseViewHolder>(
         ExerciseComparator
     ) {
@@ -21,7 +23,7 @@ class ExerciseListAdapter(
             .from(parent.context)
             .inflate(R.layout.list_item_exercise, parent, false)
 
-        return ExerciseViewHolder(createWorkoutViewModel, view)
+        return ExerciseViewHolder(createWorkoutViewModel, view, fragmentManager)
     }
 
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
@@ -31,7 +33,8 @@ class ExerciseListAdapter(
 
     class ExerciseViewHolder(
         createWorkoutViewModel: CreateWorkoutViewModel,
-        itemView: View
+        itemView: View,
+        fragmentManager: FragmentManager
     ) : RecyclerView.ViewHolder(itemView) {
 
         private val tvName = itemView.tvExerciseName
@@ -40,7 +43,11 @@ class ExerciseListAdapter(
 
         init {
             itemView.setOnClickListener {
-                createWorkoutViewModel.editExercise(layoutPosition)
+                val dialog = createWorkoutViewModel.createEditExerciseDialog(layoutPosition)
+
+                // TODO Dialog is not shown because of execute block in createEditExerciseDialog
+                //  dialog is always null
+                dialog?.show(fragmentManager, "Edit exercise")
             }
         }
 

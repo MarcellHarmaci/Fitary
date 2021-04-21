@@ -2,6 +2,8 @@ package hu.bme.aut.fitary.ui.createWorkout
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.base.ViewModelScope
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
@@ -11,7 +13,8 @@ import hu.bme.aut.fitary.ui.createWorkout.adapter.ExerciseListAdapter
 import kotlinx.android.synthetic.main.fragment_create_workout.*
 
 class CreateWorkoutFragment :
-    RainbowCakeFragment<CreateWorkoutViewState, CreateWorkoutViewModel>() {
+    RainbowCakeFragment<CreateWorkoutViewState, CreateWorkoutViewModel>(),
+    CreateWorkoutViewModel.AddExerciseDialogHandler {
 
     private lateinit var exerciseAdapter: ExerciseListAdapter
 
@@ -23,11 +26,10 @@ class CreateWorkoutFragment :
     override fun onStart() {
         super.onStart()
 
-        viewModel.load()
+        viewModel.setDialogHandler(this)
 
         btnAddExercise.setOnClickListener {
-            viewModel.addExercise()
-            exerciseAdapter.submitList(viewModel.exercises)
+            viewModel.createAddExerciseDialog()
         }
         btnSaveWorkout.setOnClickListener {
             // TODO validate view state
@@ -54,12 +56,17 @@ class CreateWorkoutFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        exerciseAdapter = ExerciseListAdapter(viewModel)
+        exerciseAdapter = ExerciseListAdapter(viewModel, parentFragmentManager)
         rvExercises.adapter = exerciseAdapter
-//        rvExercises.layoutManager = LinearLayoutManager(view.context).apply {
-//            reverseLayout = true
-//            stackFromEnd = true
-//        }
+        rvExercises.layoutManager = LinearLayoutManager(view.context)
+    }
+
+    override fun onDialogReadyToBeShowed(dialog: DialogFragment) {
+        dialog.show(parentFragmentManager, "Add exercise")
+
+        // TODO Make exercise list some LiveData or Channel
+        //  so Fragment can be notified on state changes
+        exerciseAdapter.submitList(viewModel.exercises)
     }
 
 }

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.dialog_add_exercise.view.*
 class AddExerciseDialog(
     private val exerciseNames: List<String>,
     private val exerciseScores: Map<String, Double>
-) : DialogFragment(), AdapterView.OnItemClickListener {
+) : DialogFragment(), AdapterView.OnItemSelectedListener {
 
     private var resultHandler: ResultHandler? = null
     private var exercise = CreateWorkoutPresenter.Exercise(
@@ -40,13 +40,13 @@ class AddExerciseDialog(
             false
         )
 
-        // TODO initialize the spinner's adapter
         val spinner = dialogLayout.spinner
         val adapter = context?.let {
             ArrayAdapter(it, android.R.layout.simple_spinner_item, exerciseNames)
         }
+
         spinner.adapter = adapter
-        spinner.onItemClickListener = this
+        spinner.onItemSelectedListener = this
 
         dialogLayout.etReps.doOnTextChanged { currentText, _, _, _ ->
             exercise.reps = currentText.toString().toInt()
@@ -68,11 +68,15 @@ class AddExerciseDialog(
         return dialogLayout
     }
 
-    override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val newName = exerciseNames[position]
 
         exercise.name = newName
         exercise.scorePerRep = exerciseScores[newName]!!    // TODO handle exception
+    }
+
+    override fun onNothingSelected(parent: AdapterView<*>?) {
+        // TODO Implement method
     }
 
 }
