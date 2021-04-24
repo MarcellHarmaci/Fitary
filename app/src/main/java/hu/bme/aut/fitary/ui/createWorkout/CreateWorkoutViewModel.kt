@@ -1,5 +1,6 @@
 package hu.bme.aut.fitary.ui.createWorkout
 
+import androidx.lifecycle.MutableLiveData
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import hu.bme.aut.fitary.ui.createWorkout.dialog.*
 import javax.inject.Inject
@@ -9,7 +10,8 @@ class CreateWorkoutViewModel @Inject constructor(
 ) : RainbowCakeViewModel<CreateWorkoutViewState>(Loading), ResultHandler {
 
     var comment: String? = null
-    val exercises = mutableListOf<CreateWorkoutPresenter.Exercise>()
+    private val exercises = mutableListOf<CreateWorkoutPresenter.Exercise>()
+    val exercisesLiveData = MutableLiveData<MutableList<CreateWorkoutPresenter.Exercise>>()
 
     private var addExerciseDialogHandler: AddExerciseDialogHandler? = null
     fun setAddExerciseDialogHandler(handler: AddExerciseDialogHandler) {
@@ -42,10 +44,12 @@ class CreateWorkoutViewModel @Inject constructor(
 
     override fun onAddDialogResult(exercise: CreateWorkoutPresenter.Exercise) {
         exercises += exercise
+        exercisesLiveData.value = exercises
     }
 
     override fun onEditDialogResult(exercise: CreateWorkoutPresenter.Exercise, position: Int) {
         exercises[position] = exercise
+        exercisesLiveData.value = exercises
     }
 
     fun saveWorkout() = execute {

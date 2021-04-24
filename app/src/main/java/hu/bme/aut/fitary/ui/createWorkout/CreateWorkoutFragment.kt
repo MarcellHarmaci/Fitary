@@ -3,6 +3,7 @@ package hu.bme.aut.fitary.ui.createWorkout
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.base.ViewModelScope
@@ -28,6 +29,16 @@ class CreateWorkoutFragment :
         super.onStart()
 
         viewModel.setAddExerciseDialogHandler(this)
+        viewModel.exercisesLiveData.observe(this, Observer {
+            it?.let {
+                exerciseAdapter.submitList(it)
+
+                // Weird behaviour here!
+                // Editing exercises doesn't update the UI unless notifyDataSetChanged() is called.
+                // Explained in more depth here: https://stackoverflow.com/a/50031492/10658813
+                exerciseAdapter.notifyDataSetChanged()
+            }
+        })
 
         btnAddExercise.setOnClickListener {
             viewModel.createAddExerciseDialog()
@@ -64,10 +75,6 @@ class CreateWorkoutFragment :
 
     override fun onAddExerciseDialogReady(dialog: DialogFragment) {
         dialog.show(parentFragmentManager, "Add exercise")
-
-        // TODO Make exercise list some LiveData or Channel
-        //  so Fragment can be notified on state changes
-        exerciseAdapter.submitList(viewModel.exercises)
     }
 
 }
