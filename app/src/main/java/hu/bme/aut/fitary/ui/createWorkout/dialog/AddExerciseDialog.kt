@@ -4,13 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
+import kotlinx.android.synthetic.main.dialog_add_exercise.*
 import kotlinx.android.synthetic.main.dialog_add_exercise.view.*
+
 
 class AddExerciseDialog(
     private val exerciseNames: List<String>,
@@ -49,16 +53,32 @@ class AddExerciseDialog(
         spinner.onItemSelectedListener = this
 
         dialogLayout.etReps.doOnTextChanged { currentText, _, _, _ ->
-            exercise.reps = currentText.toString().toInt()
+            if (currentText.isNullOrBlank())
+                exercise.reps = 0
+            else
+                exercise.reps = currentText.toString().toInt()
 
             // Update displayed score
             dialogLayout.tvScore.text = exercise.score.toString()
         }
 
-        dialogLayout.btnSave.setOnClickListener {
-            resultHandler?.onAddDialogResult(exercise)
+        dialogLayout.etReps.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                btnSave.callOnClick()
+                true
+            }
+            else false
+        }
 
-            dismissAllowingStateLoss()
+        dialogLayout.btnSave.setOnClickListener {
+            if (validateForm()) {
+                resultHandler?.onAddDialogResult(exercise)
+
+                dismissAllowingStateLoss()
+            } else {
+                val message = "You should do at least 1 repetition"
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            }
         }
 
         dialogLayout.btnCancel.setOnClickListener {
@@ -66,6 +86,10 @@ class AddExerciseDialog(
         }
 
         return dialogLayout
+    }
+
+    private fun validateForm(): Boolean {
+        return !etReps.text.isNullOrBlank() && etReps.text.toString().toInt() != 0
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

@@ -28,6 +28,8 @@ class CreateWorkoutFragment :
     override fun onStart() {
         super.onStart()
 
+        // TODO Hide the FloatingActionButton (This may rather belong to MainActivity)
+
         viewModel.setAddExerciseDialogHandler(this)
         viewModel.exercisesLiveData.observe(this, Observer {
             it?.let {

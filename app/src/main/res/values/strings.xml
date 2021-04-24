@@ -14,6 +14,7 @@
 
     <string name="save">Save</string>
     <string name="add">Add</string>
+    <string name="modify">Modify</string>
     <string name="cancel">Cancel</string>
     <string name="write_a_comment">Write a comment...</string>
     <string name="add_exercise">Add exercise</string>
