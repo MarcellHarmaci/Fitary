@@ -97,6 +97,8 @@ class AddExerciseDialog(
 
         exercise.name = newName
         exercise.scorePerRep = exerciseScores[newName]!!    // TODO handle exception
+
+        tvScore.text = exercise.score.toString()
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

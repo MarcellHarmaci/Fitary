@@ -2,11 +2,11 @@ package hu.bme.aut.fitary.dataSource
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import hu.bme.aut.fitary.dataSource.model.UserProfile
+import hu.bme.aut.fitary.dataSource.model.Workout
 import hu.bme.aut.fitary.domainModel.DomainExercise
 import hu.bme.aut.fitary.domainModel.DomainUser
 import hu.bme.aut.fitary.domainModel.DomainWorkout
-import hu.bme.aut.fitary.dataSource.model.UserProfile
-import hu.bme.aut.fitary.dataSource.model.Workout
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -117,7 +117,7 @@ class FirebaseDataSource @Inject constructor(
                 DomainExercise(
                     id = dataExercise.key,
                     name = dataExercise.value.name,
-                    reps = 0
+                    scorePerRep = dataExercise.value.score
                 )
             )
         }.toMap().filter { pair -> pair.key != null }
