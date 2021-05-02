@@ -1,14 +1,16 @@
 package hu.bme.aut.fitary.ui.createWorkout
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
-import co.zsmb.rainbowcake.base.ViewModelScope
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
+import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.createWorkout.adapter.ExerciseListAdapter
 import hu.bme.aut.fitary.ui.createWorkout.dialog.AddExerciseDialogHandler
@@ -16,21 +18,20 @@ import kotlinx.android.synthetic.main.fragment_create_workout.*
 
 class CreateWorkoutFragment :
     RainbowCakeFragment<CreateWorkoutViewState, CreateWorkoutViewModel>(),
-    AddExerciseDialogHandler {
+    AddExerciseDialogHandler,
+    CreateWorkoutViewModel.WorkoutSavingFinishedHandler {
 
     private lateinit var exerciseAdapter: ExerciseListAdapter
+    private var progressDialog: ProgressDialog? = null
 
-    // VM Scope in bound to MainActivity to keep VM when this Fragment is destroyed
-    // TODO Correct scope
-    override fun provideViewModel() = getViewModelFromFactory(scope = ViewModelScope.Activity)
+    override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_create_workout
 
     override fun onStart() {
         super.onStart()
 
-        // TODO Hide the FloatingActionButton (This may rather belong to MainActivity)
-
         viewModel.setAddExerciseDialogHandler(this)
+        viewModel.setSaveFinishedHandler(this)
         viewModel.exercisesLiveData.observe(this, Observer {
             it?.let {
                 exerciseAdapter.submitList(it)
@@ -46,23 +47,36 @@ class CreateWorkoutFragment :
             viewModel.createAddExerciseDialog()
         }
         btnSaveWorkout.setOnClickListener {
-            // TODO validate view state
-            viewModel.saveWorkout()
+            if (viewModel.validateForm()) {
+                viewModel.saveWorkout()
+            } else {
+                val message = "Add at least 1 exercise to save the workout"
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            }
+
         }
+    }
+
+    override fun onStop() {
+        hideProgressDialog()
+        (activity as MainActivity).setFloatingActionButtonVisible(true)
+
+        super.onStop()
     }
 
     override fun render(viewState: CreateWorkoutViewState) {
         when (viewState) {
             is Loading -> {
-                //pbListLoading.visibility = View.VISIBLE
+                hideProgressDialog()
             }
-            is CreateWorkoutLoaded -> {
-                //pbListLoading.visibility = View.GONE
+            is WorkoutCreationInProgress -> {
+                hideProgressDialog()
 
                 exerciseAdapter.submitList(viewState.exercises)
+                etComment.setText(viewState.comment ?: "")
             }
             is SavingWorkout -> {
-
+                showProgressDialog()
             }
         }.exhaustive
     }
@@ -77,6 +91,38 @@ class CreateWorkoutFragment :
 
     override fun onAddExerciseDialogReady(dialog: DialogFragment) {
         dialog.show(parentFragmentManager, "Add exercise")
+    }
+
+    private fun showProgressDialog() {
+        if (progressDialog != null) {
+            return
+        }
+
+        progressDialog = ProgressDialog(context).apply {
+            setCancelable(false)
+            setMessage("Saving workout...")
+            show()
+        }
+    }
+
+    private fun hideProgressDialog() {
+        progressDialog?.let { dialog ->
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
+        }
+        progressDialog = null
+    }
+
+    override fun onSaveFinished(isSuccessful: Boolean) {
+        when(isSuccessful) {
+            true ->
+                parentFragmentManager.popBackStack()
+            false -> {
+                val message = "Couldn't save workout\nTry again later"
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
 }

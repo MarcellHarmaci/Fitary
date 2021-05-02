@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         fab = findViewById(R.id.fab)
         fab.setOnClickListener {
+            setFloatingActionButtonVisible(false)
             navController.navigate(R.id.nav_create_workout)
         }
     }

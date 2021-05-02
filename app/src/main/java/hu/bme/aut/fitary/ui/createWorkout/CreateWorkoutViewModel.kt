@@ -13,6 +13,15 @@ class CreateWorkoutViewModel @Inject constructor(
     private val exercises = mutableListOf<CreateWorkoutPresenter.Exercise>()
     val exercisesLiveData = MutableLiveData<MutableList<CreateWorkoutPresenter.Exercise>>()
 
+    interface WorkoutSavingFinishedHandler {
+        fun onSaveFinished(isSuccessful: Boolean)
+    }
+
+    private var saveFinishedHandler: WorkoutSavingFinishedHandler? = null
+    fun setSaveFinishedHandler(handler: WorkoutSavingFinishedHandler) {
+        saveFinishedHandler = handler
+    }
+
     private var addExerciseDialogHandler: AddExerciseDialogHandler? = null
     fun setAddExerciseDialogHandler(handler: AddExerciseDialogHandler) {
         addExerciseDialogHandler = handler
@@ -55,7 +64,24 @@ class CreateWorkoutViewModel @Inject constructor(
     fun saveWorkout() = execute {
         viewState = SavingWorkout
 
-        TODO("Not yet implemented")
+        var isSaveSuccessful = false
+
+        // TODO Inspect how this behaves
+        //  Wait till workout is saved (Async-await pattern?)
+        isSaveSuccessful = createWorkoutPresenter.saveWorkout(exercises, comment)
+
+        if (isSaveSuccessful) {
+            saveFinishedHandler?.onSaveFinished(true)
+        }
+        else {
+            viewState = WorkoutCreationInProgress(exercises, comment)
+            saveFinishedHandler?.onSaveFinished(false)
+        }
+
+    }
+
+    fun validateForm(): Boolean {
+        return exercises.isNotEmpty()
     }
 
 }

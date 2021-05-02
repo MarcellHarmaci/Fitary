@@ -6,6 +6,7 @@ object Loading : CreateWorkoutViewState()
 
 object SavingWorkout : CreateWorkoutViewState()
 
-data class CreateWorkoutLoaded(
-    val exercises: List<CreateWorkoutPresenter.Exercise>
+data class WorkoutCreationInProgress(
+    val exercises: List<CreateWorkoutPresenter.Exercise>,
+    val comment: String?
 ) : CreateWorkoutViewState()
