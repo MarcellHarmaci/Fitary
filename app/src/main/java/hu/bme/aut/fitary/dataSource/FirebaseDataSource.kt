@@ -29,7 +29,7 @@ class FirebaseDataSource @Inject constructor(
             DomainWorkout(
                 id = workout.uid + workout.comment, // TODO create id from timestamp and uid
                 uid = workout.uid ?: "Unknown user",
-                username =  userDAO.users[workout.uid]?.username ?: "No username",
+                username = userDAO.users[workout.uid]?.username ?: "No username",
                 domainExercises = mapWorkoutExercisesToDomain(workout),
                 score = workout.score,
                 comment = workout.comment
@@ -97,7 +97,15 @@ class FirebaseDataSource @Inject constructor(
         userDAO.saveUser(newUser)
     }
 
-    suspend fun getCurrentUser() = userDAO.currentUser
+    suspend fun getCurrentUser(): DomainUser? {
+        return userDAO.currentUser?.let { userProfile ->
+            DomainUser(
+                id = userProfile.id,
+                mail = userProfile.mail,
+                username = userProfile.username
+            )
+        }
+    }
 
     suspend fun getUserById(userId: String?): DomainUser? {
 
