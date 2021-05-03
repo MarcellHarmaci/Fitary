@@ -35,6 +35,7 @@ class UserWorkoutsFragment :
                 //pbListLoading.visibility = View.GONE
 
                 workoutAdapter.submitList(viewState.workouts)
+                rvUserWorkouts.smoothScrollToPosition(workoutAdapter.itemCount - 1)
             }
         }.exhaustive
     }
