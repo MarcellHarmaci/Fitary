@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.pieChart
+package hu.bme.aut.fitary.ui.charts.pieChart
 
 import android.os.Bundle
 import android.view.LayoutInflater

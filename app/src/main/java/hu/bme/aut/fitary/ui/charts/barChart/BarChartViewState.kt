@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.barChart
+package hu.bme.aut.fitary.ui.charts.barChart
 
 sealed class BarChartViewState
 

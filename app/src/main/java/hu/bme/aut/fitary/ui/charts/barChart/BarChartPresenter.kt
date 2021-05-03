@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.barChart
+package hu.bme.aut.fitary.ui.charts.barChart
 
 import co.zsmb.rainbowcake.withIOContext
 import javax.inject.Inject

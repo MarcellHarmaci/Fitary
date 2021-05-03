@@ -1,10 +1,10 @@
-package hu.bme.aut.fitary.adapter
+package hu.bme.aut.fitary.ui.charts
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import hu.bme.aut.fitary.ui.barChart.BarChartFragment
-import hu.bme.aut.fitary.ui.pieChart.PieChartFragment
+import hu.bme.aut.fitary.ui.charts.barChart.BarChartFragment
+import hu.bme.aut.fitary.ui.charts.pieChart.PieChartFragment
 
 class ChartPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
