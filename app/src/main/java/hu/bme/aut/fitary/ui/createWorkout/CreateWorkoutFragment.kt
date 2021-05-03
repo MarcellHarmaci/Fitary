@@ -122,7 +122,7 @@ class CreateWorkoutFragment :
     override fun onSaveFinished(isSuccessful: Boolean) {
         when(isSuccessful) {
             true ->
-                parentFragmentManager.popBackStack()
+                (activity as MainActivity).onSupportNavigateUp()
             false -> {
                 val message = "Couldn't save workout\nTry again later"
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
