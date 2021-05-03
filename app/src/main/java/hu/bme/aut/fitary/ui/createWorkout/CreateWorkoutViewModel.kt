@@ -2,12 +2,15 @@ package hu.bme.aut.fitary.ui.createWorkout
 
 import androidx.lifecycle.MutableLiveData
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.ui.createWorkout.dialog.*
 import javax.inject.Inject
 
 class CreateWorkoutViewModel @Inject constructor(
     private val createWorkoutPresenter: CreateWorkoutPresenter
-) : RainbowCakeViewModel<CreateWorkoutViewState>(Loading), ResultHandler {
+) : RainbowCakeViewModel<CreateWorkoutViewState>(Loading), ResultHandler, OnSuccessListener<Void>,
+    OnFailureListener {
 
     var comment: String? = null
     private val exercises = mutableListOf<CreateWorkoutPresenter.Exercise>()
@@ -61,27 +64,23 @@ class CreateWorkoutViewModel @Inject constructor(
         exercisesLiveData.value = exercises
     }
 
+    fun validateForm(): Boolean {
+        return exercises.isNotEmpty()
+    }
+
     fun saveWorkout() = execute {
         viewState = SavingWorkout
 
-        var isSaveSuccessful = false
-
-        // TODO Inspect how this behaves
-        //  Wait till workout is saved (Async-await pattern?)
-        isSaveSuccessful = createWorkoutPresenter.saveWorkout(exercises, comment)
-
-        if (isSaveSuccessful) {
-            saveFinishedHandler?.onSaveFinished(true)
-        }
-        else {
-            viewState = WorkoutCreationInProgress(exercises, comment)
-            saveFinishedHandler?.onSaveFinished(false)
-        }
-
+        createWorkoutPresenter.saveWorkout(exercises, comment, this, this)
     }
 
-    fun validateForm(): Boolean {
-        return exercises.isNotEmpty()
+    override fun onSuccess(void: Void?) {
+        saveFinishedHandler?.onSaveFinished(true)
+    }
+
+    override fun onFailure(exception: Exception) {
+        viewState = WorkoutCreationInProgress(exercises, comment)
+        saveFinishedHandler?.onSaveFinished(false)
     }
 
 }

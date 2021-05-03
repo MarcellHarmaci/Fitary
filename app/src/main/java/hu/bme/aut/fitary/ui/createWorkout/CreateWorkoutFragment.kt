@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,6 +47,7 @@ class CreateWorkoutFragment :
         btnAddExercise.setOnClickListener {
             viewModel.createAddExerciseDialog()
         }
+
         btnSaveWorkout.setOnClickListener {
             if (viewModel.validateForm()) {
                 viewModel.saveWorkout()
@@ -53,7 +55,10 @@ class CreateWorkoutFragment :
                 val message = "Add at least 1 exercise to save the workout"
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
+        }
 
+        etComment.doOnTextChanged { text, _, _, _ ->
+            viewModel.comment = text.toString()
         }
     }
 

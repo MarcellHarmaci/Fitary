@@ -2,6 +2,8 @@ package hu.bme.aut.fitary.dataSource
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.dataSource.model.Workout
 import hu.bme.aut.fitary.domainModel.DomainExercise
@@ -59,34 +61,6 @@ class FirebaseDataSource @Inject constructor(
         return domainExercises
     }
 
-    suspend fun saveWorkout(domainWorkout: DomainWorkout) {
-        // User must be logged in to save a workout
-        val user = userDAO.currentUser ?: return
-
-        var score = 0.0
-        val exercises = mutableListOf<Long>()
-        val reps = mutableListOf<Int>()
-        for (exercise in domainWorkout.domainExercises) {
-            if (exercise.id == null) continue
-
-            exercises += exercise.id
-            reps += exercise.reps
-
-            // TODO Compute this in business logic layer
-            score += exercise.reps * getExerciseScoreById(exercise.id)
-        }
-
-        val newWorkout = Workout(
-            uid = user.id,
-            exercises = exercises,
-            reps = reps,
-            score = score,
-            comment = domainWorkout.comment
-        )
-
-        workoutDAO.saveWorkout(newWorkout)
-    }
-
     suspend fun saveUser(domainUser: DomainUser) {
         val newUser = UserProfile(
             id = domainUser.id,
@@ -132,5 +106,31 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun getExerciseScoreById(id: Long?) = exerciseDAO.exercises[id]?.score ?: 1.0
+
+    suspend fun saveWorkout(
+        domainWorkout: DomainWorkout,
+        onSuccessListener: OnSuccessListener<Void>,
+        onFailureListener: OnFailureListener
+    ) {
+        val exerciseList = mutableListOf<Long>()
+        val repetitionList = mutableListOf<Int>()
+
+        for (exercise in domainWorkout.domainExercises) {
+            if (exercise.id == null) continue
+
+            exerciseList += exercise.id
+            repetitionList += exercise.reps
+        }
+
+        val newWorkout = Workout(
+            uid = domainWorkout.uid,
+            exercises = exerciseList,
+            reps = repetitionList,
+            score = domainWorkout.score,
+            comment = domainWorkout.comment
+        )
+
+        workoutDAO.saveWorkout(newWorkout, onSuccessListener, onFailureListener)
+    }
 
 }

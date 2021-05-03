@@ -1,8 +1,10 @@
 package hu.bme.aut.fitary.interactor
 
 import androidx.lifecycle.Observer
-import hu.bme.aut.fitary.domainModel.DomainWorkout
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.dataSource.FirebaseDataSource
+import hu.bme.aut.fitary.domainModel.DomainWorkout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -35,6 +37,14 @@ class WorkoutInteractor @Inject constructor(
 
     init {
         firebaseDataSource.workouts.observeForever(workoutObserver)
+    }
+
+    suspend fun saveWorkout(
+        workout: DomainWorkout,
+        onSuccessListener: OnSuccessListener<Void>,
+        onFailureListener: OnFailureListener
+    ) {
+        firebaseDataSource.saveWorkout(workout, onSuccessListener, onFailureListener)
     }
 
 }

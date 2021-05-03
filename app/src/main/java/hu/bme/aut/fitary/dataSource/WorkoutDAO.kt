@@ -1,6 +1,8 @@
 package hu.bme.aut.fitary.dataSource
 
 import androidx.lifecycle.MutableLiveData
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -77,7 +79,11 @@ class WorkoutDAO @Inject constructor() {
         }
     }
 
-    suspend fun saveWorkout(workout: Workout) {
+    suspend fun saveWorkout(
+        workout: Workout,
+        onSuccessListener: OnSuccessListener<Void>,
+        onFailureListener: OnFailureListener
+    ) {
         val key = database.reference
             .child("workouts")
             .push().key ?: return
@@ -86,6 +92,8 @@ class WorkoutDAO @Inject constructor() {
             .child("workouts")
             .child(key)
             .setValue(workout)
+            .addOnSuccessListener(onSuccessListener)
+            .addOnFailureListener(onFailureListener)
     }
 
 }
