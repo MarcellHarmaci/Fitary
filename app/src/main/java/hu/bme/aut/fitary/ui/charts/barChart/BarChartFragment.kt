@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import co.zsmb.rainbowcake.base.RainbowCakeFragment
+import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.HorizontalBarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -12,23 +12,19 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.domainModel.DomainWorkout
 import kotlinx.android.synthetic.main.fragment_chart_bar.view.*
 
-class BarChartFragment : RainbowCakeFragment<BarChartViewState, BarChartViewModel>() {
+class BarChartFragment : Fragment() {//RainbowCakeFragment<BarChartViewState, BarChartViewModel>() {
 
-    override fun provideViewModel(): BarChartViewModel {
-        TODO("Not yet implemented")
-    }
-
-    override fun render(viewState: BarChartViewState) {
-        TODO("Not yet implemented")
-    }
+//    override fun provideViewModel(): BarChartViewModel {
+//        TODO("Not yet implemented")
+//    }
+//
+//    override fun render(viewState: BarChartViewState) {
+//        TODO("Not yet implemented")
+//    }
 
     private lateinit var barChart: HorizontalBarChart
     private var x = 1f
@@ -48,8 +44,6 @@ class BarChartFragment : RainbowCakeFragment<BarChartViewState, BarChartViewMode
         barChart.setDrawValueAboveBar(false)
         barChart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
         barChart.xAxis.position = XAxis.XAxisPosition.TOP_INSIDE
-
-        initWorkoutsListener()
 
         return root
     }
@@ -77,33 +71,4 @@ class BarChartFragment : RainbowCakeFragment<BarChartViewState, BarChartViewMode
         barChart.invalidate()
     }
 
-    private fun initWorkoutsListener() {
-        FirebaseDatabase.getInstance()
-            .getReference("workouts")
-            .addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-                    val newWorkout = dataSnapshot.getValue<DomainWorkout>(DomainWorkout::class.java)
-
-                    if (newWorkout != null) {
-                        updateBarChart(newWorkout)
-                    }
-                }
-
-                override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    // "Not yet implemented"
-                }
-
-                override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                    // "Not yet implemented"
-                }
-
-                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    // "Not yet implemented"
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // "Not yet implemented"
-                }
-            })
-    }
 }

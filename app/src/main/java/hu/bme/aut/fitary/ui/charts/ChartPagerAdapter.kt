@@ -18,7 +18,7 @@ class ChartPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     override fun getCount() = 2
 
-    override fun getPageTitle(position: Int): CharSequence? {
+    override fun getPageTitle(position: Int): CharSequence {
         return when (position) {
             0 -> "Your exercises"
             1 -> "Reps by workout"

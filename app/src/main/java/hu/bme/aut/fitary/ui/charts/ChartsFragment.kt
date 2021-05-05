@@ -23,9 +23,9 @@ class ChartsFragment : Fragment() {
         return root
     }
 
-    override fun onPause() {
-        (context as MainActivity).setFloatingActionButtonVisible(true)
-        super.onPause()
+    override fun onStop() {
+        (activity as MainActivity).setFloatingActionButtonVisible(true)
+        super.onStop()
     }
 
 }
