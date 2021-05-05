@@ -23,14 +23,11 @@ class UserWorkoutsPresenter @Inject constructor(
     override fun notify(newValue: MutableList<DomainWorkout>) {
         CoroutineScope(Dispatchers.IO).launch {
 
-            workouts = newValue.mapNotNull { domainWorkout ->
-                domainWorkout.id?.let { workoutId ->
+            workouts = newValue.map { domainWorkout ->
                     Workout(
-                        id = workoutId,
                         score = domainWorkout.score,
                         comment = domainWorkout.comment ?: "-"
                     )
-                }
             }.toMutableList()
 
             workoutsChannel.send(workouts)
@@ -39,7 +36,6 @@ class UserWorkoutsPresenter @Inject constructor(
 
     // Presentation model
     data class Workout(
-        val id: String,
         val score: Double,
         val comment: String
     )
