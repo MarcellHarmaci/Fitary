@@ -7,7 +7,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 class UserWorkoutsPresenter @Inject constructor(
@@ -18,13 +17,10 @@ class UserWorkoutsPresenter @Inject constructor(
     private var workouts = mutableListOf<Workout>()
 
     init {
-        Timber.d("Adding UserWorkoutsPresenter to observe")
         workoutInteractor.addObserver(this)
     }
 
     override fun notify(newValue: MutableList<DomainWorkout>) {
-        Timber.d("UserWorkoutsPresenter notified")
-
         CoroutineScope(Dispatchers.IO).launch {
 
             workouts = newValue.mapNotNull { domainWorkout ->

@@ -7,7 +7,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 class PieChartPresenter @Inject constructor(
@@ -17,13 +16,10 @@ class PieChartPresenter @Inject constructor(
     var exercisesChannel = Channel<List<Exercise>>()
 
     init {
-        Timber.d("Adding PieChartPresenter to observe")
         workoutInteractor.addObserver(this)
     }
 
     override fun notify(newValue: MutableList<DomainWorkout>) {
-        Timber.d("PieChartPresenter notified")
-
         CoroutineScope(Dispatchers.Default).launch {
 
             val exerciseMap = mutableMapOf<String, Double>()
@@ -34,14 +30,9 @@ class PieChartPresenter @Inject constructor(
                     val currentScore: Double? = exerciseMap[domainExercise.name]
 
                     if (currentScore == null) {
-                        Timber.d("Exercise \"${domainExercise.name}\" does not exist > " +
-                                "score: ${domainExercise.score}")
                         exerciseMap += Pair(domainExercise.name, domainExercise.score)
                     } else {
-                        Timber.d("Exercise \"${domainExercise.name}\" already exists > " +
-                                "${exerciseMap[domainExercise.name]} += ${domainExercise.score}")
                         exerciseMap[domainExercise.name] = currentScore + domainExercise.score
-                        Timber.d("New value: ${exerciseMap[domainExercise.name]}")
                     }
                 }
             }
