@@ -5,6 +5,7 @@ import co.zsmb.rainbowcake.dagger.ViewModelKey
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
+import hu.bme.aut.fitary.ui.charts.pieChart.PieChartViewModel
 import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutViewModel
 import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsViewModel
 import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsViewModel
@@ -27,4 +28,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CreateWorkoutViewModel::class)
     abstract fun bindCreateWorkoutViewModel(createWorkoutViewModel: CreateWorkoutViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(PieChartViewModel::class)
+    abstract fun bindPieChartViewModel(pieChartViewModel: PieChartViewModel): ViewModel
 }

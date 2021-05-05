@@ -15,8 +15,12 @@ class PieChartPresenter @Inject constructor(
 
     var exercisesChannel = Channel<List<Exercise>>()
 
-    init {
+    fun connectView() {
         workoutInteractor.addObserver(this)
+    }
+
+    fun disconnectView() {
+        workoutInteractor.removeObserver(this)
     }
 
     override fun notify(newValue: MutableList<DomainWorkout>) {
