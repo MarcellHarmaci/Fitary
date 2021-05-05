@@ -63,6 +63,7 @@ class CreateWorkoutFragment :
     }
 
     override fun onStop() {
+        viewModel.exercisesLiveData.removeObservers(this)
         hideProgressDialog()
         (activity as MainActivity).setFloatingActionButtonVisible(true)
 

@@ -9,8 +9,8 @@ import javax.inject.Inject
 
 class CreateWorkoutViewModel @Inject constructor(
     private val createWorkoutPresenter: CreateWorkoutPresenter
-) : RainbowCakeViewModel<CreateWorkoutViewState>(Loading), ResultHandler, OnSuccessListener<Void>,
-    OnFailureListener {
+) : RainbowCakeViewModel<CreateWorkoutViewState>(Loading),
+    ResultHandler, OnSuccessListener<Void>, OnFailureListener {
 
     var comment: String? = null
     private val exercises = mutableListOf<CreateWorkoutPresenter.Exercise>()

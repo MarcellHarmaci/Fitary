@@ -23,4 +23,10 @@ class ExerciseInteractor @Inject constructor(
         }.toMap()
     }
 
+    suspend fun getExerciseIdByName(name: String): Long? {
+        return firebaseDataSource.getExercises().filterValues { domainExercise ->
+            domainExercise.name == name
+        }.keys.toList()[0]
+    }
+
 }

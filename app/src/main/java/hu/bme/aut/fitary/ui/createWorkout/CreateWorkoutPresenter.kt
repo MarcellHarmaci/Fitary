@@ -38,6 +38,7 @@ class CreateWorkoutPresenter @Inject constructor(
             workoutScore += it.score
 
             DomainExercise(
+                id = exerciseInteractor.getExerciseIdByName(it.name),
                 name = it.name,
                 reps = it.reps,
                 scorePerRep = it.scorePerRep
@@ -56,9 +57,6 @@ class CreateWorkoutPresenter @Inject constructor(
             workoutInteractor.saveWorkout(workout, onSuccessListener, onFailureListener)
         }
     }
-
-    // TODO Implement on IO thread
-    fun saveWorkout(workout: DomainWorkout) {}
 
     // Presentation model
     data class Exercise(
