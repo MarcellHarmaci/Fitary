@@ -1,6 +1,5 @@
 package hu.bme.aut.fitary.interactor
 
-import androidx.lifecycle.Observer
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.dataSource.FirebaseDataSource
@@ -15,28 +14,36 @@ import javax.inject.Singleton
 @Singleton
 class WorkoutInteractor @Inject constructor(
     private val firebaseDataSource: FirebaseDataSource
-) {
+) : Observable<MutableList<DomainWorkout>> {
 
+    override val observers = mutableListOf<Observer<MutableList<DomainWorkout>>>()
     val workoutListChannel = Channel<MutableList<DomainWorkout>>()
-    val userWorkoutsChannel = Channel<MutableList<DomainWorkout>>()
 
     private var workouts = mutableListOf<DomainWorkout>()
     private var userWorkouts = mutableListOf<DomainWorkout>()
+        set(value) {
+            field = value
+            notifyObservers(value)
+        }
 
-    private val workoutObserver = Observer<MutableList<DomainWorkout>> { observedWorkouts ->
-        CoroutineScope(Dispatchers.Default).launch {
-            val currentUserId = firebaseDataSource.getCurrentUser()?.id ?: return@launch
+    init {
+        firebaseDataSource.workouts.observeForever { observedWorkouts ->
+            CoroutineScope(Dispatchers.Default).launch {
+                val currentUserId = firebaseDataSource.getCurrentUser()?.id ?: return@launch
 
-            workouts = observedWorkouts
-            workoutListChannel.send(workouts)
+                workouts = observedWorkouts
+                workoutListChannel.send(workouts)
 
-            userWorkouts = observedWorkouts.filter { it.uid == currentUserId }.toMutableList()
-            userWorkoutsChannel.send(userWorkouts)
+                userWorkouts = observedWorkouts.filter { it.uid == currentUserId }.toMutableList()
+            }
         }
     }
 
-    init {
-        firebaseDataSource.workouts.observeForever(workoutObserver)
+    override fun addObserver(observer: Observer<MutableList<DomainWorkout>>) {
+        super.addObserver(observer)
+
+        // Notify new observer about current state
+        observer.notify(userWorkouts)
     }
 
     suspend fun saveWorkout(
