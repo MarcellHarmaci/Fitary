@@ -5,11 +5,12 @@ import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsPresenter
 
 object WorkoutComparator : DiffUtil.ItemCallback<UserWorkoutsPresenter.Workout>() {
 
+    // TODO Replace with better solution
     override fun areItemsTheSame(
         oldItem: UserWorkoutsPresenter.Workout,
         newItem: UserWorkoutsPresenter.Workout
     ): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem === newItem
     }
 
     override fun areContentsTheSame(

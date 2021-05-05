@@ -28,12 +28,17 @@ class FirebaseDataSource @Inject constructor(
     private val workoutObserver = Observer<MutableList<Workout>> {
         workouts.value = it.map { workout ->
 
+            var score = 0.0
+            for (i in 0 until workout.exercises.size) {
+                val scorePerRep = exerciseDAO.getExerciseScoreById(workout.exercises[i]) ?: 0.0
+                score += scorePerRep * workout.reps[i]
+            }
+
             DomainWorkout(
-                id = workout.uid + workout.comment, // TODO create id from timestamp and uid
                 uid = workout.uid ?: "Unknown user",
                 username = userDAO.users[workout.uid]?.username ?: "No username",
                 domainExercises = mapWorkoutExercisesToDomain(workout),
-                score = workout.score,
+                score = score,
                 comment = workout.comment
             )
         }.toMutableList()
@@ -48,7 +53,7 @@ class FirebaseDataSource @Inject constructor(
     private fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
         val domainExercises = mutableListOf<DomainExercise>()
 
-        for (i in 1 until workout.exercises.size) {
+        for (i in 0 until workout.exercises.size) {
             val exerciseId = workout.exercises[i]
 
             domainExercises += DomainExercise(
@@ -126,7 +131,6 @@ class FirebaseDataSource @Inject constructor(
             uid = domainWorkout.uid,
             exercises = exerciseList,
             reps = repetitionList,
-            score = domainWorkout.score,
             comment = domainWorkout.comment
         )
 

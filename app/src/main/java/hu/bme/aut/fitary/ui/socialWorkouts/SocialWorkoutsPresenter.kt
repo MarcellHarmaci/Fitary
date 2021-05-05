@@ -24,15 +24,12 @@ class SocialWorkoutsPresenter @Inject constructor(
 
             workoutInteractor.workoutListChannel.consumeEach { consumedWorkouts ->
 
-                workouts = consumedWorkouts.mapNotNull { domainWorkout ->
-                    domainWorkout.id?.let { workoutId ->
-                        Workout(
-                            id = workoutId,
-                            username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
-                            score = domainWorkout.score,
-                            comment = domainWorkout.comment ?: "-"
-                        )
-                    }
+                workouts = consumedWorkouts.map { domainWorkout ->
+                    Workout(
+                        username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
+                        score = domainWorkout.score,
+                        comment = domainWorkout.comment ?: "-"
+                    )
                 }.toMutableList()
 
                 workoutsChannel.send(workouts)
@@ -42,7 +39,6 @@ class SocialWorkoutsPresenter @Inject constructor(
 
     // Presentation model
     data class Workout(
-        val id: String,
         val username: String,
         val score: Double,
         val comment: String

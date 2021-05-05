@@ -1,94 +1,70 @@
 package hu.bme.aut.fitary.ui.charts.pieChart
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.github.mikephil.charting.charts.PieChart
+import co.zsmb.rainbowcake.base.RainbowCakeFragment
+import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
+import co.zsmb.rainbowcake.extensions.exhaustive
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.utils.ColorTemplate
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.domainModel.DomainWorkout
-import hu.bme.aut.fitary.extensions.addEntry
-import kotlinx.android.synthetic.main.fragment_chart_pie.view.*
+import kotlinx.android.synthetic.main.fragment_chart_pie.*
 
-class PieChartFragment : Fragment() {
+class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewModel>() {
 
-    private lateinit var pieChart: PieChart
-    private val pieEntries: MutableList<PieEntry> = mutableListOf()
+    override fun provideViewModel() = getViewModelFromFactory()
+    override fun getViewResource() = R.layout.fragment_chart_pie
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val root = inflater.inflate(R.layout.fragment_chart_pie, container, false)
+    override fun onStart() {
+        super.onStart()
 
-        pieChart = root.pieChart
-        pieChart.legend.textSize = 14f
-        pieChart.setDrawEntryLabels(false)
-        pieChart.description.isEnabled = false
-        pieChart.isRotationEnabled = false
+        pieChart.apply {
+            isRotationEnabled = false
+            description.isEnabled = false
+            setDrawEntryLabels(false)
+            legend.textSize = 14f
+        }
 
-        initWorkoutsListener()
-
-        return root
+        viewModel.connectView()
     }
 
-    private fun updatePieChart(newDomainWorkout: DomainWorkout) {
-        for (exercise in newDomainWorkout.domainExercises)
-            pieEntries.addEntry(
+    override fun onStop() {
+        viewModel.disconnectView()
+
+        super.onStop()
+    }
+
+    override fun render(viewState: PieChartViewState) {
+        when (viewState) {
+            is Loading -> {
+                // TODO
+            }
+            is ExercisesLoaded -> renderPieChart(viewState.exercises)
+        }.exhaustive
+    }
+
+    private fun renderPieChart(exercises: List<PieChartPresenter.Exercise>) {
+        val pieEntries: MutableList<PieEntry> = mutableListOf()
+
+        for (exercise in exercises) {
+            pieEntries.add(
                 PieEntry(
-                    exercise.reps.toFloat(),
+                    exercise.sumOfScore.toFloat(),
                     exercise.name
                 )
             )
+        }
 
-        val dataSet = PieDataSet(pieEntries, "")
-        dataSet.setColors(ColorTemplate.MATERIAL_COLORS, 255)
-        dataSet.valueTextSize = 14f
+        val dataSet = PieDataSet(pieEntries, "").apply {
+            setColors(ColorTemplate.JOYFUL_COLORS, 255)
+            valueTextSize = 14f
+        }
 
-        pieChart.data = PieData(dataSet)
-        pieChart.invalidate()
-    }
-
-    private fun initWorkoutsListener() {
-        FirebaseDatabase.getInstance()
-            .getReference("workouts")
-            .addChildEventListener(object : ChildEventListener {
-                override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-                    val newWorkout = dataSnapshot.getValue<DomainWorkout>(DomainWorkout::class.java)
-                    val currentUser = FirebaseAuth.getInstance().currentUser
-
-                    if (newWorkout != null && newWorkout.uid == currentUser?.uid) {
-                        updatePieChart(newWorkout)
-                    }
-                }
-
-                override fun onChildChanged(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    // "Not yet implemented"
-                }
-
-                override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                    // "Not yet implemented"
-                }
-
-                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    // "Not yet implemented"
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // "Not yet implemented"
-                }
-            })
+        pieChart.apply {
+            data = PieData(dataSet)
+            notifyDataSetChanged()
+            invalidate()
+        }
     }
 
 }
