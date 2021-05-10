@@ -26,6 +26,7 @@ class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewMode
 
             setDrawEntryLabels(true)
             setEntryLabelColor(Color.BLACK)
+            
             extraLeftOffset = 30f
             extraRightOffset = 30f
         }

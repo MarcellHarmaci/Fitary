@@ -15,7 +15,6 @@ import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
 import kotlinx.android.synthetic.main.dialog_add_exercise.*
 import kotlinx.android.synthetic.main.dialog_add_exercise.view.*
 
-
 class AddExerciseDialog(
     private val exerciseNames: List<String>,
     private val exerciseScores: Map<String, Double>

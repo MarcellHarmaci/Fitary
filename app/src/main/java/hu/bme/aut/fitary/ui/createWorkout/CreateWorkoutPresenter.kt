@@ -8,6 +8,8 @@ import hu.bme.aut.fitary.domainModel.DomainWorkout
 import hu.bme.aut.fitary.interactor.ExerciseInteractor
 import hu.bme.aut.fitary.interactor.UserInteractor
 import hu.bme.aut.fitary.interactor.WorkoutInteractor
+import java.math.BigDecimal
+import java.math.RoundingMode
 import javax.inject.Inject
 
 class CreateWorkoutPresenter @Inject constructor(
@@ -32,7 +34,7 @@ class CreateWorkoutPresenter @Inject constructor(
     ) {
 
         val currentUser = userInteractor.getCurrentUser()
-        var workoutScore = 0.0
+        var workoutScore = BigDecimal(0)
 
         val domainExercises = exercises.map {
             workoutScore += it.score
@@ -50,7 +52,7 @@ class CreateWorkoutPresenter @Inject constructor(
                 uid = it,
                 username = currentUser.username,
                 domainExercises = domainExercises.toMutableList(),
-                score = workoutScore,
+                score = workoutScore.toDouble(),
                 comment = comment
             )
 
@@ -64,7 +66,8 @@ class CreateWorkoutPresenter @Inject constructor(
         var reps: Int = 0,
         var scorePerRep: Double = 1.0
     ) {
-        val score: Double
-            get() = reps * scorePerRep
+        val score: BigDecimal
+            get() = BigDecimal(reps.toDouble() * scorePerRep)
+                .setScale(2, RoundingMode.HALF_EVEN)
     }
 }
