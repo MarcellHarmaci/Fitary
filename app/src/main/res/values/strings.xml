@@ -14,14 +14,16 @@
 
     <string name="save">Save</string>
     <string name="add">Add</string>
+    <string name="modify">Modify</string>
     <string name="cancel">Cancel</string>
     <string name="write_a_comment">Write a comment...</string>
     <string name="add_exercise">Add exercise</string>
     <string name="exercise">Exercise</string>
     <string name="reps">Reps</string>
     <string name="li_workout_user">User:</string>
-    <string name="li_workout_reps">Reps:</string>
+    <string name="li_workout_score">Score:</string>
     <string name="li_workout_comment">Comment:</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

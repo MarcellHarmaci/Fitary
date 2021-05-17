@@ -3,17 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_user_workouts">
+    app:startDestination="@+id/nav_social_workouts">
 
     <fragment
         android:id="@+id/nav_user_workouts"
-        android:name="hu.bme.aut.fitary.ui.workouts.UserWorkoutsFragment"
+        android:name="hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsFragment"
         android:label="@string/menu_my_workouts"
         tools:layout="@layout/fragment_workouts_user" />
 
     <fragment
         android:id="@+id/nav_social_workouts"
-        android:name="hu.bme.aut.fitary.ui.workouts.SocialWorkoutsFragment"
+        android:name="hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsFragment"
         android:label="@string/menu_social_workouts"
         tools:layout="@layout/fragment_workouts_social" />
 
@@ -22,4 +22,10 @@
         android:name="hu.bme.aut.fitary.ui.charts.ChartsFragment"
         android:label="@string/menu_charts"
         tools:layout="@layout/fragment_chart_bar" />
+
+    <fragment
+        android:id="@+id/nav_create_workout"
+        android:name="hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutFragment"
+        android:label="Create workout"
+        tools:layout="@layout/fragment_create_workout" />
 </navigation>

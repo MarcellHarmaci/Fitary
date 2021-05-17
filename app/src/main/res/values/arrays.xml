@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- PieChart beach colors -->
+    <integer-array name="beachColors">
+        <item name="beachOrange">@color/beachOrange</item>
+        <item name="beachCoral">@color/beachCoral</item>
+        <item name="beachYellow">@color/beachYellow</item>
+        <item name="beachGreen">@color/beachGreen</item>
+        <item name="beachBlue">@color/beachBlue</item>
+        <item name="beachGrey">@color/beachGrey</item>
+    </integer-array>
+
+</resources>

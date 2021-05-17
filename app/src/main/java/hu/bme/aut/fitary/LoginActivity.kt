@@ -1,11 +1,18 @@
 package hu.bme.aut.fitary
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
+import hu.bme.aut.fitary.dataSource.model.UserProfile
 import hu.bme.aut.fitary.extensions.validateNonEmpty
 import kotlinx.android.synthetic.main.activity_login.*
+
 
 class LoginActivity : BaseActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
@@ -18,6 +25,22 @@ class LoginActivity : BaseActivity() {
 
         btnRegister.setOnClickListener { registerClick() }
         btnLogin.setOnClickListener { loginClick() }
+
+        etPassword.setOnEditorActionListener { textView, actionId, keyEvent ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+
+                // Hide soft keyboard
+                val imm: InputMethodManager = textView.context
+                    .getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(textView.windowToken, 0)
+
+                // Log in
+                loginClick()
+
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
     }
 
     private fun validateForm() = etEmail.validateNonEmpty() && etPassword.validateNonEmpty()
@@ -40,15 +63,15 @@ class LoginActivity : BaseActivity() {
                     .build()
                 firebaseUser?.updateProfile(profileChangeRequest)
 
+                saveUser(firebaseUser)
                 toast("Registration successful")
+                loginClick()
             }
             .addOnFailureListener { exception ->
                 hideProgressDialog()
 
                 toast(exception.message)
             }
-
-        loginClick()
     }
 
     private fun loginClick() {
@@ -63,7 +86,7 @@ class LoginActivity : BaseActivity() {
             .addOnSuccessListener {
                 hideProgressDialog()
 
-                startActivity(Intent(this@LoginActivity, WorkoutsActivity::class.java))
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 finish()
             }
             .addOnFailureListener { exception ->
@@ -73,4 +96,28 @@ class LoginActivity : BaseActivity() {
             }
     }
 
+    // TODO Remove when refactoring to use RainbowCake
+    private fun saveUser(firebaseUser: FirebaseUser?) {
+        val key = FirebaseDatabase
+                .getInstance()
+                .reference
+                .child("users")
+                .push().key ?: return
+
+        if (firebaseUser == null) {
+            toast("User not yet logged in")
+            return
+        }
+
+        val newUser = UserProfile(
+            id = firebaseUser.uid,
+            mail = firebaseUser.email ?: "No mail",
+            username = firebaseUser.email?.substringBefore('@') ?: "No name"
+        )
+
+        FirebaseDatabase.getInstance().reference
+            .child("workouts")
+            .child(key)
+            .setValue(newUser)
+    }
 }
