@@ -1,5 +1,6 @@
 package hu.bme.aut.fitary.ui.charts.pieChart
 
+import androidx.lifecycle.MutableLiveData
 import hu.bme.aut.fitary.domainModel.DomainWorkout
 import hu.bme.aut.fitary.interactor.Observer
 import hu.bme.aut.fitary.interactor.WorkoutInteractor
@@ -11,24 +12,15 @@ import javax.inject.Inject
 
 class PieChartPresenter @Inject constructor(
     private val workoutInteractor: WorkoutInteractor,
-) : Observer<MutableList<DomainWorkout>> {
+) {
 
-    var exercisesChannel = Channel<List<Exercise>>()
+    val exercises = MutableLiveData<List<Exercise>>()
 
-    fun connectView() {
-        workoutInteractor.addObserver(this)
-    }
-
-    fun disconnectView() {
-        workoutInteractor.removeObserver(this)
-    }
-
-    override fun notify(newValue: MutableList<DomainWorkout>) {
-        CoroutineScope(Dispatchers.Default).launch {
-
+    init {
+        workoutInteractor.userWorkoutsLiveData.observeForever { observedWorkouts ->
             val exerciseMap = mutableMapOf<String, Double>()
 
-            newValue.forEach { domainWorkout ->
+            observedWorkouts.forEach { domainWorkout ->
                 domainWorkout.domainExercises.forEach { domainExercise ->
 
                     val currentScore: Double? = exerciseMap[domainExercise.name]
@@ -41,14 +33,14 @@ class PieChartPresenter @Inject constructor(
                 }
             }
 
-            val exercises = exerciseMap.map {
+            val mappedExercises = exerciseMap.map {
                 Exercise(
                     name = it.key,
                     sumOfScore = it.value
                 )
             }
 
-            exercisesChannel.send(exercises)
+            exercises.value = mappedExercises
         }
     }
 

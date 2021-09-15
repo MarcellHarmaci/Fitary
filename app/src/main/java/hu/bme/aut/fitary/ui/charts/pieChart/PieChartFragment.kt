@@ -30,14 +30,6 @@ class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewMode
             extraLeftOffset = 30f
             extraRightOffset = 30f
         }
-
-        viewModel.connectView()
-    }
-
-    override fun onStop() {
-        viewModel.disconnectView()
-
-        super.onStop()
     }
 
     override fun render(viewState: PieChartViewState) {
