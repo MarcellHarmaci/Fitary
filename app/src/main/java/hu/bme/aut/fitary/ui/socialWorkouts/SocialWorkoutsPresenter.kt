@@ -16,15 +16,12 @@ class SocialWorkoutsPresenter @Inject constructor(
 
     val workoutsChannel = Channel<MutableList<Workout>>()
 
-    // TODO move to consumeEach function
-    private var workouts = mutableListOf<Workout>()
-
     init {
         CoroutineScope(Dispatchers.IO).launch {
 
             workoutInteractor.workoutListChannel.consumeEach { consumedWorkouts ->
 
-                workouts = consumedWorkouts.map { domainWorkout ->
+                val workouts = consumedWorkouts.map { domainWorkout ->
                     Workout(
                         username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
                         score = domainWorkout.score,

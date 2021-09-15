@@ -14,7 +14,6 @@ class UserWorkoutsPresenter @Inject constructor(
 ) : Observer<MutableList<DomainWorkout>> {
 
     val workoutsChannel = Channel<MutableList<Workout>>()
-    private var workouts = mutableListOf<Workout>()
 
     init {
         workoutInteractor.addObserver(this)
@@ -23,7 +22,7 @@ class UserWorkoutsPresenter @Inject constructor(
     override fun notify(newValue: MutableList<DomainWorkout>) {
         CoroutineScope(Dispatchers.IO).launch {
 
-            workouts = newValue.map { domainWorkout ->
+            val workouts = newValue.map { domainWorkout ->
                     Workout(
                         score = domainWorkout.score,
                         comment = domainWorkout.comment ?: "-"
