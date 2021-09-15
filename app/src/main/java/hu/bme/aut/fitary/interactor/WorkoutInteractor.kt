@@ -1,5 +1,6 @@
 package hu.bme.aut.fitary.interactor
 
+import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.dataSource.FirebaseDataSource
@@ -8,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,31 +21,32 @@ class WorkoutInteractor @Inject constructor(
     override val observers = mutableListOf<Observer<MutableList<DomainWorkout>>>()
     val workoutListChannel = Channel<MutableList<DomainWorkout>>()
 
-    private var workouts = mutableListOf<DomainWorkout>()
-    private var userWorkouts = mutableListOf<DomainWorkout>()
-        set(value) {
-            field = value
-            notifyObservers(value)
-        }
+    val allWorkoutsLiveData = MutableLiveData<MutableList<DomainWorkout>>()
+    val userWorkoutsLiveData = MutableLiveData<MutableList<DomainWorkout>>()
+
+    var currentUserId: String? = null
 
     init {
-        firebaseDataSource.workouts.observeForever { observedWorkouts ->
-            CoroutineScope(Dispatchers.Default).launch {
-                val currentUserId = firebaseDataSource.getCurrentUser()?.id ?: return@launch
-
-                workouts = observedWorkouts
-                workoutListChannel.send(workouts)
-
-                userWorkouts = observedWorkouts.filter { it.uid == currentUserId }.toMutableList()
+        runBlocking {
+            launch {
+                currentUserId = firebaseDataSource.getCurrentUserId()
             }
         }
-    }
 
-    override fun addObserver(observer: Observer<MutableList<DomainWorkout>>) {
-        super.addObserver(observer)
+        firebaseDataSource.workouts.observeForever { observedWorkouts ->
+            CoroutineScope(Dispatchers.Default).launch {
+                workoutListChannel.send(observedWorkouts)
+            }
 
-        // Notify new observer about current state
-        observer.notify(userWorkouts)
+            allWorkoutsLiveData.value = observedWorkouts
+
+            if (currentUserId != null) {
+                userWorkoutsLiveData.value = observedWorkouts.filter {
+                    it.uid == currentUserId
+                }.toMutableList()
+            }
+        }
+
     }
 
     suspend fun saveWorkout(

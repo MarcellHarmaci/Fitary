@@ -1,5 +1,6 @@
 package hu.bme.aut.fitary.dataSource
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.gms.tasks.OnFailureListener
@@ -75,6 +76,8 @@ class FirebaseDataSource @Inject constructor(
 
         userDAO.saveUser(newUser)
     }
+
+    suspend fun getCurrentUserId() = userDAO.getCurrentUserId()
 
     suspend fun getCurrentUser(): DomainUser? {
         return userDAO.currentUser?.let { userProfile ->
