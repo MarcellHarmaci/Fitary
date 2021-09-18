@@ -5,7 +5,6 @@ import hu.bme.aut.fitary.interactor.WorkoutInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,9 +16,9 @@ class SocialWorkoutsPresenter @Inject constructor(
     val workoutsChannel = Channel<MutableList<Workout>>()
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        workoutInteractor.allWorkoutsLiveData.observeForever { consumedWorkouts ->
 
-            workoutInteractor.workoutListChannel.consumeEach { consumedWorkouts ->
+            CoroutineScope(Dispatchers.IO).launch {
 
                 val workouts = consumedWorkouts.map { domainWorkout ->
                     Workout(
