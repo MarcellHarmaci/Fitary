@@ -8,6 +8,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.Workout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,6 +24,11 @@ class WorkoutDAO @Inject constructor() {
 
     private val workoutMap = mutableMapOf<String?, Workout>()
     val workouts = MutableLiveData<MutableList<Workout>>()
+
+    val workoutsFlow = MutableSharedFlow<List<Workout>>(
+        replay = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     init {
         database
@@ -75,7 +85,13 @@ class WorkoutDAO @Inject constructor() {
 
         if (workout != null) {
             workoutMap[previousChildName] = workout
-            workouts.value = workoutMap.values.toMutableList()
+            val newState = workoutMap.values.toMutableList()
+
+            workouts.value = newState
+
+            CoroutineScope(Dispatchers.Default).launch {
+                workoutsFlow.emit(newState)
+            }
         }
     }
 

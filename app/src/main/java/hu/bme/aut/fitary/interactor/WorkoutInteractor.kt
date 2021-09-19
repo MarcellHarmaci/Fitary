@@ -7,7 +7,9 @@ import hu.bme.aut.fitary.dataSource.FirebaseDataSource
 import hu.bme.aut.fitary.domainModel.DomainWorkout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -18,13 +20,31 @@ class WorkoutInteractor @Inject constructor(
     private val firebaseDataSource: FirebaseDataSource
 ) : Observable<MutableList<DomainWorkout>> {
 
+    private var currentUserId: String? = null
+
     override val observers = mutableListOf<Observer<MutableList<DomainWorkout>>>()
-    val workoutListChannel = Channel<MutableList<DomainWorkout>>()
 
-    val allWorkoutsLiveData = MutableLiveData<MutableList<DomainWorkout>>()
+    val allWorkoutsFlow = firebaseDataSource.workoutsFlow.shareIn(
+        scope = CoroutineScope(Dispatchers.Default),
+        started = SharingStarted.Eagerly,
+        replay = 1
+    )
+
+    val userWorkoutsFlow = firebaseDataSource.workoutsFlow.map { collectedWorkouts ->
+        collectedWorkouts.filter {
+            if (currentUserId == null)
+                currentUserId = firebaseDataSource.getCurrentUserId()
+
+            it.uid == currentUserId
+        }
+    }.shareIn(
+        scope = CoroutineScope(Dispatchers.Default),
+        started = SharingStarted.Eagerly,
+        replay = 1
+    )
+
+
     val userWorkoutsLiveData = MutableLiveData<MutableList<DomainWorkout>>()
-
-    var currentUserId: String? = null
 
     init {
         runBlocking {
@@ -34,12 +54,6 @@ class WorkoutInteractor @Inject constructor(
         }
 
         firebaseDataSource.workouts.observeForever { observedWorkouts ->
-            CoroutineScope(Dispatchers.Default).launch {
-                workoutListChannel.send(observedWorkouts)
-            }
-
-            allWorkoutsLiveData.value = observedWorkouts
-
             if (currentUserId != null) {
                 userWorkoutsLiveData.value = observedWorkouts.filter {
                     it.uid == currentUserId

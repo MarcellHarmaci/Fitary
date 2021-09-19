@@ -1,6 +1,5 @@
 package hu.bme.aut.fitary.dataSource
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.gms.tasks.OnFailureListener
@@ -10,6 +9,12 @@ import hu.bme.aut.fitary.dataSource.model.Workout
 import hu.bme.aut.fitary.domainModel.DomainExercise
 import hu.bme.aut.fitary.domainModel.DomainUser
 import hu.bme.aut.fitary.domainModel.DomainWorkout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,8 +29,30 @@ class FirebaseDataSource @Inject constructor(
     private val workoutDAO: WorkoutDAO
 ) {
 
-    val workouts = MutableLiveData<MutableList<DomainWorkout>>()
+    var workoutsFlow: SharedFlow<List<DomainWorkout>> = workoutDAO.workoutsFlow.map {
+        it.map { workout ->
 
+            var score = 0.0
+            for (i in 0 until workout.exercises.size) {
+                val scorePerRep = exerciseDAO.getExerciseScoreById(workout.exercises[i]) ?: 0.0
+                score += scorePerRep * workout.reps[i]
+            }
+
+            DomainWorkout(
+                uid = workout.uid ?: "Unknown user",
+                username = userDAO.users[workout.uid]?.username ?: "No username",
+                domainExercises = mapWorkoutExercisesToDomain(workout),
+                score = score,
+                comment = workout.comment
+            )
+        }
+    }.shareIn(
+        scope = CoroutineScope(Dispatchers.Default),
+        started = SharingStarted.Eagerly,
+        replay = 1
+    )
+
+    val workouts = MutableLiveData<MutableList<DomainWorkout>>()
     private val workoutObserver = Observer<MutableList<Workout>> {
         workouts.value = it.map { workout ->
 

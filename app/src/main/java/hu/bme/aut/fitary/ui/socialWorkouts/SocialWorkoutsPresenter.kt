@@ -5,6 +5,8 @@ import hu.bme.aut.fitary.interactor.WorkoutInteractor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -13,23 +15,13 @@ class SocialWorkoutsPresenter @Inject constructor(
     private val userInteractor: UserInteractor
 ) {
 
-    val workoutsChannel = Channel<MutableList<Workout>>()
-
-    init {
-        workoutInteractor.allWorkoutsLiveData.observeForever { consumedWorkouts ->
-
-            CoroutineScope(Dispatchers.IO).launch {
-
-                val workouts = consumedWorkouts.map { domainWorkout ->
-                    Workout(
-                        username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
-                        score = domainWorkout.score,
-                        comment = domainWorkout.comment ?: "-"
-                    )
-                }.toMutableList()
-
-                workoutsChannel.send(workouts)
-            }
+    val workoutsFlow: Flow<List<Workout>> = workoutInteractor.allWorkoutsFlow.map {
+        it.map { domainWorkout ->
+            Workout(
+                username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
+                score = domainWorkout.score,
+                comment = domainWorkout.comment ?: "-"
+            )
         }
     }
 

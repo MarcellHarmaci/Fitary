@@ -19,12 +19,6 @@ class SocialWorkoutsFragment :
     override fun provideViewModel() = getViewModelFromFactory(scope = ViewModelScope.Activity)
     override fun getViewResource() = R.layout.fragment_workouts_social
 
-    override fun onStart() {
-        super.onStart()
-
-        viewModel.loadWorkouts()
-    }
-
     override fun render(viewState: SocialWorkoutsViewState) {
         when (viewState) {
             is Loading -> {
