@@ -10,8 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -47,11 +45,6 @@ class WorkoutInteractor @Inject constructor(
     val userWorkoutsLiveData = MutableLiveData<MutableList<DomainWorkout>>()
 
     init {
-        runBlocking {
-            launch {
-                currentUserId = firebaseDataSource.getCurrentUserId()
-            }
-        }
 
         firebaseDataSource.workouts.observeForever { observedWorkouts ->
             if (currentUserId != null) {
