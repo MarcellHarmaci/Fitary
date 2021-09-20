@@ -1,6 +1,7 @@
 package hu.bme.aut.fitary.ui.charts.pieChart
 
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class PieChartViewModel @Inject constructor(
@@ -8,8 +9,10 @@ class PieChartViewModel @Inject constructor(
 ) : RainbowCakeViewModel<PieChartViewState>(Loading) {
 
     init {
-        presenter.exercises.observeForever {
-            viewState = ExercisesLoaded(it)
+        executeNonBlocking {
+            presenter.exercises.collect {
+                viewState = ExercisesLoaded(it)
+            }
         }
     }
 
