@@ -1,6 +1,5 @@
 package hu.bme.aut.fitary.dataSource
 
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.ChildEventListener
@@ -23,7 +22,6 @@ class WorkoutDAO @Inject constructor() {
     private val database = FirebaseDatabase.getInstance()
 
     private val workoutMap = mutableMapOf<String?, Workout>()
-    val workouts = MutableLiveData<MutableList<Workout>>()
 
     val workoutsFlow = MutableSharedFlow<List<Workout>>(
         replay = 1,
@@ -38,12 +36,18 @@ class WorkoutDAO @Inject constructor() {
                 override fun onChildAdded(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) = updateLocalWorkouts(dataSnapshot, previousChildName)
+                ) = workoutUpsertHandler(
+                    workout = dataSnapshot.getValue(Workout::class.java),
+                    dbNodeId = previousChildName
+                )
 
                 override fun onChildChanged(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) = updateLocalWorkouts(dataSnapshot, previousChildName)
+                ) = workoutUpsertHandler(
+                    workout = dataSnapshot.getValue(Workout::class.java),
+                    dbNodeId = previousChildName
+                )
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                     val workout = dataSnapshot.getValue(Workout::class.java)
@@ -57,6 +61,8 @@ class WorkoutDAO @Inject constructor() {
                         for (key in keys) {
                             workoutMap.remove(key)
                         }
+
+                        emitNewStateOfWorkouts()
                     }
 
                 }
@@ -80,18 +86,19 @@ class WorkoutDAO @Inject constructor() {
             })
     }
 
-    private fun updateLocalWorkouts(dataSnapshot: DataSnapshot, previousChildName: String?) {
-        val workout = dataSnapshot.getValue(Workout::class.java)
-
+    private fun workoutUpsertHandler(workout: Workout?, dbNodeId: String?) {
         if (workout != null) {
-            workoutMap[previousChildName] = workout
-            val newState = workoutMap.values.toMutableList()
+            workoutMap[dbNodeId] = workout
 
-            workouts.value = newState
+            emitNewStateOfWorkouts()
+        }
+    }
 
-            CoroutineScope(Dispatchers.Default).launch {
-                workoutsFlow.emit(newState)
-            }
+    private fun emitNewStateOfWorkouts() {
+        val newState = workoutMap.values.toMutableList()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            workoutsFlow.emit(newState)
         }
     }
 

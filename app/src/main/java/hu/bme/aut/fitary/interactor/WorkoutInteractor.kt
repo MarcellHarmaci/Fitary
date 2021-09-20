@@ -1,6 +1,5 @@
 package hu.bme.aut.fitary.interactor
 
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.dataSource.FirebaseDataSource
@@ -16,14 +15,12 @@ import javax.inject.Singleton
 @Singleton
 class WorkoutInteractor @Inject constructor(
     private val firebaseDataSource: FirebaseDataSource
-) : Observable<MutableList<DomainWorkout>> {
+) {
 
     private var currentUserId: String? = null
 
-    override val observers = mutableListOf<Observer<MutableList<DomainWorkout>>>()
-
     val allWorkoutsFlow = firebaseDataSource.workoutsFlow.shareIn(
-        scope = CoroutineScope(Dispatchers.Default),
+        scope = CoroutineScope(Dispatchers.IO),
         started = SharingStarted.Eagerly,
         replay = 1
     )
@@ -36,25 +33,10 @@ class WorkoutInteractor @Inject constructor(
             it.uid == currentUserId
         }
     }.shareIn(
-        scope = CoroutineScope(Dispatchers.Default),
+        scope = CoroutineScope(Dispatchers.IO),
         started = SharingStarted.Eagerly,
         replay = 1
     )
-
-
-    val userWorkoutsLiveData = MutableLiveData<MutableList<DomainWorkout>>()
-
-    init {
-
-        firebaseDataSource.workouts.observeForever { observedWorkouts ->
-            if (currentUserId != null) {
-                userWorkoutsLiveData.value = observedWorkouts.filter {
-                    it.uid == currentUserId
-                }.toMutableList()
-            }
-        }
-
-    }
 
     suspend fun saveWorkout(
         workout: DomainWorkout,

@@ -5,12 +5,12 @@ import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 class SocialWorkoutsViewModel @Inject constructor(
-    private val socialWorkoutsPresenter: SocialWorkoutsPresenter
+    private val presenter: SocialWorkoutsPresenter
 ) : RainbowCakeViewModel<SocialWorkoutsViewState>(Loading) {
 
     init {
         executeNonBlocking {
-            socialWorkoutsPresenter.workoutsFlow.collect {
+            presenter.workouts.collect {
                 viewState = SocialWorkoutsLoaded(it)
             }
         }
