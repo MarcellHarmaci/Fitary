@@ -13,9 +13,6 @@ import kotlinx.android.synthetic.main.fragment_chart_pie.*
 
 class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewModel>() {
 
-    // TODO ViewModel is not bound to Activity scope!
-    //  It will get destroyed upon Fragment destruction!
-    //  Bind it to MainActivity or cancel flow collection on destruction
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_chart_pie
 
@@ -33,6 +30,12 @@ class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewMode
             extraLeftOffset = 30f
             extraRightOffset = 30f
         }
+    }
+
+    override fun onDestroy() {
+        viewModel.cancelFlowCollection()
+
+        super.onDestroy()
     }
 
     override fun render(viewState: PieChartViewState) {
