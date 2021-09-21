@@ -29,7 +29,7 @@ class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewMode
 
             setDrawEntryLabels(true)
             setEntryLabelColor(Color.BLACK)
-            
+
             extraLeftOffset = 30f
             extraRightOffset = 30f
         }
@@ -38,9 +38,15 @@ class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewMode
     override fun render(viewState: PieChartViewState) {
         when (viewState) {
             is Loading -> {
-                // TODO
+                // TODO Display loading indication
             }
-            is ExercisesLoaded -> renderPieChart(viewState.exercises)
+            is ExercisesLoaded -> {
+                if (viewState.exercises.isNotEmpty()) {
+                    renderPieChart(viewState.exercises)
+                } else {
+                    // TODO Display loading indication
+                }
+            }
         }.exhaustive
     }
 

@@ -25,9 +25,15 @@ class SocialWorkoutsFragment :
                 pbListLoading.visibility = View.VISIBLE
             }
             is SocialWorkoutsLoaded -> {
-                pbListLoading.visibility = View.GONE
-                workoutAdapter.submitList(viewState.workouts)
-                rvSocialWorkouts.smoothScrollToPosition(workoutAdapter.itemCount - 1)
+                if (viewState.workouts.isNotEmpty()) {
+                    pbListLoading.visibility = View.GONE
+                    workoutAdapter.submitList(viewState.workouts)
+
+                    rvSocialWorkouts.smoothScrollToPosition(workoutAdapter.itemCount - 1)
+                }
+                else {
+                    pbListLoading.visibility = View.VISIBLE
+                }
             }
         }.exhaustive
     }
