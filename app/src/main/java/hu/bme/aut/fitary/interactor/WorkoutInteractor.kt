@@ -7,8 +7,9 @@ import hu.bme.aut.fitary.domainModel.DomainWorkout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,23 +20,23 @@ class WorkoutInteractor @Inject constructor(
 
     private var currentUserId: String? = null
 
-    val allWorkoutsFlow = firebaseDataSource.workoutsFlow.shareIn(
+    val allWorkoutsFlow: StateFlow<List<DomainWorkout>> = firebaseDataSource.workoutsFlow.stateIn(
         scope = CoroutineScope(Dispatchers.IO),
-        started = SharingStarted.Eagerly,
-        replay = 1
+        started = SharingStarted.Lazily,
+        initialValue = listOf()
     )
 
-    val userWorkoutsFlow = firebaseDataSource.workoutsFlow.map { collectedWorkouts ->
-        collectedWorkouts.filter {
+    val userWorkoutsFlow: StateFlow<List<DomainWorkout>> = firebaseDataSource.workoutsFlow.map {
+        it.filter { domainWorkout ->
             if (currentUserId == null)
                 currentUserId = firebaseDataSource.getCurrentUserId()
 
-            it.uid == currentUserId
+            domainWorkout.uid == currentUserId
         }
-    }.shareIn(
+    }.stateIn(
         scope = CoroutineScope(Dispatchers.IO),
-        started = SharingStarted.Eagerly,
-        replay = 1
+        started = SharingStarted.Lazily,
+        initialValue = listOf()
     )
 
     suspend fun saveWorkout(

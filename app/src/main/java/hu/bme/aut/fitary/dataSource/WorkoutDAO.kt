@@ -9,8 +9,7 @@ import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.Workout
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -23,10 +22,7 @@ class WorkoutDAO @Inject constructor() {
 
     private val workoutMap = mutableMapOf<String?, Workout>()
 
-    val workoutsFlow = MutableSharedFlow<List<Workout>>(
-        replay = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    val workoutsFlow = MutableStateFlow<List<Workout>>(listOf())
 
     init {
         database

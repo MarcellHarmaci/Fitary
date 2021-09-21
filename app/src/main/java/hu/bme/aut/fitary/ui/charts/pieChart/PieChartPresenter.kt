@@ -9,10 +9,10 @@ class PieChartPresenter @Inject constructor(
     private val workoutInteractor: WorkoutInteractor,
 ) {
 
-    val exercises : Flow<List<Exercise>> = workoutInteractor.userWorkoutsFlow.map { collectedWorkouts ->
+    val exercises: Flow<List<Exercise>> = workoutInteractor.userWorkoutsFlow.map {
         val exerciseMap = mutableMapOf<String, Double>()
 
-        collectedWorkouts.forEach { domainWorkout ->
+        it.forEach { domainWorkout ->
             domainWorkout.domainExercises.forEach { domainExercise ->
 
                 val currentScore: Double? = exerciseMap[domainExercise.name]
@@ -25,10 +25,10 @@ class PieChartPresenter @Inject constructor(
             }
         }
 
-        exerciseMap.map {
+        exerciseMap.map { pair ->
             Exercise(
-                name = it.key,
-                sumOfScore = it.value
+                name = pair.key,
+                sumOfScore = pair.value
             )
         }
     }
