@@ -1,5 +1,7 @@
 package hu.bme.aut.fitary.dataSource
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -33,6 +35,7 @@ class UserDAO @Inject constructor() {
                     newUser?.let { _users += Pair(it.id, it) }
                 }
 
+                @RequiresApi(Build.VERSION_CODES.N)
                 override fun onChildChanged(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
@@ -55,6 +58,8 @@ class UserDAO @Inject constructor() {
                 }
             })
     }
+
+    suspend fun getCurrentUserId() = auth.currentUser?.uid
 
     suspend fun saveUser(user: UserProfile) {
         if (_users.containsKey(user.id) && _users[user.id] == user)

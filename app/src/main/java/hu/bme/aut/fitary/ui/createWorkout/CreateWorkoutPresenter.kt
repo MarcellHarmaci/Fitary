@@ -31,7 +31,7 @@ class CreateWorkoutPresenter @Inject constructor(
         comment: String?,
         onSuccessListener: OnSuccessListener<Void>,
         onFailureListener: OnFailureListener
-    ) {
+    ) = withIOContext {
 
         val currentUser = userInteractor.getCurrentUser()
         var workoutScore = BigDecimal(0)

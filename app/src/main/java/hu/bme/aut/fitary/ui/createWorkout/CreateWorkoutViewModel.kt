@@ -8,7 +8,7 @@ import hu.bme.aut.fitary.ui.createWorkout.dialog.*
 import javax.inject.Inject
 
 class CreateWorkoutViewModel @Inject constructor(
-    private val createWorkoutPresenter: CreateWorkoutPresenter
+    private val presenter: CreateWorkoutPresenter
 ) : RainbowCakeViewModel<CreateWorkoutViewState>(Loading),
     ResultHandler, OnSuccessListener<Void>, OnFailureListener {
 
@@ -36,8 +36,8 @@ class CreateWorkoutViewModel @Inject constructor(
     }
 
     fun createAddExerciseDialog() = execute {
-        val exerciseNames = createWorkoutPresenter.getExerciseNames()
-        val exerciseScores = createWorkoutPresenter.getExerciseScores()
+        val exerciseNames = presenter.getExerciseNames()
+        val exerciseScores = presenter.getExerciseScores()
 
         val dialog = AddExerciseDialog(exerciseNames, exerciseScores)
         dialog.setResultHandler(this)
@@ -71,7 +71,7 @@ class CreateWorkoutViewModel @Inject constructor(
     fun saveWorkout() = execute {
         viewState = SavingWorkout
 
-        createWorkoutPresenter.saveWorkout(exercises, comment, this, this)
+        presenter.saveWorkout(exercises, comment, this, this)
     }
 
     override fun onSuccess(void: Void?) {

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
-import co.zsmb.rainbowcake.base.ViewModelScope
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
@@ -16,14 +15,8 @@ class SocialWorkoutsFragment :
 
     private lateinit var workoutAdapter: WorkoutListAdapter
 
-    override fun provideViewModel() = getViewModelFromFactory(scope = ViewModelScope.Activity)
+    override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_workouts_social
-
-    override fun onStart() {
-        super.onStart()
-
-        viewModel.loadWorkouts()
-    }
 
     override fun render(viewState: SocialWorkoutsViewState) {
         when (viewState) {
@@ -31,9 +24,15 @@ class SocialWorkoutsFragment :
                 pbListLoading.visibility = View.VISIBLE
             }
             is SocialWorkoutsLoaded -> {
-                pbListLoading.visibility = View.GONE
-                workoutAdapter.submitList(viewState.workouts)
-                rvSocialWorkouts.smoothScrollToPosition(workoutAdapter.itemCount - 1)
+                if (viewState.workouts.isNotEmpty()) {
+                    pbListLoading.visibility = View.GONE
+                    workoutAdapter.submitList(viewState.workouts)
+
+                    rvSocialWorkouts.smoothScrollToPosition(workoutAdapter.itemCount - 1)
+                }
+                else {
+                    pbListLoading.visibility = View.VISIBLE
+                }
             }
         }.exhaustive
     }

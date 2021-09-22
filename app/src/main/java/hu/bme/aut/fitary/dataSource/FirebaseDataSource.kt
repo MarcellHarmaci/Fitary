@@ -1,7 +1,5 @@
 package hu.bme.aut.fitary.dataSource
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.dataSource.model.UserProfile
@@ -9,12 +7,14 @@ import hu.bme.aut.fitary.dataSource.model.Workout
 import hu.bme.aut.fitary.domainModel.DomainExercise
 import hu.bme.aut.fitary.domainModel.DomainUser
 import hu.bme.aut.fitary.domainModel.DomainWorkout
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/* Responsibilities:
-    Mapping from data models to domain models
-    Providing access to CRUD operations
+/** Responsibilities:
+ * Mapping from data models to domain models;
+ * Providing access to CRUD operations.
  */
 @Singleton
 class FirebaseDataSource @Inject constructor(
@@ -23,12 +23,10 @@ class FirebaseDataSource @Inject constructor(
     private val workoutDAO: WorkoutDAO
 ) {
 
-    val workouts = MutableLiveData<MutableList<DomainWorkout>>()
-
-    private val workoutObserver = Observer<MutableList<Workout>> {
-        workouts.value = it.map { workout ->
-
+    var workoutsFlow: Flow<List<DomainWorkout>> = workoutDAO.workoutsFlow.map {
+        it.map { workout ->
             var score = 0.0
+
             for (i in 0 until workout.exercises.size) {
                 val scorePerRep = exerciseDAO.getExerciseScoreById(workout.exercises[i]) ?: 0.0
                 score += scorePerRep * workout.reps[i]
@@ -41,11 +39,7 @@ class FirebaseDataSource @Inject constructor(
                 score = score,
                 comment = workout.comment
             )
-        }.toMutableList()
-    }
-
-    init {
-        workoutDAO.workouts.observeForever(workoutObserver)
+        }
     }
 
     // TODO Improve mapping code style
@@ -75,6 +69,8 @@ class FirebaseDataSource @Inject constructor(
 
         userDAO.saveUser(newUser)
     }
+
+    suspend fun getCurrentUserId() = userDAO.getCurrentUserId()
 
     suspend fun getCurrentUser(): DomainUser? {
         return userDAO.currentUser?.let { userProfile ->
