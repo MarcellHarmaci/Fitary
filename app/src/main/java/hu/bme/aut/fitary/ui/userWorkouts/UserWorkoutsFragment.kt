@@ -18,12 +18,6 @@ class UserWorkoutsFragment :
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_workouts_user
 
-    override fun onDestroy() {
-        viewModel.cancelFlowCollection()
-
-        super.onDestroy()
-    }
-
     override fun render(viewState: UserWorkoutsViewState) {
         when (viewState) {
             is Loading -> {

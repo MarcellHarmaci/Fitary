@@ -32,12 +32,6 @@ class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewMode
         }
     }
 
-    override fun onDestroy() {
-        viewModel.cancelFlowCollection()
-
-        super.onDestroy()
-    }
-
     override fun render(viewState: PieChartViewState) {
         when (viewState) {
             is Loading -> {
