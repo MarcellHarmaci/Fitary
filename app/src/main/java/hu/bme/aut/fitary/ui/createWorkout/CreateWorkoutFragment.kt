@@ -2,6 +2,9 @@ package hu.bme.aut.fitary.ui.createWorkout
 
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.view.ContextMenu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
@@ -60,6 +63,8 @@ class CreateWorkoutFragment :
         etComment.doOnTextChanged { text, _, _, _ ->
             viewModel.comment = text.toString()
         }
+
+        registerForContextMenu(rvExercises)
     }
 
     override fun onStop() {
@@ -121,7 +126,7 @@ class CreateWorkoutFragment :
     }
 
     override fun onSaveFinished(isSuccessful: Boolean) {
-        when(isSuccessful) {
+        when (isSuccessful) {
             true ->
                 (activity as MainActivity).onSupportNavigateUp()
             false -> {
@@ -129,6 +134,22 @@ class CreateWorkoutFragment :
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        view: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        super.onCreateContextMenu(menu, view, menuInfo)
+
+        val inflater = MenuInflater(context)
+        inflater.inflate(R.menu.exercise_context_menu, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        viewModel.onContextItemSelected(item)
+        return true
     }
 
 }

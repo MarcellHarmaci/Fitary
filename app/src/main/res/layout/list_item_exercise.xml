@@ -4,14 +4,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:longClickable="true">
 
     <TextView
         android:id="@+id/tvExerciseName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/exercise"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:maxLines="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +23,7 @@
         android:id="@+id/tvReps"
         android:layout_width="64dp"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:gravity="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvScore"
@@ -32,7 +33,7 @@
         android:id="@+id/tvScore"
         android:layout_width="64dp"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:gravity="end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

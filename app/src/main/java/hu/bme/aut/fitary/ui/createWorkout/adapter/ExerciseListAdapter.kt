@@ -17,8 +17,8 @@ class ExerciseListAdapter(
     private val createWorkoutViewModel: CreateWorkoutViewModel,
     private val fragmentManager: FragmentManager
 ) : ListAdapter<CreateWorkoutPresenter.Exercise, ExerciseListAdapter.ExerciseViewHolder>(
-        ExerciseComparator
-    ) {
+    ExerciseComparator
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseViewHolder {
         val view = LayoutInflater
@@ -33,7 +33,7 @@ class ExerciseListAdapter(
         holder.bind(exercise)
     }
 
-    class ExerciseViewHolder(
+    inner class ExerciseViewHolder(
         itemView: View,
         private val createWorkoutViewModel: CreateWorkoutViewModel,
         private val fragmentManager: FragmentManager
@@ -49,6 +49,10 @@ class ExerciseListAdapter(
             itemView.setOnClickListener {
                 createWorkoutViewModel.createEditExerciseDialog(layoutPosition)
             }
+
+            // TODO Remove if RecyclerView has to be registered instead
+//            val createWorkoutFragment = fragmentManager.primaryNavigationFragment
+//            createWorkoutFragment?.registerForContextMenu(itemView)
         }
 
         fun bind(exercise: CreateWorkoutPresenter.Exercise) {

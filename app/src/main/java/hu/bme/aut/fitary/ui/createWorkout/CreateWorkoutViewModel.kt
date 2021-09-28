@@ -1,9 +1,11 @@
 package hu.bme.aut.fitary.ui.createWorkout
 
+import android.view.MenuItem
 import androidx.lifecycle.MutableLiveData
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.createWorkout.dialog.*
 import javax.inject.Inject
 
@@ -81,6 +83,23 @@ class CreateWorkoutViewModel @Inject constructor(
     override fun onFailure(exception: Exception) {
         viewState = WorkoutCreationInProgress(exercises, comment)
         saveFinishedHandler?.onSaveFinished(false)
+    }
+
+    fun onContextItemSelected(item: MenuItem) = execute {
+        val position = 0 // TODO get item position
+//        val position = (item.menuInfo as AdapterView.AdapterContextMenuInfo).position // TODO This is always null
+
+        when (item.itemId) {
+            R.id.context_item_duplicate_exercise -> {
+                val duplicate = exercises[position].copy()
+                exercises.add(position + 1, duplicate)
+                exercisesLiveData.value = exercises
+            }
+            R.id.context_item_delete_exercise -> {
+                exercises.removeAt(position)
+                exercisesLiveData.value = exercises
+            }
+        }
     }
 
 }
