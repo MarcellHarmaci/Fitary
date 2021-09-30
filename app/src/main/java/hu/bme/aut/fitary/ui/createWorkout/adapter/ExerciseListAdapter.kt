@@ -50,9 +50,9 @@ class ExerciseListAdapter(
                 createWorkoutViewModel.createEditExerciseDialog(layoutPosition)
             }
 
-            // TODO Remove if RecyclerView has to be registered instead
-//            val createWorkoutFragment = fragmentManager.primaryNavigationFragment
-//            createWorkoutFragment?.registerForContextMenu(itemView)
+            // Set OnCreateContextMenuListener
+            val createWorkoutFragment = fragmentManager.primaryNavigationFragment
+            createWorkoutFragment?.registerForContextMenu(itemView)
         }
 
         fun bind(exercise: CreateWorkoutPresenter.Exercise) {
@@ -64,5 +64,6 @@ class ExerciseListAdapter(
         override fun onEditExerciseDialogReady(dialog: DialogFragment) {
             dialog.show(fragmentManager, "Edit exercise")
         }
+
     }
 }

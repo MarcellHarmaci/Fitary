@@ -1,12 +1,14 @@
 package hu.bme.aut.fitary.ui.createWorkout
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.ContextMenu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.iterator
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -63,8 +65,6 @@ class CreateWorkoutFragment :
         etComment.doOnTextChanged { text, _, _, _ ->
             viewModel.comment = text.toString()
         }
-
-        registerForContextMenu(rvExercises)
     }
 
     override fun onStop() {
@@ -98,6 +98,9 @@ class CreateWorkoutFragment :
         exerciseAdapter = ExerciseListAdapter(viewModel, parentFragmentManager)
         rvExercises.adapter = exerciseAdapter
         rvExercises.layoutManager = LinearLayoutManager(view.context)
+
+        // TODO What do I resister? RecyclerView or ViewHolder's ItemView?
+//        registerForContextMenu(rvExercises)
     }
 
     override fun onAddExerciseDialogReady(dialog: DialogFragment) {
@@ -145,10 +148,18 @@ class CreateWorkoutFragment :
 
         val inflater = MenuInflater(context)
         inflater.inflate(R.menu.exercise_context_menu, menu)
+
+        val position = rvExercises.getChildAdapterPosition(view)
+        val posIntent = Intent().putExtra("position", position)
+
+        menu.iterator().forEach {
+            it.intent = posIntent
+        }
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        viewModel.onContextItemSelected(item)
+        val position = item.intent.getIntExtra("position", 0)
+        viewModel.onContextItemSelected(item, position)
         return true
     }
 

@@ -85,10 +85,7 @@ class CreateWorkoutViewModel @Inject constructor(
         saveFinishedHandler?.onSaveFinished(false)
     }
 
-    fun onContextItemSelected(item: MenuItem) = execute {
-        val position = 0 // TODO get item position
-//        val position = (item.menuInfo as AdapterView.AdapterContextMenuInfo).position // TODO This is always null
-
+    fun onContextItemSelected(item: MenuItem, position: Int) = execute {
         when (item.itemId) {
             R.id.context_item_duplicate_exercise -> {
                 val duplicate = exercises[position].copy()
