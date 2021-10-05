@@ -31,6 +31,18 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
         val navController = findNavController(R.id.nav_host_fragment)
+
+        navController.addOnDestinationChangedListener { _, destination, arguments ->
+            when (destination.id) {
+                R.id.nav_edit_or_create_workout -> {
+                    if (arguments?.getString("workout_id") != null)
+                        destination.label = "Edit workout"
+                    else
+                        destination.label = "Create workout"
+                }
+            }
+        }
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         appBarConfiguration = AppBarConfiguration(
@@ -43,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         fab = findViewById(R.id.fab)
         fab.setOnClickListener {
             setFloatingActionButtonVisible(false)
-            navController.navigate(R.id.nav_create_workout)
+            navController.navigate(R.id.nav_edit_or_create_workout)
         }
     }
 

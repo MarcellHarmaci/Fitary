@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout
+package hu.bme.aut.fitary.ui.editWorkout
 
 import android.app.ProgressDialog
 import android.content.Intent
@@ -18,20 +18,20 @@ import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.ui.createWorkout.adapter.ExerciseListAdapter
-import hu.bme.aut.fitary.ui.createWorkout.dialog.AddExerciseDialogHandler
-import kotlinx.android.synthetic.main.fragment_create_workout.*
+import hu.bme.aut.fitary.ui.editWorkout.adapter.ExerciseListAdapter
+import hu.bme.aut.fitary.ui.editWorkout.dialog.AddExerciseDialogHandler
+import kotlinx.android.synthetic.main.fragment_edit_or_create_workout.*
 
-class CreateWorkoutFragment :
-    RainbowCakeFragment<CreateWorkoutViewState, CreateWorkoutViewModel>(),
+class EditWorkoutFragment :
+    RainbowCakeFragment<EditWorkoutViewState, EditWorkoutViewModel>(),
     AddExerciseDialogHandler,
-    CreateWorkoutViewModel.WorkoutSavingFinishedHandler {
+    EditWorkoutViewModel.WorkoutSavingFinishedHandler {
 
     private lateinit var exerciseAdapter: ExerciseListAdapter
     private var progressDialog: ProgressDialog? = null
 
     override fun provideViewModel() = getViewModelFromFactory()
-    override fun getViewResource() = R.layout.fragment_create_workout
+    override fun getViewResource() = R.layout.fragment_edit_or_create_workout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,18 +84,18 @@ class CreateWorkoutFragment :
         super.onStop()
     }
 
-    override fun render(viewState: CreateWorkoutViewState) {
+    override fun render(viewState: EditWorkoutViewState) {
         when (viewState) {
             is Loading -> {
                 hideProgressDialog()
             }
-            is WorkoutCreationInProgress -> {
+            is Editing -> {
                 hideProgressDialog()
 
                 exerciseAdapter.submitList(viewState.exercises)
                 etComment.setText(viewState.comment ?: "")
             }
-            is SavingWorkout -> {
+            is Saving -> {
                 showProgressDialog()
             }
         }.exhaustive

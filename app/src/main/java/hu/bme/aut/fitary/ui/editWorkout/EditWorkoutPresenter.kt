@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout
+package hu.bme.aut.fitary.ui.editWorkout
 
 import co.zsmb.rainbowcake.withIOContext
 import com.google.android.gms.tasks.OnFailureListener
@@ -12,7 +12,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
 
-class CreateWorkoutPresenter @Inject constructor(
+class EditWorkoutPresenter @Inject constructor(
     private val workoutInteractor: WorkoutInteractor,
     private val exerciseInteractor: ExerciseInteractor,
     private val userInteractor: UserInteractor

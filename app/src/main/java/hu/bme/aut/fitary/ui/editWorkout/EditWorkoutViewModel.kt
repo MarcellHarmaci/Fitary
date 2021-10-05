@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout
+package hu.bme.aut.fitary.ui.editWorkout
 
 import android.view.MenuItem
 import androidx.lifecycle.MutableLiveData
@@ -6,17 +6,17 @@ import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.ui.createWorkout.dialog.*
+import hu.bme.aut.fitary.ui.editWorkout.dialog.*
 import javax.inject.Inject
 
-class CreateWorkoutViewModel @Inject constructor(
-    private val presenter: CreateWorkoutPresenter
-) : RainbowCakeViewModel<CreateWorkoutViewState>(Loading),
+class EditWorkoutViewModel @Inject constructor(
+    private val presenter: EditWorkoutPresenter
+) : RainbowCakeViewModel<EditWorkoutViewState>(Loading),
     ResultHandler, OnSuccessListener<Void>, OnFailureListener {
 
     var comment: String? = null
-    private val exercises = mutableListOf<CreateWorkoutPresenter.Exercise>()
-    val exercisesLiveData = MutableLiveData<MutableList<CreateWorkoutPresenter.Exercise>>()
+    private val exercises = mutableListOf<EditWorkoutPresenter.Exercise>()
+    val exercisesLiveData = MutableLiveData<MutableList<EditWorkoutPresenter.Exercise>>()
 
     interface WorkoutSavingFinishedHandler {
         fun onSaveFinished(isSuccessful: Boolean)
@@ -56,12 +56,12 @@ class CreateWorkoutViewModel @Inject constructor(
         editExerciseDialogHandler?.onEditExerciseDialogReady(dialog)
     }
 
-    override fun onAddDialogResult(exercise: CreateWorkoutPresenter.Exercise) {
+    override fun onAddDialogResult(exercise: EditWorkoutPresenter.Exercise) {
         exercises += exercise
         exercisesLiveData.value = exercises
     }
 
-    override fun onEditDialogResult(exercise: CreateWorkoutPresenter.Exercise, position: Int) {
+    override fun onEditDialogResult(exercise: EditWorkoutPresenter.Exercise, position: Int) {
         exercises[position] = exercise
         exercisesLiveData.value = exercises
     }
@@ -71,7 +71,7 @@ class CreateWorkoutViewModel @Inject constructor(
     }
 
     fun saveWorkout() = execute {
-        viewState = SavingWorkout
+        viewState = Saving
 
         presenter.saveWorkout(exercises, comment, this, this)
     }
@@ -81,7 +81,7 @@ class CreateWorkoutViewModel @Inject constructor(
     }
 
     override fun onFailure(exception: Exception) {
-        viewState = WorkoutCreationInProgress(
+        viewState = Editing(
             exercises = exercises,
             comment = comment
         )
@@ -106,7 +106,7 @@ class CreateWorkoutViewModel @Inject constructor(
         val workout = presenter.loadWorkout(workoutId)
 
         workout?.let {
-            viewState = WorkoutCreationInProgress(
+            viewState = Editing(
                 exercises = it.exercises,
                 score = it.score.toDouble(),
                 comment = it.comment

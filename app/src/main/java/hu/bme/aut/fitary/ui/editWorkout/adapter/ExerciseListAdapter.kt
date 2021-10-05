@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout.adapter
+package hu.bme.aut.fitary.ui.editWorkout.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,15 +8,15 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
-import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutViewModel
-import hu.bme.aut.fitary.ui.createWorkout.dialog.EditExerciseDialogHandler
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutPresenter
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutViewModel
+import hu.bme.aut.fitary.ui.editWorkout.dialog.EditExerciseDialogHandler
 import kotlinx.android.synthetic.main.list_item_exercise.view.*
 
 class ExerciseListAdapter(
-    private val createWorkoutViewModel: CreateWorkoutViewModel,
+    private val editWorkoutViewModel: EditWorkoutViewModel,
     private val fragmentManager: FragmentManager
-) : ListAdapter<CreateWorkoutPresenter.Exercise, ExerciseListAdapter.ExerciseViewHolder>(
+) : ListAdapter<EditWorkoutPresenter.Exercise, ExerciseListAdapter.ExerciseViewHolder>(
     ExerciseComparator
 ) {
 
@@ -25,7 +25,7 @@ class ExerciseListAdapter(
             .from(parent.context)
             .inflate(R.layout.list_item_exercise, parent, false)
 
-        return ExerciseViewHolder(view, createWorkoutViewModel, fragmentManager)
+        return ExerciseViewHolder(view, editWorkoutViewModel, fragmentManager)
     }
 
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
@@ -35,7 +35,7 @@ class ExerciseListAdapter(
 
     inner class ExerciseViewHolder(
         itemView: View,
-        private val createWorkoutViewModel: CreateWorkoutViewModel,
+        private val editWorkoutViewModel: EditWorkoutViewModel,
         private val fragmentManager: FragmentManager
     ) : RecyclerView.ViewHolder(itemView), EditExerciseDialogHandler {
 
@@ -44,10 +44,10 @@ class ExerciseListAdapter(
         private val tvScore = itemView.tvScore
 
         init {
-            createWorkoutViewModel.setEditExerciseDialogHandler(this)
+            editWorkoutViewModel.setEditExerciseDialogHandler(this)
 
             itemView.setOnClickListener {
-                createWorkoutViewModel.createEditExerciseDialog(layoutPosition)
+                editWorkoutViewModel.createEditExerciseDialog(layoutPosition)
             }
 
             // Set OnCreateContextMenuListener
@@ -55,7 +55,7 @@ class ExerciseListAdapter(
             createWorkoutFragment?.registerForContextMenu(itemView)
         }
 
-        fun bind(exercise: CreateWorkoutPresenter.Exercise) {
+        fun bind(exercise: EditWorkoutPresenter.Exercise) {
             tvName.text = exercise.name
             tvReps.text = exercise.reps.toString()
             tvScore.text = exercise.score.toString()

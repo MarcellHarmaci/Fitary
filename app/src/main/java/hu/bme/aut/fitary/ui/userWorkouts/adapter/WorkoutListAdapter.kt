@@ -41,7 +41,7 @@ class WorkoutListAdapter(
 
             itemView.setOnClickListener {
                 val bundle = bundleOf("workout_id" to workoutId)
-                navController.navigate(R.id.nav_create_workout, bundle)
+                navController.navigate(R.id.nav_edit_or_create_workout, bundle)
             }
         }
 
