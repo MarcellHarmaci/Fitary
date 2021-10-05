@@ -12,6 +12,7 @@ class UserWorkoutsPresenter @Inject constructor(
     val workouts: Flow<List<Workout>> = workoutInteractor.userWorkoutsFlow.map {
         it.map { domainWorkout ->
             Workout(
+                id = domainWorkout.id,
                 score = domainWorkout.score,
                 comment = domainWorkout.comment ?: "-"
             )
@@ -20,6 +21,7 @@ class UserWorkoutsPresenter @Inject constructor(
 
     // Presentation model
     data class Workout(
+        val id: String?,
         val score: Double,
         val comment: String
     )

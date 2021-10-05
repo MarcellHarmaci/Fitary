@@ -81,7 +81,10 @@ class CreateWorkoutViewModel @Inject constructor(
     }
 
     override fun onFailure(exception: Exception) {
-        viewState = WorkoutCreationInProgress(exercises, comment)
+        viewState = WorkoutCreationInProgress(
+            exercises = exercises,
+            comment = comment
+        )
         saveFinishedHandler?.onSaveFinished(false)
     }
 
@@ -96,6 +99,18 @@ class CreateWorkoutViewModel @Inject constructor(
                 exercises.removeAt(position)
                 exercisesLiveData.value = exercises
             }
+        }
+    }
+
+    fun loadWorkout(workoutId: String) = execute {
+        val workout = presenter.loadWorkout(workoutId)
+
+        workout?.let {
+            viewState = WorkoutCreationInProgress(
+                exercises = it.exercises,
+                score = it.score.toDouble(),
+                comment = it.comment
+            )
         }
     }
 

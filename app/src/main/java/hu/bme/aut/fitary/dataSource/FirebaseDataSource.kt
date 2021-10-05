@@ -24,7 +24,10 @@ class FirebaseDataSource @Inject constructor(
 ) {
 
     var workoutsFlow: Flow<List<DomainWorkout>> = workoutDAO.workoutsFlow.map {
-        it.map { workout ->
+        it.map { pair ->
+            val workoutId = pair.first
+            val workout = pair.second
+
             var score = 0.0
 
             for (i in 0 until workout.exercises.size) {
@@ -33,6 +36,7 @@ class FirebaseDataSource @Inject constructor(
             }
 
             DomainWorkout(
+                id = workoutId,
                 uid = workout.uid ?: "Unknown user",
                 username = userDAO.users[workout.uid]?.username ?: "No username",
                 domainExercises = mapWorkoutExercisesToDomain(workout),
@@ -130,7 +134,13 @@ class FirebaseDataSource @Inject constructor(
             comment = domainWorkout.comment
         )
 
-        workoutDAO.saveWorkout(newWorkout, onSuccessListener, onFailureListener)
+        val key = domainWorkout.id
+        if (key.isNullOrBlank()) {
+            workoutDAO.saveWorkout(newWorkout, onSuccessListener, onFailureListener)
+        }
+        else {
+            workoutDAO.updateWorkout(key, newWorkout, onSuccessListener, onFailureListener)
+        }
     }
 
 }

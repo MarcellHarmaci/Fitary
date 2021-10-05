@@ -22,7 +22,7 @@ class WorkoutDAO @Inject constructor() {
 
     private val workoutMap = mutableMapOf<String?, Workout>()
 
-    val workoutsFlow = MutableStateFlow<List<Workout>>(listOf())
+    val workoutsFlow = MutableStateFlow<List<Pair<String?, Workout>>>(listOf())
 
     init {
         database
@@ -91,10 +91,8 @@ class WorkoutDAO @Inject constructor() {
     }
 
     private fun emitNewStateOfWorkouts() {
-        val newState = workoutMap.values.toMutableList()
-
         CoroutineScope(Dispatchers.IO).launch {
-            workoutsFlow.emit(newState)
+            workoutsFlow.emit(workoutMap.toList())
         }
     }
 
@@ -107,6 +105,20 @@ class WorkoutDAO @Inject constructor() {
             .child("workouts")
             .push().key ?: return
 
+        database.reference
+            .child("workouts")
+            .child(key)
+            .setValue(workout)
+            .addOnSuccessListener(onSuccessListener)
+            .addOnFailureListener(onFailureListener)
+    }
+
+    suspend fun updateWorkout(
+        key: String,
+        workout: Workout,
+        onSuccessListener: OnSuccessListener<Void>,
+        onFailureListener: OnFailureListener
+    ) {
         database.reference
             .child("workouts")
             .child(key)

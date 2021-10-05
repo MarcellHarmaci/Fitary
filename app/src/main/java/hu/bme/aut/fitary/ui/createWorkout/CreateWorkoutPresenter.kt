@@ -60,7 +60,38 @@ class CreateWorkoutPresenter @Inject constructor(
         }
     }
 
+    suspend fun loadWorkout(id: String): Workout? = withIOContext {
+        val domainWorkout: DomainWorkout? = workoutInteractor.userWorkoutsFlow.value
+            .find { it.id == id }
+
+        domainWorkout?.let {
+            val exercises = it.domainExercises.map { domainExercise ->
+                Exercise(
+                    name = domainExercise.name,
+                    reps = domainExercise.reps,
+                    scorePerRep = domainExercise.scorePerRep
+                )
+            }
+
+            Workout(
+                id = domainWorkout.id,
+                exercises = exercises,
+                comment = domainWorkout.comment
+            )
+        }
+    }
+
     // Presentation model
+    data class Workout(
+        val id: String?,
+        var exercises: List<Exercise> = listOf(),
+        var comment: String?
+    ) {
+        val score: BigDecimal
+            get() = exercises.sumOf { it.score }
+                .setScale(2, RoundingMode.HALF_EVEN)
+    }
+
     data class Exercise(
         var name: String = "",
         var reps: Int = 0,

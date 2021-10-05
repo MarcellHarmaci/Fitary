@@ -33,6 +33,15 @@ class CreateWorkoutFragment :
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_create_workout
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val workoutId = arguments?.getString("workout_id")
+        workoutId?.let {
+            viewModel.loadWorkout(workoutId)
+        }
+    }
+
     override fun onStart() {
         super.onStart()
 
@@ -98,9 +107,6 @@ class CreateWorkoutFragment :
         exerciseAdapter = ExerciseListAdapter(viewModel, parentFragmentManager)
         rvExercises.adapter = exerciseAdapter
         rvExercises.layoutManager = LinearLayoutManager(view.context)
-
-        // TODO What do I resister? RecyclerView or ViewHolder's ItemView?
-//        registerForContextMenu(rvExercises)
     }
 
     override fun onAddExerciseDialogReady(dialog: DialogFragment) {

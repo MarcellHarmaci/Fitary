@@ -38,7 +38,7 @@ class UserWorkoutsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        workoutAdapter = WorkoutListAdapter()
+        workoutAdapter = WorkoutListAdapter(this)
         rvUserWorkouts.adapter = workoutAdapter
         rvUserWorkouts.layoutManager = LinearLayoutManager(view.context).apply {
             reverseLayout = true

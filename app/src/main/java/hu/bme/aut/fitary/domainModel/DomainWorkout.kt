@@ -1,6 +1,7 @@
 package hu.bme.aut.fitary.domainModel
 
 data class DomainWorkout (
+    val id: String? = null,
     val uid: String,
     var username: String,
     var domainExercises: MutableList<DomainExercise> = mutableListOf(),
