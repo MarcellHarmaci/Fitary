@@ -22,7 +22,7 @@ class WorkoutDAO @Inject constructor() {
 
     private val workoutMap = mutableMapOf<String?, Workout>()
 
-    val workoutsFlow = MutableStateFlow<List<Pair<String?, Workout>>>(listOf())
+    val workoutsFlow = MutableStateFlow<List<Workout>>(listOf())
 
     init {
         database
@@ -34,7 +34,7 @@ class WorkoutDAO @Inject constructor() {
                     previousChildName: String?
                 ) = workoutUpsertHandler(
                     workout = dataSnapshot.getValue(Workout::class.java),
-                    dbNodeId = previousChildName
+                    previousChildName = previousChildName
                 )
 
                 override fun onChildChanged(
@@ -42,7 +42,7 @@ class WorkoutDAO @Inject constructor() {
                     previousChildName: String?
                 ) = workoutUpsertHandler(
                     workout = dataSnapshot.getValue(Workout::class.java),
-                    dbNodeId = previousChildName
+                    previousChildName = previousChildName
                 )
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
@@ -60,7 +60,6 @@ class WorkoutDAO @Inject constructor() {
 
                         emitNewStateOfWorkouts()
                     }
-
                 }
 
                 override fun onChildMoved(
@@ -82,9 +81,9 @@ class WorkoutDAO @Inject constructor() {
             })
     }
 
-    private fun workoutUpsertHandler(workout: Workout?, dbNodeId: String?) {
+    private fun workoutUpsertHandler(workout: Workout?, previousChildName: String?) {
         if (workout != null) {
-            workoutMap[dbNodeId] = workout
+            workoutMap[workout.id] = workout
 
             emitNewStateOfWorkouts()
         }
@@ -92,7 +91,8 @@ class WorkoutDAO @Inject constructor() {
 
     private fun emitNewStateOfWorkouts() {
         CoroutineScope(Dispatchers.IO).launch {
-            workoutsFlow.emit(workoutMap.toList())
+            val newState = workoutMap.values.toList()
+            workoutsFlow.emit(newState)
         }
     }
 
@@ -104,6 +104,8 @@ class WorkoutDAO @Inject constructor() {
         val key = database.reference
             .child("workouts")
             .push().key ?: return
+
+        workout.id = key
 
         database.reference
             .child("workouts")
