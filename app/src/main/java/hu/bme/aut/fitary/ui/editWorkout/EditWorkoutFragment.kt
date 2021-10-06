@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.core.view.iterator
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
@@ -47,16 +46,6 @@ class EditWorkoutFragment :
 
         viewModel.setAddExerciseDialogHandler(this)
         viewModel.setSaveFinishedHandler(this)
-        viewModel.exercisesLiveData.observe(this, Observer {
-            it?.let {
-                exerciseAdapter.submitList(it)
-
-                // Weird behaviour here!
-                // Editing exercises doesn't update the UI unless notifyDataSetChanged() is called.
-                // Explained in more depth here: https://stackoverflow.com/a/50031492/10658813
-                exerciseAdapter.notifyDataSetChanged()
-            }
-        })
 
         btnAddExercise.setOnClickListener {
             viewModel.createAddExerciseDialog()
@@ -77,7 +66,6 @@ class EditWorkoutFragment :
     }
 
     override fun onStop() {
-        viewModel.exercisesLiveData.removeObservers(this)
         hideProgressDialog()
         (activity as MainActivity).setFloatingActionButtonVisible(true)
 
@@ -92,7 +80,12 @@ class EditWorkoutFragment :
             is Editing -> {
                 hideProgressDialog()
 
+                // Weird behaviour here!
+                // Editing exercises doesn't update the UI unless notifyDataSetChanged() is called.
+                // Explained in more depth here: https://stackoverflow.com/a/50031492/10658813
                 exerciseAdapter.submitList(viewState.exercises)
+                exerciseAdapter.notifyDataSetChanged()
+
                 etComment.setText(viewState.comment ?: "")
             }
             is Saving -> {

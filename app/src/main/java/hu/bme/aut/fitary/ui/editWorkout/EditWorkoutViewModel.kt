@@ -6,6 +6,7 @@ import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.R
+import hu.bme.aut.fitary.extensions.sumOfScores
 import hu.bme.aut.fitary.ui.editWorkout.dialog.*
 import javax.inject.Inject
 
@@ -15,8 +16,7 @@ class EditWorkoutViewModel @Inject constructor(
     ResultHandler, OnSuccessListener<Void>, OnFailureListener {
 
     var comment: String? = null
-    private val exercises = mutableListOf<EditWorkoutPresenter.Exercise>()
-    val exercisesLiveData = MutableLiveData<MutableList<EditWorkoutPresenter.Exercise>>()
+    private var exercises = mutableListOf<EditWorkoutPresenter.Exercise>()
 
     interface WorkoutSavingFinishedHandler {
         fun onSaveFinished(isSuccessful: Boolean)
@@ -56,14 +56,17 @@ class EditWorkoutViewModel @Inject constructor(
         editExerciseDialogHandler?.onEditExerciseDialogReady(dialog)
     }
 
-    override fun onAddDialogResult(exercise: EditWorkoutPresenter.Exercise) {
-        exercises += exercise
-        exercisesLiveData.value = exercises
+    override fun onAddDialogResult(exercise: EditWorkoutPresenter.Exercise) = execute {
+        exercises.plusAssign(exercise)
+        updateViewStateWithCurrentExercises()
     }
 
-    override fun onEditDialogResult(exercise: EditWorkoutPresenter.Exercise, position: Int) {
+    override fun onEditDialogResult(
+        exercise: EditWorkoutPresenter.Exercise,
+        position: Int
+    ) = execute {
         exercises[position] = exercise
-        exercisesLiveData.value = exercises
+        updateViewStateWithCurrentExercises()
     }
 
     fun validateForm(): Boolean {
@@ -93,12 +96,24 @@ class EditWorkoutViewModel @Inject constructor(
             R.id.context_item_duplicate_exercise -> {
                 val duplicate = exercises[position].copy()
                 exercises.add(position + 1, duplicate)
-                exercisesLiveData.value = exercises
+                updateViewStateWithCurrentExercises()
             }
             R.id.context_item_delete_exercise -> {
                 exercises.removeAt(position)
-                exercisesLiveData.value = exercises
+                updateViewStateWithCurrentExercises()
             }
+        }
+    }
+
+    private fun updateViewStateWithCurrentExercises() = execute {
+        if (viewState is Editing) {
+            val oldState = viewState as Editing
+
+            viewState = oldState.copy(
+                exercises = exercises,
+                score = exercises.sumOfScores(),
+                comment = oldState.comment
+            )
         }
     }
 
@@ -106,6 +121,8 @@ class EditWorkoutViewModel @Inject constructor(
         val workout = presenter.loadWorkout(workoutId)
 
         workout?.let {
+            exercises = it.exercises.toMutableList()
+
             viewState = Editing(
                 exercises = it.exercises,
                 score = it.score.toDouble(),
