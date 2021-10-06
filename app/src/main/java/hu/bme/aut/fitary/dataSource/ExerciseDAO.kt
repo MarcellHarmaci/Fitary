@@ -51,8 +51,8 @@ class ExerciseDAO @Inject constructor() {
             })
     }
 
-    fun getExerciseById(id: Long) = exercises[id]
+    suspend fun getExerciseById(id: Long) = exercises[id]
 
-    fun getExerciseScoreById(id: Long): Double? = exercises[id]?.score
+    suspend fun getExerciseScoreById(id: Long): Double? = exercises[id]?.score
 
 }

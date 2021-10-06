@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/tvScore"
-        android:layout_width="64dp"
+        android:layout_width="96dp"
         android:layout_height="wrap_content"
         android:textSize="22sp"
         android:gravity="end"

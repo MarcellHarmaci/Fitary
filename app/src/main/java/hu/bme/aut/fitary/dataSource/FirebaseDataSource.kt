@@ -48,7 +48,7 @@ class FirebaseDataSource @Inject constructor(
 
     // TODO Improve mapping code style
     //  docs: https://rainbowcake.dev/best-practices/mapping-code-style/
-    private fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
+    private suspend fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
         val domainExercises = mutableListOf<DomainExercise>()
 
         for (i in 0 until workout.exercises.size) {
@@ -56,8 +56,9 @@ class FirebaseDataSource @Inject constructor(
 
             domainExercises += DomainExercise(
                 id = exerciseId,
+                name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise",
                 reps = workout.reps[i],
-                name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
+                scorePerRep = exerciseDAO.getExerciseScoreById(exerciseId) ?: 1.0
             )
         }
 
