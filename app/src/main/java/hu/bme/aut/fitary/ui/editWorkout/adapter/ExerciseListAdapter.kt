@@ -2,23 +2,25 @@ package hu.bme.aut.fitary.ui.editWorkout.adapter
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.fitary.R
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutFragment
 import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutPresenter
 import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutViewModel
 import hu.bme.aut.fitary.ui.editWorkout.dialog.EditExerciseDialogHandler
 import kotlinx.android.synthetic.main.list_item_exercise.view.*
+import java.util.*
 
 class ExerciseListAdapter(
     private val editWorkoutViewModel: EditWorkoutViewModel,
-    private val fragmentManager: FragmentManager
+    private val fragment: EditWorkoutFragment
 ) : ListAdapter<EditWorkoutPresenter.Exercise, ExerciseListAdapter.ExerciseViewHolder>(
     ExerciseComparator
 ) {
@@ -28,7 +30,7 @@ class ExerciseListAdapter(
             .from(parent.context)
             .inflate(R.layout.list_item_exercise, parent, false)
 
-        return ExerciseViewHolder(view, editWorkoutViewModel, fragmentManager)
+        return ExerciseViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
@@ -36,16 +38,22 @@ class ExerciseListAdapter(
         holder.bind(exercise)
     }
 
+    fun onItemMoved(from: Int, to: Int) {
+        val list = currentList.toMutableList()
+        Collections.swap(list, from, to)
+        notifyItemMoved(from, to)
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     inner class ExerciseViewHolder(
-        itemView: View,
-        private val editWorkoutViewModel: EditWorkoutViewModel,
-        private val fragmentManager: FragmentManager
+        itemView: View
     ) : RecyclerView.ViewHolder(itemView), EditExerciseDialogHandler {
 
         private val tvName = itemView.tvExerciseName
         private val tvReps = itemView.tvReps
         private val tvScore = itemView.tvScore
+
+        private var defaultBackgroundColor = Color.TRANSPARENT
 
         init {
             editWorkoutViewModel.setEditExerciseDialogHandler(this)
@@ -57,17 +65,22 @@ class ExerciseListAdapter(
             itemView.setOnTouchListener { _, motionEvent ->
                 when (motionEvent.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        val background = itemView.background
+                        if (background is ColorDrawable) {
+                            defaultBackgroundColor = background.color
+                        }
+
                         itemView.setBackgroundColor(Color.LTGRAY)
                     }
-                    MotionEvent.ACTION_UP, MotionEvent.ACTION_OUTSIDE, MotionEvent.ACTION_CANCEL -> {
-                        itemView.setBackgroundColor(Color.TRANSPARENT)
+                    MotionEvent.ACTION_CANCEL -> {
+                        itemView.setBackgroundColor(defaultBackgroundColor)
                     }
                 }
                 false
             }
+
             // Set OnCreateContextMenuListener
-            val createWorkoutFragment = fragmentManager.primaryNavigationFragment
-            createWorkoutFragment?.registerForContextMenu(itemView)
+//            fragment?.registerForContextMenu(itemView)
         }
 
         fun bind(exercise: EditWorkoutPresenter.Exercise) {
@@ -77,8 +90,7 @@ class ExerciseListAdapter(
         }
 
         override fun onEditExerciseDialogReady(dialog: DialogFragment) {
-            dialog.show(fragmentManager, "Edit exercise")
+            dialog.show(fragment.childFragmentManager, "Edit exercise")
         }
-
     }
 }

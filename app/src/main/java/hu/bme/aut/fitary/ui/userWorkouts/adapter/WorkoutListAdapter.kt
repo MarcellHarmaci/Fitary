@@ -4,16 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hu.bme.aut.fitary.R
+import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsFragment
 import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsPresenter
 import kotlinx.android.synthetic.main.list_item_user_workout.view.*
 
 class WorkoutListAdapter(
-    private val fragment: Fragment
+    private val fragment: UserWorkoutsFragment
 ) : ListAdapter<UserWorkoutsPresenter.Workout, WorkoutListAdapter.WorkoutViewHolder>(
     WorkoutComparator
 ) {
@@ -40,6 +40,8 @@ class WorkoutListAdapter(
             val navController = findNavController(fragment)
 
             itemView.setOnClickListener {
+                fragment.setFabVisible(false)
+
                 val bundle = bundleOf("workout_id" to workoutId)
                 navController.navigate(R.id.nav_edit_or_create_workout, bundle)
             }

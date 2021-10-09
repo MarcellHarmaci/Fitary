@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
+import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.userWorkouts.adapter.WorkoutListAdapter
 import kotlinx.android.synthetic.main.fragment_workouts_user.*
@@ -44,6 +45,10 @@ class UserWorkoutsFragment :
             reverseLayout = true
             stackFromEnd = true
         }
+    }
+
+    fun setFabVisible(isVisible: Boolean) {
+        (activity as MainActivity).setFloatingActionButtonVisible(isVisible)
     }
 
 }
