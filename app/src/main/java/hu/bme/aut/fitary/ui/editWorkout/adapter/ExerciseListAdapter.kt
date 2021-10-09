@@ -1,6 +1,9 @@
 package hu.bme.aut.fitary.ui.editWorkout.adapter
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
@@ -33,6 +36,7 @@ class ExerciseListAdapter(
         holder.bind(exercise)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     inner class ExerciseViewHolder(
         itemView: View,
         private val editWorkoutViewModel: EditWorkoutViewModel,
@@ -50,6 +54,17 @@ class ExerciseListAdapter(
                 editWorkoutViewModel.createEditExerciseDialog(layoutPosition)
             }
 
+            itemView.setOnTouchListener { _, motionEvent ->
+                when (motionEvent.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        itemView.setBackgroundColor(Color.LTGRAY)
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_OUTSIDE, MotionEvent.ACTION_CANCEL -> {
+                        itemView.setBackgroundColor(Color.TRANSPARENT)
+                    }
+                }
+                false
+            }
             // Set OnCreateContextMenuListener
             val createWorkoutFragment = fragmentManager.primaryNavigationFragment
             createWorkoutFragment?.registerForContextMenu(itemView)
