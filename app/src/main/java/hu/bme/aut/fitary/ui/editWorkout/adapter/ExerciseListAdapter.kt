@@ -85,7 +85,7 @@ class ExerciseListAdapter(
 
         fun bind(exercise: EditWorkoutPresenter.Exercise) {
             tvName.text = exercise.name
-            tvReps.text = exercise.reps.toString()
+            tvReps.text = "x " + exercise.reps.toString()
             tvScore.text = exercise.score.toString()
         }
 

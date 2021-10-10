@@ -89,7 +89,7 @@ class EditWorkoutPresenter @Inject constructor(
     ) {
         val score: BigDecimal
             get() = exercises.sumOf { it.score }
-                .setScale(2, RoundingMode.HALF_EVEN)
+                .setScale(1, RoundingMode.HALF_EVEN)
     }
 
     data class Exercise(
@@ -99,6 +99,6 @@ class EditWorkoutPresenter @Inject constructor(
     ) {
         val score: BigDecimal
             get() = BigDecimal(reps.toDouble() * scorePerRep)
-                .setScale(2, RoundingMode.HALF_EVEN)
+                .setScale(1, RoundingMode.HALF_EVEN)
     }
 }

@@ -23,10 +23,10 @@
 
     <TextView
         android:id="@+id/tvReps"
-        android:layout_width="64dp"
+        android:layout_width="56dp"
         android:layout_height="wrap_content"
         android:text="Reps"
-        android:textAlignment="textEnd"
+        android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/tvScore"
@@ -34,12 +34,13 @@
 
     <TextView
         android:id="@+id/tvScore"
-        android:layout_width="96dp"
+        android:layout_width="56dp"
         android:layout_height="wrap_content"
         android:text="Score"
         android:textAlignment="textEnd"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:layout_marginEnd="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
