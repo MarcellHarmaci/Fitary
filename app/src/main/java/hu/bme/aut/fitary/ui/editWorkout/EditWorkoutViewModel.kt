@@ -1,7 +1,6 @@
 package hu.bme.aut.fitary.ui.editWorkout
 
 import android.view.MenuItem
-import androidx.lifecycle.MutableLiveData
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
@@ -17,6 +16,7 @@ class EditWorkoutViewModel @Inject constructor(
 
     var comment: String? = null
     private var exercises = mutableListOf<EditWorkoutPresenter.Exercise>()
+    private var workoutId: String? = null
 
     interface WorkoutSavingFinishedHandler {
         fun onSaveFinished(isSuccessful: Boolean)
@@ -76,7 +76,7 @@ class EditWorkoutViewModel @Inject constructor(
     fun saveWorkout() = execute {
         viewState = Saving
 
-        presenter.saveWorkout(exercises, comment, this, this)
+        presenter.saveWorkout(workoutId, exercises, comment, this, this)
     }
 
     override fun onSuccess(void: Void?) {
@@ -117,10 +117,11 @@ class EditWorkoutViewModel @Inject constructor(
         }
     }
 
-    fun loadWorkout(workoutId: String) = execute {
-        val workout = presenter.loadWorkout(workoutId)
+    fun loadWorkout(id: String) = execute {
+        val workout = presenter.loadWorkout(id)
 
         workout?.let {
+            workoutId = it.id
             exercises = it.exercises.toMutableList()
 
             viewState = Editing(

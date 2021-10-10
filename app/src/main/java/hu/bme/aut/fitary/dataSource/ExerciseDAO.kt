@@ -34,7 +34,12 @@ class ExerciseDAO @Inject constructor() {
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
                 ) {
-                    TODO("Not yet implemented")
+                    val newExercise = dataSnapshot.getValue(Exercise::class.java)
+
+                    newExercise?.let {
+                        _exercises[it.id] = it
+                        // TODO Resend all workout data with the updated exercise
+                    }
                 }
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {

@@ -126,6 +126,7 @@ class FirebaseDataSource @Inject constructor(
         }
 
         val newWorkout = Workout(
+            id = domainWorkout.id ?: "",
             uid = domainWorkout.uid,
             exercises = exerciseList,
             reps = repetitionList,

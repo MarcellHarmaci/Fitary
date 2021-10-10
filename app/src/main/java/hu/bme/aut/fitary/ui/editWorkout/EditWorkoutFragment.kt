@@ -31,6 +31,7 @@ class EditWorkoutFragment :
 
     private lateinit var exerciseAdapter: ExerciseListAdapter
     private var progressDialog: ProgressDialog? = null
+    private var workoutId: String? = null
 
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_edit_or_create_workout
@@ -38,9 +39,9 @@ class EditWorkoutFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val workoutId = arguments?.getString("workout_id")
+        workoutId = arguments?.getString("workout_id")
         workoutId?.let {
-            viewModel.loadWorkout(workoutId)
+            viewModel.loadWorkout(workoutId!!)
         }
     }
 
