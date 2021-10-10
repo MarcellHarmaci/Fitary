@@ -1,14 +1,11 @@
 package hu.bme.aut.fitary.ui.editWorkout
 
 import android.app.ProgressDialog
-import android.content.Intent
 import android.os.Bundle
-import android.view.ContextMenu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.core.view.iterator
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -27,7 +24,8 @@ import kotlinx.android.synthetic.main.fragment_edit_or_create_workout.*
 class EditWorkoutFragment :
     RainbowCakeFragment<EditWorkoutViewState, EditWorkoutViewModel>(),
     AddExerciseDialogHandler,
-    EditWorkoutViewModel.WorkoutSavingFinishedHandler {
+    EditWorkoutViewModel.SavingWorkoutFinishedHandler,
+    PopupMenu.OnMenuItemClickListener {
 
     private lateinit var exerciseAdapter: ExerciseListAdapter
     private var progressDialog: ProgressDialog? = null
@@ -168,28 +166,11 @@ class EditWorkoutFragment :
         }
     }
 
-    override fun onCreateContextMenu(
-        menu: ContextMenu,
-        view: View,
-        menuInfo: ContextMenu.ContextMenuInfo?
-    ) {
-        super.onCreateContextMenu(menu, view, menuInfo)
-
-        val inflater = MenuInflater(context)
-        inflater.inflate(R.menu.exercise_context_menu, menu)
-
-        val position = rvExercises.getChildAdapterPosition(view)
-        val posIntent = Intent().putExtra("position", position)
-
-        menu.iterator().forEach {
-            it.intent = posIntent
-        }
-    }
-
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        val position = item.intent.getIntExtra("position", 0)
-        viewModel.onContextItemSelected(item, position)
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        viewModel.onPopupItemSelected(item)
         return true
     }
+
+    fun getListItemPosition(view: View) = rvExercises.getChildAdapterPosition(view)
 
 }

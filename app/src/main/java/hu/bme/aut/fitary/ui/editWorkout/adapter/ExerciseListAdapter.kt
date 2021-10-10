@@ -1,12 +1,15 @@
 package hu.bme.aut.fitary.ui.editWorkout.adapter
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.view.iterator
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -72,11 +75,26 @@ class ExerciseListAdapter(
 
                         itemView.setBackgroundColor(Color.LTGRAY)
                     }
-                    MotionEvent.ACTION_CANCEL -> {
+                    MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                         itemView.setBackgroundColor(defaultBackgroundColor)
                     }
                 }
                 false
+            }
+
+            itemView.ibExerciseActions.setOnClickListener { button ->
+                PopupMenu(fragment.context, button).apply {
+                    setOnMenuItemClickListener(fragment)
+                    inflate(R.menu.exercise_popup_menu)
+
+                    val position: Int = fragment.getListItemPosition(itemView)
+                    val posIntent = Intent().putExtra("position", position)
+                    menu.iterator().forEach { menuItem ->
+                        menuItem.intent = posIntent
+                    }
+
+                    show()
+                }
             }
 
             // Set OnCreateContextMenuListener

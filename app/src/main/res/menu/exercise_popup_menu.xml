@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/context_item_duplicate_exercise"
+        android:id="@+id/item_duplicate_exercise"
         android:title="Duplicate" />
     <item
-        android:id="@+id/context_item_delete_exercise"
+        android:id="@+id/item_delete_exercise"
         android:title="Delete" />
 </menu>

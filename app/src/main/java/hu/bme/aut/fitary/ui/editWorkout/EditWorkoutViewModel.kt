@@ -18,12 +18,12 @@ class EditWorkoutViewModel @Inject constructor(
     private var exercises = mutableListOf<EditWorkoutPresenter.Exercise>()
     private var workoutId: String? = null
 
-    interface WorkoutSavingFinishedHandler {
+    interface SavingWorkoutFinishedHandler {
         fun onSaveFinished(isSuccessful: Boolean)
     }
 
-    private var saveFinishedHandler: WorkoutSavingFinishedHandler? = null
-    fun setSaveFinishedHandler(handler: WorkoutSavingFinishedHandler) {
+    private var saveFinishedHandler: SavingWorkoutFinishedHandler? = null
+    fun setSaveFinishedHandler(handler: SavingWorkoutFinishedHandler) {
         saveFinishedHandler = handler
     }
 
@@ -91,14 +91,16 @@ class EditWorkoutViewModel @Inject constructor(
         saveFinishedHandler?.onSaveFinished(false)
     }
 
-    fun onContextItemSelected(item: MenuItem, position: Int) = execute {
+    fun onPopupItemSelected(item: MenuItem) = execute {
+        val position = item.intent.getIntExtra("position", 0)
+
         when (item.itemId) {
-            R.id.context_item_duplicate_exercise -> {
+            R.id.item_duplicate_exercise -> {
                 val duplicate = exercises[position].copy()
                 exercises.add(position + 1, duplicate)
                 updateViewStateWithCurrentExercises()
             }
-            R.id.context_item_delete_exercise -> {
+            R.id.item_delete_exercise -> {
                 exercises.removeAt(position)
                 updateViewStateWithCurrentExercises()
             }
