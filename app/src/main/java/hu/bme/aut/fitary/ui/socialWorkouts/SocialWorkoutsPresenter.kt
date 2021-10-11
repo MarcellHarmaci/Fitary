@@ -16,7 +16,7 @@ class SocialWorkoutsPresenter @Inject constructor(
             Workout(
                 username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
                 score = domainWorkout.score,
-                comment = domainWorkout.comment ?: "-"
+                title = domainWorkout.title ?: "Awesome workout"
             )
         }
     }
@@ -25,6 +25,6 @@ class SocialWorkoutsPresenter @Inject constructor(
     data class Workout(
         val username: String,
         val score: Double,
-        val comment: String
+        val title: String
     )
 }

@@ -6,5 +6,5 @@ data class Workout (
     val uid: String? = null,
     val exercises: MutableList<Long> = mutableListOf(),
     val reps: MutableList<Int> = mutableListOf(),
-    var comment: String? = null
+    var title: String? = null
 )

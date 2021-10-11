@@ -29,12 +29,12 @@ class WorkoutListAdapter :
     class WorkoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvUsername = itemView.tvUsername
         private val tvScore = itemView.tvScore
-        private val tvComment = itemView.tvComment
+        private val tvComment = itemView.tvTitle
 
         fun bind(workout: SocialWorkoutsPresenter.Workout) {
             tvUsername.text = workout.username
             tvScore.text = workout.score.toString()
-            tvComment.text = workout.comment
+            tvComment.text = workout.title
         }
     }
 }

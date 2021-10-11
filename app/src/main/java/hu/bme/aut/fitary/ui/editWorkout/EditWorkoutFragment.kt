@@ -62,8 +62,8 @@ class EditWorkoutFragment :
             }
         }
 
-        etComment.doOnTextChanged { text, _, _, _ ->
-            viewModel.comment = text.toString()
+        etTitle.doOnTextChanged { text, _, _, _ ->
+            viewModel.title = text.toString()
         }
     }
 
@@ -88,7 +88,7 @@ class EditWorkoutFragment :
                 exerciseAdapter.submitList(viewState.exercises)
                 exerciseAdapter.notifyDataSetChanged()
 
-                etComment.setText(viewState.comment ?: "")
+                etTitle.setText(viewState.title ?: "")
             }
             is Saving -> {
                 showProgressDialog()

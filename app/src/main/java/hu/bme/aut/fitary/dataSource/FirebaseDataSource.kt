@@ -38,7 +38,7 @@ class FirebaseDataSource @Inject constructor(
                 username = userDAO.users[workout.uid]?.username ?: "No username",
                 domainExercises = mapWorkoutExercisesToDomain(workout),
                 score = score,
-                comment = workout.comment
+                title = workout.title
             )
         }
     }
@@ -130,7 +130,7 @@ class FirebaseDataSource @Inject constructor(
             uid = domainWorkout.uid,
             exercises = exerciseList,
             reps = repetitionList,
-            comment = domainWorkout.comment
+            title = domainWorkout.title
         )
 
         val key = domainWorkout.id

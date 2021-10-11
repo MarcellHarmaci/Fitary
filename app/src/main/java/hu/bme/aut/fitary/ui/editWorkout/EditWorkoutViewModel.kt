@@ -14,7 +14,7 @@ class EditWorkoutViewModel @Inject constructor(
 ) : RainbowCakeViewModel<EditWorkoutViewState>(Loading),
     ResultHandler, OnSuccessListener<Void>, OnFailureListener {
 
-    var comment: String? = null
+    var title: String? = null
     private var exercises = mutableListOf<EditWorkoutPresenter.Exercise>()
     private var workoutId: String? = null
 
@@ -76,7 +76,7 @@ class EditWorkoutViewModel @Inject constructor(
     fun saveWorkout() = execute {
         viewState = Saving
 
-        presenter.saveWorkout(workoutId, exercises, comment, this, this)
+        presenter.saveWorkout(workoutId, exercises, title, this, this)
     }
 
     override fun onSuccess(void: Void?) {
@@ -86,7 +86,7 @@ class EditWorkoutViewModel @Inject constructor(
     override fun onFailure(exception: Exception) {
         viewState = Editing(
             exercises = exercises,
-            comment = comment
+            title = title
         )
         saveFinishedHandler?.onSaveFinished(false)
     }
@@ -114,7 +114,7 @@ class EditWorkoutViewModel @Inject constructor(
             viewState = oldState.copy(
                 exercises = exercises,
                 score = exercises.sumOfScores(),
-                comment = oldState.comment
+                title = oldState.title
             )
         }
     }
@@ -129,7 +129,7 @@ class EditWorkoutViewModel @Inject constructor(
             viewState = Editing(
                 exercises = it.exercises,
                 score = it.score.toDouble(),
-                comment = it.comment
+                title = it.title
             )
         }
     }

@@ -29,7 +29,7 @@ class EditWorkoutPresenter @Inject constructor(
     suspend fun saveWorkout(
         workoutId: String?,
         exercises: List<Exercise>,
-        comment: String?,
+        title: String?,
         onSuccessListener: OnSuccessListener<Void>,
         onFailureListener: OnFailureListener
     ) = withIOContext {
@@ -55,7 +55,7 @@ class EditWorkoutPresenter @Inject constructor(
                 username = currentUser.username,
                 domainExercises = domainExercises.toMutableList(),
                 score = workoutScore.toDouble(),
-                comment = comment
+                title = title
             )
 
             workoutInteractor.saveWorkout(workout, onSuccessListener, onFailureListener)
@@ -78,7 +78,7 @@ class EditWorkoutPresenter @Inject constructor(
             Workout(
                 id = domainWorkout.id,
                 exercises = exercises,
-                comment = domainWorkout.comment
+                title = domainWorkout.title
             )
         }
     }
@@ -87,7 +87,7 @@ class EditWorkoutPresenter @Inject constructor(
     data class Workout(
         val id: String?,
         var exercises: List<Exercise> = listOf(),
-        var comment: String?
+        var title: String?
     ) {
         val score: BigDecimal
             get() = exercises.sumOf { it.score }
