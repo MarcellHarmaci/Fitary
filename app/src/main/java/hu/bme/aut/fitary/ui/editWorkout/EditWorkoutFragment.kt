@@ -167,6 +167,10 @@ class EditWorkoutFragment :
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
+        if (item.itemId !in setOf(R.id.item_duplicate_exercise, R.id.item_delete_exercise)) {
+            return false
+        }
+
         viewModel.onPopupItemSelected(item)
         return true
     }

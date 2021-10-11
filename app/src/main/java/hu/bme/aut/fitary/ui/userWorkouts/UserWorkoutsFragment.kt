@@ -55,6 +55,10 @@ class UserWorkoutsFragment :
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
+        if (item.itemId !in setOf(R.id.item_copy_workout, R.id.item_delete_workout)) {
+            return false
+        }
+
         viewModel.onPopupItemSelected(item)
         return true
     }
