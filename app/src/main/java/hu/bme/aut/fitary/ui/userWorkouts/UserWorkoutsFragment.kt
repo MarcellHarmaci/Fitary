@@ -1,7 +1,9 @@
 package hu.bme.aut.fitary.ui.userWorkouts
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
@@ -12,7 +14,8 @@ import hu.bme.aut.fitary.ui.userWorkouts.adapter.WorkoutListAdapter
 import kotlinx.android.synthetic.main.fragment_workouts_user.*
 
 class UserWorkoutsFragment :
-    RainbowCakeFragment<UserWorkoutsViewState, UserWorkoutsViewModel>() {
+    RainbowCakeFragment<UserWorkoutsViewState, UserWorkoutsViewModel>(),
+    PopupMenu.OnMenuItemClickListener {
 
     private lateinit var workoutAdapter: WorkoutListAdapter
 
@@ -50,5 +53,12 @@ class UserWorkoutsFragment :
     fun setFabVisible(isVisible: Boolean) {
         (activity as MainActivity).setFloatingActionButtonVisible(isVisible)
     }
+
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        viewModel.onPopupItemSelected(item)
+        return true
+    }
+
+    fun getListItemPosition(view: View) = rvUserWorkouts.getChildAdapterPosition(view)
 
 }

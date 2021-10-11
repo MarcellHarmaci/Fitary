@@ -85,7 +85,7 @@ class ExerciseListAdapter(
             itemView.ibExerciseActions.setOnClickListener { button ->
                 PopupMenu(fragment.context, button).apply {
                     setOnMenuItemClickListener(fragment)
-                    inflate(R.menu.exercise_popup_menu)
+                    inflate(R.menu.popup_menu_exercise)
 
                     val position: Int = fragment.getListItemPosition(itemView)
                     val posIntent = Intent().putExtra("position", position)
