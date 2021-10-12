@@ -7,8 +7,12 @@ import hu.bme.aut.fitary.dataSource.model.Workout
 import hu.bme.aut.fitary.domainModel.DomainExercise
 import hu.bme.aut.fitary.domainModel.DomainUser
 import hu.bme.aut.fitary.domainModel.DomainWorkout
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -23,7 +27,7 @@ class FirebaseDataSource @Inject constructor(
     private val workoutDAO: WorkoutDAO
 ) {
 
-    var workoutsFlow: Flow<List<DomainWorkout>> = workoutDAO.workoutsFlow.map {
+    var workoutsFlow: StateFlow<List<DomainWorkout>> = workoutDAO.workoutsFlow.map {
         it.map { workout ->
             var score = 0.0
 
@@ -41,7 +45,11 @@ class FirebaseDataSource @Inject constructor(
                 title = workout.title
             )
         }
-    }
+    }.stateIn(
+        scope = CoroutineScope(Dispatchers.IO),
+        started = SharingStarted.Eagerly,
+        initialValue = listOf()
+    )
 
     // TODO Improve mapping code style
     //  docs: https://rainbowcake.dev/best-practices/mapping-code-style/
