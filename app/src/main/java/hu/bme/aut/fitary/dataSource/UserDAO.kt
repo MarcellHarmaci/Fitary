@@ -62,6 +62,7 @@ class UserDAO @Inject constructor() {
     suspend fun getCurrentUserId() = auth.currentUser?.uid
 
     suspend fun saveUser(user: UserProfile) {
+        // TODO remove this
         if (_users.containsKey(user.id) && _users[user.id] == user)
             return
 
@@ -74,5 +75,7 @@ class UserDAO @Inject constructor() {
             .child(key)
             .setValue(user)
     }
+
+    // TODO Separate function to update existing users
 
 }

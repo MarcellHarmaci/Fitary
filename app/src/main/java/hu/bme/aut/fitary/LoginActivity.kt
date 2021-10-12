@@ -63,8 +63,8 @@ class LoginActivity : BaseActivity() {
                     .build()
                 firebaseUser?.updateProfile(profileChangeRequest)
 
-                saveUser(firebaseUser)
                 toast("Registration successful")
+                saveUser(firebaseUser)
                 loginClick()
             }
             .addOnFailureListener { exception ->
@@ -116,7 +116,7 @@ class LoginActivity : BaseActivity() {
         )
 
         FirebaseDatabase.getInstance().reference
-            .child("workouts")
+            .child("users")
             .child(key)
             .setValue(newUser)
     }
