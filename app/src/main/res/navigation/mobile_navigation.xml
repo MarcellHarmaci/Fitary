@@ -24,7 +24,8 @@
         tools:layout="@layout/fragment_chart_bar" />
 
     <fragment
-        android:id="@+id/nav_edit_or_create_workout"
-        android:name="hu.bme.aut.fitary.ui.editWorkout.EditWorkoutFragment"
-        tools:layout="@layout/fragment_edit_or_create_workout" />
+        android:id="@+id/nav_user_profile"
+        android:name="hu.bme.aut.fitary.ui.userProfile.UserProfileFragment"
+        android:label="@string/user_profile"
+        tools:layout="@layout/fragment_user_profile" />
 </navigation>
