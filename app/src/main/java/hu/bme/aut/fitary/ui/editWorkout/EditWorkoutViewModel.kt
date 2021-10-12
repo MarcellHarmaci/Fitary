@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.extensions.sumOfScores
 import hu.bme.aut.fitary.ui.editWorkout.dialog.*
+import java.util.*
 import javax.inject.Inject
 
 class EditWorkoutViewModel @Inject constructor(
@@ -132,6 +133,10 @@ class EditWorkoutViewModel @Inject constructor(
                 title = it.title
             )
         }
+    }
+
+    fun swapExercises(from: Int, to: Int) = execute {
+        Collections.swap(exercises, from, to)
     }
 
 }

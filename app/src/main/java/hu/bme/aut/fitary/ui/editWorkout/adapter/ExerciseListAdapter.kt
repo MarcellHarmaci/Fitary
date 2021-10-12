@@ -42,8 +42,11 @@ class ExerciseListAdapter(
     }
 
     fun onItemMoved(from: Int, to: Int) {
+        editWorkoutViewModel.swapExercises(from, to)
+
         val list = currentList.toMutableList()
         Collections.swap(list, from, to)
+
         notifyItemMoved(from, to)
     }
 
@@ -96,9 +99,6 @@ class ExerciseListAdapter(
                     show()
                 }
             }
-
-            // Set OnCreateContextMenuListener
-//            fragment?.registerForContextMenu(itemView)
         }
 
         fun bind(exercise: EditWorkoutPresenter.Exercise) {
