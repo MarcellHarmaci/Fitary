@@ -12,14 +12,15 @@ import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import hu.bme.aut.fitary.R
 import kotlinx.android.synthetic.main.fragment_user_profile.*
 import java.io.File
 
 class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfileViewModel>() {
 
-    private val PICK_PROFILE_IMAGE = 9998
-    private val REQUEST_PERMISSION_EXTERNAL_STORAGE = 9998
+    private val REQUEST_CODE_PICK_AVATAR = 10000
+    private val REQUEST_CODE_EXTERNAL_STORAGE = 10001
 
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_user_profile
@@ -27,37 +28,7 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
     override fun onStart() {
         super.onStart()
 
-        btnEditImage?.setOnClickListener {
-            context?.let {
-                when (ContextCompat.checkSelfPermission(
-                    requireContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )) {
-                    PackageManager.PERMISSION_GRANTED -> {
-                        showImagePickerActivity()
-                    }
-                    PackageManager.PERMISSION_DENIED -> {
-                        /*
-                        if (shouldShowRequestPermissionRationale(
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                        )) {
-                            // Show permission explanation dialog
-                        }
-                        */
-
-                        requestPermissions(
-                            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                            REQUEST_PERMISSION_EXTERNAL_STORAGE
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun showImagePickerActivity() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, PICK_PROFILE_IMAGE)
+        btnEditImage?.setOnClickListener { onAvatarEditButtonClicked() }
     }
 
     override fun render(viewState: UserProfileViewState) {
@@ -75,6 +46,35 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
         }.exhaustive
     }
 
+    private fun onAvatarEditButtonClicked() {
+        context?.let {
+            val permissionCheckResult = ContextCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+
+            when (permissionCheckResult) {
+                PackageManager.PERMISSION_GRANTED -> {
+                    showImagePickerActivity()
+                }
+                PackageManager.PERMISSION_DENIED -> {
+                    /*
+                    if (shouldShowRequestPermissionRationale(
+                            Manifest.permission.READ_EXTERNAL_STORAGE
+                    )) {
+                        // Show permission explanation dialog
+                    }
+                    */
+
+                    requestPermissions(
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        REQUEST_CODE_EXTERNAL_STORAGE
+                    )
+                }
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -82,7 +82,7 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode == REQUEST_PERMISSION_EXTERNAL_STORAGE) {
+        if (requestCode == REQUEST_CODE_EXTERNAL_STORAGE) {
             if (grantResults.isNotEmpty() &&
                 grantResults[0] == PackageManager.PERMISSION_GRANTED
             ) {
@@ -97,11 +97,16 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
         }
     }
 
+    private fun showImagePickerActivity() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_CODE_PICK_AVATAR)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
-            PICK_PROFILE_IMAGE -> {
+            REQUEST_CODE_PICK_AVATAR -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val uri: Uri = data?.data!!
                     val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
@@ -113,11 +118,19 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
 
                     val columnIndex: Int? = cursor?.getColumnIndex(filePathColumn[0])
                     val filePath: String? = columnIndex?.let { cursor.getString(it) }
+                    val file = File(filePath!!)
 
+                    // Load image
                     context?.let {
                         Glide.with(it)
-                            .load(File(filePath!!)).into(ivAvatar)
+                            .load(file)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(ivAvatar)
                     }
+
+                    // TODO Load file in viewModel, store it as byte array in viewState
+                    //  and load it in Fragment.render instead
+//                    viewModel.loadAvatar(file)
                 }
             }
         }
