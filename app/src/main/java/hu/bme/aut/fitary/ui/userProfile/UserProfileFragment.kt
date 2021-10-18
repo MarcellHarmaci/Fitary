@@ -5,17 +5,17 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import hu.bme.aut.fitary.R
 import kotlinx.android.synthetic.main.fragment_user_profile.*
-import java.io.File
 
 class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfileViewModel>() {
 
@@ -28,19 +28,50 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
     override fun onStart() {
         super.onStart()
 
-        btnEditImage?.setOnClickListener { onAvatarEditButtonClicked() }
+        btnEditImage.setOnClickListener { onAvatarEditButtonClicked() }
+        btnSave.setOnClickListener {
+            if (viewModel.state.value is UserProfileLoaded) {
+                viewModel.save()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    "The user profile is not loaded yet",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 
+    @Suppress("IMPLICIT_CAST_TO_ANY")
     override fun render(viewState: UserProfileViewState) {
         when (viewState) {
             is Loading -> {
                 // TODO Display something to indicate loading
             }
             is UserProfileLoaded -> {
-                viewState.userProfile.let {
-                    tvUsernameDisplay.text = it.username
-                    tvNumberOfWorkoutsDisplay.text = it.numberOfWorkouts.toString()
-                    tvScoreOfWorkoutsDisplay.text = it.fullScore.toString()
+                tvUsernameDisplay.text = viewState.username
+                tvNumberOfWorkoutsDisplay.text = viewState.numberOfWorkouts.toString()
+                tvScoreOfWorkoutsDisplay.text = viewState.fullScore.toString()
+
+                context?.let {
+                    if (viewState.avatar != null) {
+                        val avatarAsBitmap = BitmapFactory.decodeByteArray(
+                            viewState.avatar,
+                            0,
+                            viewState.avatar.size
+                        )
+
+                        Glide.with(it)
+                            .asBitmap()
+                            .load(avatarAsBitmap)
+                            .circleCrop()
+                            .into(ivAvatar)
+                    } else {
+                        Glide.with(it)
+                            .load(R.drawable.ic_launcher_background)
+                            .circleCrop()
+                            .into(ivAvatar)
+                    }
                 }
             }
         }.exhaustive
@@ -108,6 +139,7 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
         when (requestCode) {
             REQUEST_CODE_PICK_AVATAR -> {
                 if (resultCode == Activity.RESULT_OK) {
+                    // Uri transformations
                     val uri: Uri = data?.data!!
                     val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
 
@@ -118,19 +150,9 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
 
                     val columnIndex: Int? = cursor?.getColumnIndex(filePathColumn[0])
                     val filePath: String? = columnIndex?.let { cursor.getString(it) }
-                    val file = File(filePath!!)
 
                     // Load image
-                    context?.let {
-                        Glide.with(it)
-                            .load(file)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(ivAvatar)
-                    }
-
-                    // TODO Load file in viewModel, store it as byte array in viewState
-                    //  and load it in Fragment.render instead
-//                    viewModel.loadAvatar(file)
+                    viewModel.loadImageAsAvatar(filePath)
                 }
             }
         }

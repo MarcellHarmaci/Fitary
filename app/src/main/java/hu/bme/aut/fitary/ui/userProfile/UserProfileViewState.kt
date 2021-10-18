@@ -5,5 +5,9 @@ sealed class UserProfileViewState
 object Loading : UserProfileViewState()
 
 data class UserProfileLoaded(
-    val userProfile: UserProfilePresenter.UserProfile
+    val userId: String?,
+    val username: String,
+    val numberOfWorkouts: Int,
+    val fullScore: Double,
+    val avatar: ByteArray? = null
 ) : UserProfileViewState()
