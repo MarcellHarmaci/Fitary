@@ -1,6 +1,7 @@
 package hu.bme.aut.fitary.ui.userProfile
 
 import co.zsmb.rainbowcake.withIOContext
+import hu.bme.aut.fitary.domainModel.DomainUser
 import hu.bme.aut.fitary.interactor.UserInteractor
 import hu.bme.aut.fitary.interactor.WorkoutInteractor
 import java.io.*
@@ -19,9 +20,10 @@ class UserProfilePresenter @Inject constructor(
         UserProfile(
             userId = user?.id,
             username = user?.username ?: "No username",
+            userMail = user?.mail ?: "No email address",
             numberOfWorkouts = numberOfWorkouts,
-            fullScore = fullScore
-            // TODO Set avatar
+            fullScore = fullScore,
+            avatar = user?.avatar
         )
     }
 
@@ -48,15 +50,23 @@ class UserProfilePresenter @Inject constructor(
         return@withIOContext byteArray
     }
 
-    suspend fun save(userId: String?, username: String, avatar: ByteArray?) = withIOContext {
-        TODO("Not yet implemented")
-        false
-    }
+    suspend fun save(userId: String?, username: String, userMail: String, avatar: ByteArray?) =
+        withIOContext {
+            userInteractor.updateUser(
+                DomainUser(
+                    id = userId,
+                    username = username,
+                    mail = userMail,
+                    avatar = avatar
+                )
+            )
+        }
 
     // Presentation model
     data class UserProfile(
         val userId: String?,
         val username: String,
+        val userMail: String,
         val numberOfWorkouts: Int,
         val fullScore: Double,
         val avatar: ByteArray? = null

@@ -1,5 +1,6 @@
 package hu.bme.aut.fitary.dataSource
 
+import android.util.Base64
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import hu.bme.aut.fitary.dataSource.model.UserProfile
@@ -80,6 +81,18 @@ class FirebaseDataSource @Inject constructor(
         userDAO.saveUser(newUser)
     }
 
+    suspend fun updateUser(key: String, domainUser: DomainUser) {
+        val user = UserProfile(
+            key = key,
+            id = domainUser.id,
+            mail = domainUser.mail,
+            username = domainUser.username,
+            avatar = Base64.encodeToString(domainUser.avatar, Base64.DEFAULT)
+        )
+
+        userDAO.updateUser(user)
+    }
+
     suspend fun getCurrentUserId() = userDAO.getCurrentUserId()
 
     suspend fun getCurrentUser(): DomainUser? {
@@ -87,7 +100,10 @@ class FirebaseDataSource @Inject constructor(
             DomainUser(
                 id = userProfile.id,
                 mail = userProfile.mail,
-                username = userProfile.username
+                username = userProfile.username,
+                avatar = userProfile.avatar?.let {
+                    Base64.decode(userProfile.avatar, Base64.DEFAULT)
+                }
             )
         }
     }
@@ -148,6 +164,12 @@ class FirebaseDataSource @Inject constructor(
         else {
             workoutDAO.updateWorkout(key, newWorkout, onSuccessListener, onFailureListener)
         }
+    }
+
+    suspend fun getUserKeyById(id: String?): String? {
+        if (id == null) return null
+
+        return userDAO.getKeyById(id)
     }
 
 }

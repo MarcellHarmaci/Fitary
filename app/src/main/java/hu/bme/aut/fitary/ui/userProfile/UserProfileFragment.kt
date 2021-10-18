@@ -14,6 +14,7 @@ import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import com.bumptech.glide.Glide
+import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
 import kotlinx.android.synthetic.main.fragment_user_profile.*
 
@@ -27,6 +28,8 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
 
     override fun onStart() {
         super.onStart()
+
+        (activity as MainActivity).setFloatingActionButtonVisible(false)
 
         btnEditImage.setOnClickListener { onAvatarEditButtonClicked() }
         btnSave.setOnClickListener {
@@ -50,6 +53,7 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
             }
             is UserProfileLoaded -> {
                 tvUsernameDisplay.text = viewState.username
+                tvUserMailDisplay.text = viewState.userMail
                 tvNumberOfWorkoutsDisplay.text = viewState.numberOfWorkouts.toString()
                 tvScoreOfWorkoutsDisplay.text = viewState.fullScore.toString()
 

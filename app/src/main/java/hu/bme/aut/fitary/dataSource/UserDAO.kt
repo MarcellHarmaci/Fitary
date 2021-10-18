@@ -24,6 +24,8 @@ class UserDAO @Inject constructor() {
     val users: Map<String?, UserProfile>
         get() = _users.toMap()
 
+    private val keyLookup = mutableMapOf<String, String>()
+
     init {
         database
             .getReference("users")
@@ -32,7 +34,13 @@ class UserDAO @Inject constructor() {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
                     val newUser = dataSnapshot.getValue(UserProfile::class.java)
 
-                    newUser?.let { _users += Pair(it.id, it) }
+                    newUser?.let {
+                        _users += Pair(it.id, it)
+
+                        if (it.id != null && it.key != null) {
+                            keyLookup += Pair(it.id, it.key)
+                        }
+                    }
                 }
 
                 @RequiresApi(Build.VERSION_CODES.N)
@@ -41,7 +49,14 @@ class UserDAO @Inject constructor() {
                     previousChildName: String?
                 ) {
                     val user = dataSnapshot.getValue(UserProfile::class.java)
-                    user?.let { _users.replace(it.id, it) }
+
+                    user?.let {
+                        _users.replace(it.id, it)
+
+                        if (it.id != null && it.key != null) {
+                            keyLookup.replace(it.id, it.key)
+                        }
+                    }
                 }
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
@@ -61,21 +76,38 @@ class UserDAO @Inject constructor() {
 
     suspend fun getCurrentUserId() = auth.currentUser?.uid
 
+    suspend fun getKeyById(id: String) = keyLookup[id]
+
     suspend fun saveUser(user: UserProfile) {
-        // TODO remove this
-        if (_users.containsKey(user.id) && _users[user.id] == user)
-            return
+        if (user.id != null && _users.containsKey(user.id))
+            return // Return if user id already exists
 
         val key = database.reference
             .child("users")
             .push().key ?: return
 
+        val newUser = user.copy(
+            key = key,
+            id = user.id,
+            mail = user.mail,
+            username = user.username,
+            avatar = user.avatar
+        )
+
         database.reference
             .child("users")
             .child(key)
-            .setValue(user)
+            .setValue(newUser)
     }
 
-    // TODO Separate function to update existing users
+    suspend fun updateUser(user: UserProfile) {
+        if (user.key == null || !_users.containsKey(user.id))
+            return
+
+        database.reference
+            .child("users")
+            .child(user.key)
+            .setValue(user)
+    }
 
 }

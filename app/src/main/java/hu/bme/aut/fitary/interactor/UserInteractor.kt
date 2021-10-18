@@ -26,4 +26,9 @@ class UserInteractor @Inject constructor(
         )
     }
 
+    suspend fun updateUser(domainUser: DomainUser) {
+        val key = firebaseDataSource.getUserKeyById(domainUser.id)
+        key?.let { firebaseDataSource.updateUser(key, domainUser) }
+    }
+
 }

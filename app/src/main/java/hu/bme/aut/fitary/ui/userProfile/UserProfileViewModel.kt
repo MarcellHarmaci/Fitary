@@ -4,7 +4,6 @@ import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import java.io.*
 import javax.inject.Inject
 
-
 class UserProfileViewModel @Inject constructor(
     private val presenter: UserProfilePresenter
 ) : RainbowCakeViewModel<UserProfileViewState>(Loading) {
@@ -12,9 +11,11 @@ class UserProfileViewModel @Inject constructor(
     init {
         execute {
             val profile = presenter.loadUserProfile()
+
             viewState = UserProfileLoaded(
                 userId = profile.userId,
                 username = profile.username,
+                userMail = profile.userMail,
                 numberOfWorkouts = profile.numberOfWorkouts,
                 fullScore = profile.fullScore,
                 avatar = profile.avatar
@@ -42,9 +43,11 @@ class UserProfileViewModel @Inject constructor(
 
     fun save() = execute {
         val currentState = viewState as UserProfileLoaded
+
         presenter.save(
             currentState.userId,
             currentState.username,
+            currentState.userMail,
             currentState.avatar
         )
     }
