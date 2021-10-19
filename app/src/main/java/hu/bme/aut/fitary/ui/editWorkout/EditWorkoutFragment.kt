@@ -38,9 +38,7 @@ class EditWorkoutFragment :
         super.onCreate(savedInstanceState)
 
         workoutId = arguments?.getString("workout_id")
-        workoutId?.let {
-            viewModel.loadWorkout(workoutId!!)
-        }
+        viewModel.loadWorkout(workoutId)
     }
 
     override fun onStart() {

@@ -120,7 +120,12 @@ class EditWorkoutViewModel @Inject constructor(
         }
     }
 
-    fun loadWorkout(id: String) = execute {
+    fun loadWorkout(id: String?) = execute {
+        if (id == null) {
+            viewState = Editing()
+            return@execute
+        }
+
         val workout = presenter.loadWorkout(id)
 
         workout?.let {
