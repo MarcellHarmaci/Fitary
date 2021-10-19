@@ -10,6 +10,7 @@ import androidx.core.view.iterator
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsFragment
 import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsPresenter
@@ -36,6 +37,7 @@ class WorkoutListAdapter(
     inner class WorkoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvScore = itemView.tvScore
         private val tvTitle = itemView.tvTitle
+        private val ivProfile = itemView.ivProfile
 
         private var workoutId: String? = null
 
@@ -68,6 +70,20 @@ class WorkoutListAdapter(
         fun bind(workout: UserWorkoutsPresenter.Workout) {
             tvScore.text = workout.score.toString()
             tvTitle.text = workout.title
+
+            val context = fragment.requireContext()
+            if (workout.avatar != null) {
+                Glide.with(context)
+                    .asBitmap()
+                    .load(workout.avatar)
+                    .circleCrop()
+                    .into(ivProfile)
+            } else {
+                Glide.with(context)
+                    .load(R.drawable.ic_launcher_background)
+                    .circleCrop()
+                    .into(ivProfile)
+            }
 
             workoutId = workout.id
         }

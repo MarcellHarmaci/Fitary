@@ -1,5 +1,6 @@
 package hu.bme.aut.fitary.ui.userWorkouts
 
+import hu.bme.aut.fitary.interactor.UserInteractor
 import hu.bme.aut.fitary.interactor.WorkoutInteractor
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -7,6 +8,7 @@ import javax.inject.Inject
 
 class UserWorkoutsPresenter @Inject constructor(
     private val workoutInteractor: WorkoutInteractor,
+    private val userInteractor: UserInteractor
 ) {
 
     val workouts: Flow<List<Workout>> = workoutInteractor.userWorkoutsFlow.map {
@@ -14,7 +16,8 @@ class UserWorkoutsPresenter @Inject constructor(
             Workout(
                 id = domainWorkout.id,
                 score = domainWorkout.score,
-                title = domainWorkout.title ?: "Awesome workout"
+                title = domainWorkout.title ?: "Awesome workout",
+                avatar = userInteractor.getAvatarById(domainWorkout.uid)
             )
         }
     }
@@ -24,5 +27,6 @@ class UserWorkoutsPresenter @Inject constructor(
         val id: String?,
         val score: Double,
         val title: String,
+        val avatar: ByteArray? = null
     )
 }
