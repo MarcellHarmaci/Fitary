@@ -5,4 +5,13 @@ data class DomainUser(
     val mail: String,
     val username: String,
     val avatar: ByteArray? = null
-)
+) {
+    override fun toString(): String {
+        val isAvatarNull = if (avatar == null) {
+            "null"
+        } else {
+            "notNull"
+        }
+        return "DomainUser(id=$id, mail='$mail', username='$username', avatar='$isAvatarNull)"
+    }
+}

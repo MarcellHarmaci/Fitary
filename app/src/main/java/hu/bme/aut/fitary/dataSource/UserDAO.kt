@@ -8,13 +8,15 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.UserProfile
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@ObsoleteCoroutinesApi
 @Singleton
 class UserDAO @Inject constructor() {
 
@@ -32,6 +34,9 @@ class UserDAO @Inject constructor() {
 
     private val keyLookup = mutableMapOf<String, String>()
 
+    @ObsoleteCoroutinesApi
+    val userDaoContext = newSingleThreadContext("UserDaoContext")
+
     init {
         database
             .getReference("users")
@@ -42,12 +47,14 @@ class UserDAO @Inject constructor() {
 
                     newUser?.let {
                         if (it.id != null && it.key != null) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                _users += Pair(it.id, it)
-                                userFlow.emit(users)
-                            }
+                            runBlocking {
+                                withContext(userDaoContext) {
+                                    _users += Pair(it.id, it)
+                                    userFlow.emit(users)
 
-                            keyLookup += Pair(it.id, it.key)
+                                    keyLookup += Pair(it.id, it.key)
+                                }
+                            }
                         }
                     }
                 }
@@ -61,12 +68,14 @@ class UserDAO @Inject constructor() {
 
                     user?.let {
                         if (it.id != null && it.key != null) {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                _users.replace(it.id, it)
-                                userFlow.emit(users)
-                            }
+                            runBlocking {
+                                withContext(userDaoContext) {
+                                    _users.replace(it.id, it)
+                                    userFlow.emit(users)
 
-                            keyLookup.replace(it.id, it.key)
+                                    keyLookup.replace(it.id, it.key)
+                                }
+                            }
                         }
                     }
                 }
