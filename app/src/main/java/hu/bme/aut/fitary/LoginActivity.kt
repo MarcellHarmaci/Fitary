@@ -110,6 +110,7 @@ class LoginActivity : BaseActivity() {
         }
 
         val newUser = UserProfile(
+            key = key,
             id = firebaseUser.uid,
             mail = firebaseUser.email ?: "No mail",
             username = firebaseUser.email?.substringBefore('@') ?: "No name"

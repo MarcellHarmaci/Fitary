@@ -17,6 +17,7 @@
     <string name="modify">Modify</string>
     <string name="cancel">Cancel</string>
     <string name="title_of_workout">Title of workout</string>
+    <string name="username">Username</string>
     <string name="add_exercise">Add exercise</string>
     <string name="exercise">Exercise</string>
     <string name="reps">Reps</string>
@@ -26,4 +27,8 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user_profile">User profile</string>
+    <string name="save_changes">Save changes</string>
+    <string name="full_score">Full score</string>
+    <string name="nr_of_workouts">Nr. of workouts</string>
 </resources>

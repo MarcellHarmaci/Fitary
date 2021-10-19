@@ -8,6 +8,7 @@ import dagger.multibindings.IntoMap
 import hu.bme.aut.fitary.ui.charts.pieChart.PieChartViewModel
 import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutViewModel
 import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsViewModel
+import hu.bme.aut.fitary.ui.userProfile.UserProfileViewModel
 import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsViewModel
 
 @Suppress("unused")
@@ -33,4 +34,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(PieChartViewModel::class)
     abstract fun bindPieChartViewModel(pieChartViewModel: PieChartViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(UserProfileViewModel::class)
+    abstract fun bindUserProfileViewModel(userProfileViewModel: UserProfileViewModel): ViewModel
 }

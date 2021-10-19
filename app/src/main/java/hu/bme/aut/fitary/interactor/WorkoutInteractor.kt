@@ -35,7 +35,7 @@ class WorkoutInteractor @Inject constructor(
         }
     }.stateIn(
         scope = CoroutineScope(Dispatchers.IO),
-        started = SharingStarted.Lazily,
+        started = SharingStarted.Eagerly,
         initialValue = listOf()
     )
 
