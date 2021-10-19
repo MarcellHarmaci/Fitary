@@ -16,6 +16,12 @@ class UserInteractor @Inject constructor(
     suspend fun getUsernameById(userId: String): String? =
         firebaseDataSource.getUserById(userId)?.username
 
+    suspend fun getAvatarById(id: String?): ByteArray? {
+        id ?: return null
+
+        return firebaseDataSource.userFlow.value[id]?.avatar
+    }
+
     suspend fun saveUser(firebaseUser: FirebaseUser?) {
         firebaseDataSource.saveUser(
             DomainUser(

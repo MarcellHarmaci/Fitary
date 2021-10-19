@@ -8,6 +8,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.UserProfile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,9 +24,11 @@ class UserDAO @Inject constructor() {
     val currentUser: UserProfile?
         get() = users[auth.currentUser?.uid]
 
-    private val _users = mutableMapOf<String?, UserProfile>()
-    val users: Map<String?, UserProfile>
+    private val _users = mutableMapOf<String, UserProfile>()
+    val users: Map<String, UserProfile>
         get() = _users.toMap()
+
+    val userFlow = MutableStateFlow<Map<String, UserProfile>>(mapOf())
 
     private val keyLookup = mutableMapOf<String, String>()
 
@@ -35,9 +41,12 @@ class UserDAO @Inject constructor() {
                     val newUser = dataSnapshot.getValue(UserProfile::class.java)
 
                     newUser?.let {
-                        _users += Pair(it.id, it)
-
                         if (it.id != null && it.key != null) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                _users += Pair(it.id, it)
+                                userFlow.emit(users)
+                            }
+
                             keyLookup += Pair(it.id, it.key)
                         }
                     }
@@ -51,9 +60,12 @@ class UserDAO @Inject constructor() {
                     val user = dataSnapshot.getValue(UserProfile::class.java)
 
                     user?.let {
-                        _users.replace(it.id, it)
-
                         if (it.id != null && it.key != null) {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                _users.replace(it.id, it)
+                                userFlow.emit(users)
+                            }
+
                             keyLookup.replace(it.id, it.key)
                         }
                     }

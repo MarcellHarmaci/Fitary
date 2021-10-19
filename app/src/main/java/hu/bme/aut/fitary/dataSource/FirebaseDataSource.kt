@@ -52,6 +52,26 @@ class FirebaseDataSource @Inject constructor(
         initialValue = listOf()
     )
 
+    val userFlow: StateFlow<Map<String, DomainUser>> = userDAO.userFlow.map {
+        it.map { dataPair ->
+            Pair(
+                dataPair.key,
+                DomainUser(
+                    id = dataPair.key,
+                    mail = dataPair.value.mail,
+                    username = dataPair.value.username,
+                    avatar = dataPair.value.avatar?.let { encodedAvatar ->
+                        Base64.decode(encodedAvatar, Base64.DEFAULT)
+                    }
+                )
+            )
+        }.toMap()
+    }.stateIn(
+        scope = CoroutineScope(Dispatchers.IO),
+        started = SharingStarted.Eagerly,
+        initialValue = mapOf()
+    )
+
     // TODO Improve mapping code style
     //  docs: https://rainbowcake.dev/best-practices/mapping-code-style/
     private suspend fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
