@@ -28,5 +28,14 @@ class UserWorkoutsPresenter @Inject constructor(
         val score: Double,
         val title: String,
         val avatar: ByteArray? = null
-    )
+    ) {
+        override fun toString(): String {
+            val isAvatarNull = if (avatar == null) {
+                "null"
+            } else {
+                "notNull"
+            }
+            return "Workout(id=$id, score=$score, title='$title', avatar=$isAvatarNull)"
+        }
+    }
 }

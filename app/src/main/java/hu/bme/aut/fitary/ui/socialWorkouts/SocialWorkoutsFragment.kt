@@ -41,7 +41,7 @@ class SocialWorkoutsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        workoutAdapter = WorkoutListAdapter()
+        workoutAdapter = WorkoutListAdapter(this)
         rvSocialWorkouts.adapter = workoutAdapter
         rvSocialWorkouts.layoutManager = LinearLayoutManager(view.context).apply {
             reverseLayout = true

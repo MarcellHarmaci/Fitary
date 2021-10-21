@@ -12,6 +12,6 @@ data class DomainUser(
         } else {
             "notNull"
         }
-        return "DomainUser(id=$id, mail='$mail', username='$username', avatar='$isAvatarNull)"
+        return "DomainUser(id=$id, mail='$mail', username='$username', avatar=$isAvatarNull)"
     }
 }

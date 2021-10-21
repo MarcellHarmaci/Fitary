@@ -50,10 +50,6 @@ class UserWorkoutsFragment :
         }
     }
 
-    fun setFabVisible(isVisible: Boolean) {
-        (activity as MainActivity).setFloatingActionButtonVisible(isVisible)
-    }
-
     override fun onMenuItemClick(item: MenuItem): Boolean {
         if (item.itemId !in setOf(R.id.item_copy_workout, R.id.item_delete_workout)) {
             return false
