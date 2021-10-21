@@ -44,6 +44,8 @@ class EditWorkoutFragment :
     override fun onStart() {
         super.onStart()
 
+        (activity as MainActivity).setFloatingActionButtonVisible(false)
+
         viewModel.setAddExerciseDialogHandler(this)
         viewModel.setSaveFinishedHandler(this)
 
@@ -63,13 +65,6 @@ class EditWorkoutFragment :
         etTitle.doOnTextChanged { text, _, _, _ ->
             viewModel.title = text.toString()
         }
-    }
-
-    override fun onStop() {
-        hideProgressDialog()
-        (activity as MainActivity).setFloatingActionButtonVisible(true)
-
-        super.onStop()
     }
 
     override fun render(viewState: EditWorkoutViewState) {

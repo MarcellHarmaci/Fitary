@@ -45,8 +45,6 @@ class WorkoutListAdapter(
             val navController = findNavController(fragment)
 
             itemView.setOnClickListener {
-                fragment.setFabVisible(false)
-
                 val bundle = bundleOf("workout_id" to workoutId)
                 navController.navigate(R.id.nav_edit_or_create_workout, bundle)
             }

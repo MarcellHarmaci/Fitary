@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
+import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.socialWorkouts.adapter.WorkoutListAdapter
 import kotlinx.android.synthetic.main.fragment_workouts_social.*
@@ -46,6 +47,12 @@ class SocialWorkoutsFragment :
             reverseLayout = true
             stackFromEnd = true
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        (activity as MainActivity).setFloatingActionButtonVisible(true)
     }
 
 }
