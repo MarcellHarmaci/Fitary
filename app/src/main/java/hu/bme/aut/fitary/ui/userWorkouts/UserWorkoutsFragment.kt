@@ -25,10 +25,10 @@ class UserWorkoutsFragment :
     override fun render(viewState: UserWorkoutsViewState) {
         when (viewState) {
             is Loading -> {
-                //pbListLoading.visibility = View.VISIBLE
+                pbListLoading.visibility = View.VISIBLE
             }
             is UserWorkoutsLoaded -> {
-                //pbListLoading.visibility = View.GONE
+                pbListLoading.visibility = View.GONE
 
                 workoutAdapter.submitList(viewState.workouts)
 
