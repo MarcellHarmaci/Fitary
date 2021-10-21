@@ -31,7 +31,7 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
 
         (activity as MainActivity).setFloatingActionButtonVisible(false)
 
-        btnEditImage.setOnClickListener { onAvatarEditButtonClicked() }
+        fabEditImage.setOnClickListener { onAvatarEditButtonClicked() }
         btnSave.setOnClickListener {
             if (viewModel.state.value is UserProfileLoaded) {
                 viewModel.save()

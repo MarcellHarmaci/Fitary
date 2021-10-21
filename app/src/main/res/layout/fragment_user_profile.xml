@@ -9,19 +9,18 @@
     <!-- Remove constant demo image -->
     <ImageView
         android:id="@+id/ivAvatar"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
         android:src="@drawable/ic_launcher_background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_launcher_background" />
 
-    <ImageButton
-        android:id="@+id/btnEditImage"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:background="@android:color/transparent"
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabEditImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@drawable/ic_edit"
         app:layout_constraintBottom_toBottomOf="@+id/ivAvatar"
         app:layout_constraintEnd_toEndOf="@+id/ivAvatar" />
@@ -30,7 +29,7 @@
         android:id="@+id/tvUsername"
         android:layout_width="156dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:text="@string/username"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +39,7 @@
         android:id="@+id/tvUsernameDisplay"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="@android:color/black"
