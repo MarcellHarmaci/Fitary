@@ -50,16 +50,16 @@ class WorkoutListAdapter(
             }
 
             itemView.ibWorkoutActions.setOnClickListener { button ->
-                PopupMenu(fragment.context, button).apply {
-                    setOnMenuItemClickListener(fragment)
-                    inflate(R.menu.popup_menu_user_workout)
+                PopupMenu(fragment.requireContext(), button).apply {
+                    inflate(R.menu.popup_menu_workout_actions)
 
-                    val position: Int = fragment.getListItemPosition(itemView)
-                    val posIntent = Intent().putExtra("position", position)
+                    // Add list item position to every menu item
+                    val posIntent = Intent().putExtra("position", adapterPosition)
                     menu.iterator().forEach { menuItem ->
                         menuItem.intent = posIntent
                     }
 
+                    setOnMenuItemClickListener(fragment)
                     show()
                 }
             }
@@ -85,5 +85,7 @@ class WorkoutListAdapter(
 
             workoutId = workout.id
         }
+
     }
+
 }

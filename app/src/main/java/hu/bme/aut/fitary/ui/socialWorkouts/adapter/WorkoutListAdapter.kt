@@ -1,8 +1,11 @@
 package hu.bme.aut.fitary.ui.socialWorkouts.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.core.view.iterator
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -13,10 +16,9 @@ import kotlinx.android.synthetic.main.list_item_workout.view.*
 
 class WorkoutListAdapter(
     val fragment: SocialWorkoutsFragment
-) :
-    ListAdapter<SocialWorkoutsPresenter.Workout, WorkoutListAdapter.WorkoutViewHolder>(
-        WorkoutComparator
-    ) {
+) : ListAdapter<SocialWorkoutsPresenter.Workout, WorkoutListAdapter.WorkoutViewHolder>(
+    WorkoutComparator
+) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutViewHolder {
         val view = LayoutInflater
@@ -54,6 +56,29 @@ class WorkoutListAdapter(
                     .circleCrop()
                     .into(ivProfile)
             }
+
+            itemView.ibWorkoutActions.setOnClickListener { button ->
+                PopupMenu(fragment.requireContext(), button).apply {
+                    inflate(R.menu.popup_menu_workout_actions)
+
+                    // Remove items if this workout is not owned by the current user
+                    if (!workout.isOwnedByUser) {
+                        menu.removeItem(R.id.item_edit_workout)
+                        menu.removeItem(R.id.item_delete_workout)
+                    }
+
+                    // Add list item position to every menu item
+                    val posIntent = Intent().putExtra("position", adapterPosition)
+                    menu.iterator().forEach { menuItem ->
+                        menuItem.intent = posIntent
+                    }
+
+                    setOnMenuItemClickListener(fragment)
+                    show()
+                }
+            }
         }
+
     }
+
 }

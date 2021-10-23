@@ -95,7 +95,7 @@ class UserDAO @Inject constructor() {
             })
     }
 
-    suspend fun getCurrentUserId() = auth.currentUser?.uid
+    suspend fun getCurrentUserId() = auth.currentUser!!.uid
 
     suspend fun getKeyById(id: String) = keyLookup[id]
 

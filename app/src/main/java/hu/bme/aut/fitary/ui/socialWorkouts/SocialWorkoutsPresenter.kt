@@ -17,7 +17,8 @@ class SocialWorkoutsPresenter @Inject constructor(
                 username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
                 score = domainWorkout.score,
                 title = domainWorkout.title ?: "Awesome workout",
-                avatar = userInteractor.getAvatarById(domainWorkout.uid)
+                avatar = userInteractor.getAvatarById(domainWorkout.uid),
+                isOwnedByUser = workoutInteractor.isWorkoutOwnedByCurrentUser(domainWorkout)
             )
         }
     }
@@ -27,7 +28,8 @@ class SocialWorkoutsPresenter @Inject constructor(
         val username: String,
         val score: Double,
         val title: String,
-        val avatar: ByteArray? = null
+        val avatar: ByteArray? = null,
+        val isOwnedByUser: Boolean = false
     ) {
         override fun toString(): String {
             val isAvatarNull = if (avatar == null) {
@@ -35,7 +37,13 @@ class SocialWorkoutsPresenter @Inject constructor(
             } else {
                 "notNull"
             }
-            return "Workout(username='$username', score=$score, title='$title', avatar=$isAvatarNull)"
+            return "Workout(" +
+                    "username='$username', " +
+                    "score=$score, " +
+                    "title='$title', " +
+                    "avatar=$isAvatarNull, " +
+                    "isOwnedByUser=$isOwnedByUser" +
+                    ")"
         }
     }
 }

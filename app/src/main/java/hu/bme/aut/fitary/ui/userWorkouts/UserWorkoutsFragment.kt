@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
-import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.userWorkouts.adapter.WorkoutListAdapter
 import kotlinx.android.synthetic.main.fragment_workouts_user.*
@@ -51,14 +50,14 @@ class UserWorkoutsFragment :
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
-        if (item.itemId !in setOf(R.id.item_copy_workout, R.id.item_delete_workout)) {
-            return false
-        }
+        if (item.itemId !in setOf(
+                R.id.item_edit_workout,
+                R.id.item_copy_workout,
+                R.id.item_delete_workout
+        )) return false
 
         viewModel.onPopupItemSelected(item)
         return true
     }
-
-    fun getListItemPosition(view: View) = rvUserWorkouts.getChildAdapterPosition(view)
 
 }
