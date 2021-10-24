@@ -20,8 +20,10 @@ import kotlinx.android.synthetic.main.fragment_user_profile.*
 
 class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfileViewModel>() {
 
-    private val REQUEST_CODE_PICK_AVATAR = 10000
-    private val REQUEST_CODE_EXTERNAL_STORAGE = 10001
+    companion object {
+        private const val REQUEST_CODE_PICK_AVATAR = 10000
+        private const val REQUEST_CODE_EXTERNAL_STORAGE = 10001
+    }
 
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_user_profile

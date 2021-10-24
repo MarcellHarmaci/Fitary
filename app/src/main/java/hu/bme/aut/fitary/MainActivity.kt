@@ -16,6 +16,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -60,7 +61,10 @@ class MainActivity : AppCompatActivity() {
         fab = findViewById(R.id.fab)
         fab.setOnClickListener {
             setFloatingActionButtonVisible(false)
-            navController.navigate(R.id.nav_edit_or_create_workout)
+            val bundle = Bundle().apply {
+                putInt("purpose", EditWorkoutFragment.Purpose.CREATE_WORKOUT)
+            }
+            navController.navigate(R.id.nav_edit_or_create_workout, bundle)
         }
     }
 

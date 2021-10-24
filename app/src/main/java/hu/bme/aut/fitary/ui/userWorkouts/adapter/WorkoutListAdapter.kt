@@ -5,9 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.os.bundleOf
 import androidx.core.view.iterator
-import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -39,16 +37,7 @@ class WorkoutListAdapter(
         private val tvTitle = itemView.tvTitle
         private val ivProfile = itemView.ivProfile
 
-        private var workoutId: String? = null
-
         init {
-            val navController = findNavController(fragment)
-
-            itemView.setOnClickListener {
-                val bundle = bundleOf("workout_id" to workoutId)
-                navController.navigate(R.id.nav_edit_or_create_workout, bundle)
-            }
-
             itemView.ibWorkoutActions.setOnClickListener { button ->
                 PopupMenu(fragment.requireContext(), button).apply {
                     inflate(R.menu.popup_menu_workout_actions)
@@ -82,8 +71,6 @@ class WorkoutListAdapter(
                     .circleCrop()
                     .into(ivProfile)
             }
-
-            workoutId = workout.id
         }
 
     }
