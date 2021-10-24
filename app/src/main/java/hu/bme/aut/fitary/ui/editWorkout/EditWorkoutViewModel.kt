@@ -15,9 +15,31 @@ class EditWorkoutViewModel @Inject constructor(
 ) : RainbowCakeViewModel<EditWorkoutViewState>(Loading),
     ResultHandler, OnSuccessListener<Void>, OnFailureListener {
 
-    var title: String? = null
-    private var exercises = mutableListOf<EditWorkoutPresenter.Exercise>()
-    private var workoutId: String? = null
+    fun loadWorkout(openedWithPurpose: Int?, id: String?) = execute {
+
+        if (openedWithPurpose == EditWorkoutFragment.Purpose.CREATE_WORKOUT
+            || openedWithPurpose == null
+            || id == null
+        ) {
+            viewState = Editing()
+        } else {
+            val workout = presenter.loadWorkout(id)
+
+            workout?.let {
+                viewState = Editing(
+                    id = when (openedWithPurpose) {
+                        EditWorkoutFragment.Purpose.EDIT_WORKOUT -> it.id
+                        else -> null
+                    },
+                    exercises = it.exercises.toMutableList(),
+                    score = it.score.toDouble(),
+                    title = it.title
+                )
+            } ?: run {
+                viewState = Editing()
+            }
+        }
+    }
 
     interface SavingWorkoutFinishedHandler {
         fun onSaveFinished(isSuccessful: Boolean)
@@ -49,7 +71,7 @@ class EditWorkoutViewModel @Inject constructor(
     }
 
     fun createEditExerciseDialog(position: Int) = execute {
-        val exercise = exercises[position]
+        val exercise = (viewState as Editing).exercises[position]
 
         val dialog = EditExerciseDialog(exercise, position)
         dialog.setResultHandler(this)
@@ -58,26 +80,47 @@ class EditWorkoutViewModel @Inject constructor(
     }
 
     override fun onAddDialogResult(exercise: EditWorkoutPresenter.Exercise) = execute {
-        exercises.plusAssign(exercise)
-        updateViewStateWithCurrentExercises()
+        val oldState = (viewState as Editing)
+        val exercises = oldState.exercises.toMutableList()
+
+        exercises.add(exercise)
+
+        viewState = oldState.versionedCopy(
+            exercises = exercises,
+            score = exercises.sumOfScores()
+        )
     }
 
     override fun onEditDialogResult(
         exercise: EditWorkoutPresenter.Exercise,
         position: Int
     ) = execute {
+        val oldState = (viewState as Editing)
+        val exercises = oldState.exercises.toMutableList()
+
         exercises[position] = exercise
-        updateViewStateWithCurrentExercises()
+
+        viewState = oldState.versionedCopy(
+            exercises = exercises,
+            score = exercises.sumOfScores()
+        )
     }
 
     fun validateForm(): Boolean {
-        return exercises.isNotEmpty()
+        return (viewState as Editing).exercises.isNotEmpty()
     }
 
     fun saveWorkout() = execute {
-        viewState = Saving
+        val newState = (viewState as Editing).toSaving()
+        viewState = newState
 
-        presenter.saveWorkout(workoutId, exercises, title, this, this)
+        presenter.saveWorkout(
+            id = newState.id,
+            exercises = newState.exercises,
+            title = newState.title,
+            onSuccessListener = this,
+            onFailureListener = this
+        )
     }
 
     override fun onSuccess(void: Void?) {
@@ -85,63 +128,41 @@ class EditWorkoutViewModel @Inject constructor(
     }
 
     override fun onFailure(exception: Exception) {
-        viewState = Editing(
-            exercises = exercises,
-            title = title
-        )
+        viewState = (viewState as Saving).toEditing()
         saveFinishedHandler?.onSaveFinished(false)
     }
 
     fun onPopupItemSelected(item: MenuItem) = execute {
         val position = item.intent.getIntExtra("position", 0)
+        val exercises = (viewState as Editing).exercises.toMutableList()
 
         when (item.itemId) {
             R.id.item_duplicate_exercise -> {
                 val duplicate = exercises[position].copy()
                 exercises.add(position + 1, duplicate)
-                updateViewStateWithCurrentExercises()
             }
             R.id.item_delete_exercise -> {
                 exercises.removeAt(position)
-                updateViewStateWithCurrentExercises()
             }
-        }
-    }
-
-    private fun updateViewStateWithCurrentExercises() = execute {
-        if (viewState is Editing) {
-            val oldState = viewState as Editing
-
-            viewState = oldState.copy(
-                exercises = exercises,
-                score = exercises.sumOfScores(),
-                title = oldState.title
-            )
-        }
-    }
-
-    fun loadWorkout(id: String?) = execute {
-        if (id == null) {
-            viewState = Editing()
-            return@execute
+            else -> return@execute
         }
 
-        val workout = presenter.loadWorkout(id)
-
-        workout?.let {
-            workoutId = it.id
-            exercises = it.exercises.toMutableList()
-
-            viewState = Editing(
-                exercises = it.exercises,
-                score = it.score.toDouble(),
-                title = it.title
-            )
-        }
+        viewState = (viewState as Editing).versionedCopy(
+            exercises = exercises,
+            score = exercises.sumOfScores()
+        )
     }
 
     fun swapExercises(from: Int, to: Int) = execute {
-        Collections.swap(exercises, from, to)
+        // Update view state's inner property without incrementing version.
+        // Re-rendering drops the currently dragged item
+        Collections.swap((viewState as Editing).exercises, from, to)
+    }
+
+    fun setTitle(newTitle: String) {
+        // Update view state's inner property without incrementing version.
+        // Re-rendering moves EditText selection
+        (viewState as Editing).title = newTitle
     }
 
 }

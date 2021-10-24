@@ -46,7 +46,6 @@ class ExerciseListAdapter(
 
         val list = currentList.toMutableList()
         Collections.swap(list, from, to)
-
         notifyItemMoved(from, to)
     }
 

@@ -20,16 +20,21 @@ import hu.bme.aut.fitary.ui.editWorkout.adapter.ExerciseListAdapter
 import hu.bme.aut.fitary.ui.editWorkout.dialog.AddExerciseDialogHandler
 import kotlinx.android.synthetic.main.fragment_edit_or_create_workout.*
 
-
+// TODO Hide keyboard on toolbar back pressed
 class EditWorkoutFragment :
     RainbowCakeFragment<EditWorkoutViewState, EditWorkoutViewModel>(),
     AddExerciseDialogHandler,
     EditWorkoutViewModel.SavingWorkoutFinishedHandler,
     PopupMenu.OnMenuItemClickListener {
 
+    object Purpose {
+        const val CREATE_WORKOUT = 10000
+        const val EDIT_WORKOUT = 10001
+        const val COPY_WORKOUT = 10002
+    }
+
     private lateinit var exerciseAdapter: ExerciseListAdapter
     private var progressDialog: ProgressDialog? = null
-    private var workoutId: String? = null
 
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_edit_or_create_workout
@@ -37,8 +42,9 @@ class EditWorkoutFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        workoutId = arguments?.getString("workout_id")
-        viewModel.loadWorkout(workoutId)
+        val purpose = arguments?.getInt("purpose")
+        val workoutId = arguments?.getString("workout_id")
+        viewModel.loadWorkout(purpose, workoutId)
     }
 
     override fun onStart() {
@@ -63,7 +69,7 @@ class EditWorkoutFragment :
         }
 
         etTitle.doOnTextChanged { text, _, _, _ ->
-            viewModel.title = text.toString()
+            viewModel.setTitle(text.toString())
         }
     }
 
@@ -81,7 +87,8 @@ class EditWorkoutFragment :
                 exerciseAdapter.submitList(viewState.exercises)
                 exerciseAdapter.notifyDataSetChanged()
 
-                etTitle.setText(viewState.title ?: "")
+                etTitle.setText(viewState.title)
+                etTitle.setSelection(etTitle.length())
             }
             is Saving -> {
                 showProgressDialog()
@@ -150,8 +157,10 @@ class EditWorkoutFragment :
 
     override fun onSaveFinished(isSuccessful: Boolean) {
         when (isSuccessful) {
-            true ->
+            true -> {
+                hideProgressDialog()
                 (activity as MainActivity).onSupportNavigateUp()
+            }
             false -> {
                 val message = "Couldn't save workout\nTry again later"
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()

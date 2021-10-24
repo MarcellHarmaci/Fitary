@@ -27,7 +27,7 @@ class EditWorkoutPresenter @Inject constructor(
     }
 
     suspend fun saveWorkout(
-        workoutId: String?,
+        id: String?,
         exercises: List<Exercise>,
         title: String?,
         onSuccessListener: OnSuccessListener<Void>,
@@ -50,7 +50,7 @@ class EditWorkoutPresenter @Inject constructor(
 
         currentUser?.id?.let {
             val workout = DomainWorkout(
-                id = workoutId,
+                id = id,
                 uid = it,
                 username = currentUser.username,
                 domainExercises = domainExercises.toMutableList(),
@@ -75,7 +75,7 @@ class EditWorkoutPresenter @Inject constructor(
                 )
             }
 
-            Workout(
+            return@withIOContext Workout(
                 id = domainWorkout.id,
                 exercises = exercises,
                 title = domainWorkout.title
