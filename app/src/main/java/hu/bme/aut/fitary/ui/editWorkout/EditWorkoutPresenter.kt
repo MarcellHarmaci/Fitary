@@ -63,7 +63,7 @@ class EditWorkoutPresenter @Inject constructor(
     }
 
     suspend fun loadWorkout(id: String): Workout? = withIOContext {
-        val domainWorkout: DomainWorkout? = workoutInteractor.userWorkoutsFlow.value
+        val domainWorkout: DomainWorkout? = workoutInteractor.allWorkoutsFlow.value
             .find { it.id == id }
 
         domainWorkout?.let {
