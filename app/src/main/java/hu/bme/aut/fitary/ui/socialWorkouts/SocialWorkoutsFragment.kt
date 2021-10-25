@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
@@ -64,7 +65,7 @@ class SocialWorkoutsFragment :
                 R.id.item_copy_workout
         )) return false
 
-        viewModel.onPopupItemSelected(item)
+        viewModel.onPopupItemSelected(item, findNavController())
         return true
     }
 

@@ -1,5 +1,6 @@
 package hu.bme.aut.fitary.ui.userWorkouts
 
+import co.zsmb.rainbowcake.withIOContext
 import hu.bme.aut.fitary.interactor.UserInteractor
 import hu.bme.aut.fitary.interactor.WorkoutInteractor
 import kotlinx.coroutines.flow.Flow
@@ -20,6 +21,10 @@ class UserWorkoutsPresenter @Inject constructor(
                 avatar = userInteractor.getAvatarById(domainWorkout.uid)
             )
         }
+    }
+
+    suspend fun deleteWorkout(workoutId: String) = withIOContext {
+        workoutInteractor.deleteWorkoutById(workoutId)
     }
 
     // Presentation model

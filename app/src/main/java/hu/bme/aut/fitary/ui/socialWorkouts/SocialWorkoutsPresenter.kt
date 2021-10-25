@@ -1,5 +1,6 @@
 package hu.bme.aut.fitary.ui.socialWorkouts
 
+import co.zsmb.rainbowcake.withIOContext
 import hu.bme.aut.fitary.interactor.UserInteractor
 import hu.bme.aut.fitary.interactor.WorkoutInteractor
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,7 @@ class SocialWorkoutsPresenter @Inject constructor(
     val workouts: Flow<List<Workout>> = workoutInteractor.allWorkoutsFlow.map {
         it.map { domainWorkout ->
             Workout(
+                id = domainWorkout.id,
                 username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
                 score = domainWorkout.score,
                 title = domainWorkout.title ?: "Awesome workout",
@@ -23,8 +25,13 @@ class SocialWorkoutsPresenter @Inject constructor(
         }
     }
 
+    suspend fun deleteWorkout(workoutId: String) = withIOContext {
+        workoutInteractor.deleteWorkoutById(workoutId)
+    }
+
     // Presentation model
     data class Workout(
+        val id: String?,
         val username: String,
         val score: Double,
         val title: String,

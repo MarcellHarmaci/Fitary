@@ -53,13 +53,9 @@ class WorkoutDAO @Inject constructor() {
                     val workout = dataSnapshot.getValue(Workout::class.java)
 
                     if (workout != null) {
-                        val keys = workoutMap.filterValues { it == workout }.keys
-
-                        // There can only be one workout matching the deleted one
-                        // UserId with the DateTime of creation can differentiate workouts
-                        // That's why it's safe to remove "all" matching keys
-                        for (key in keys) {
-                            workoutMap.remove(key)
+                        val pairToDelete = workoutMap.toList().find { it.second == workout }
+                        pairToDelete?.let {
+                            workoutMap.remove(it.first)
                         }
 
                         emitNewStateOfWorkouts()
@@ -133,6 +129,13 @@ class WorkoutDAO @Inject constructor() {
             .setValue(workout)
             .addOnSuccessListener(onSuccessListener)
             .addOnFailureListener(onFailureListener)
+    }
+
+    suspend fun deleteWorkout(key: String) {
+        database.reference
+            .child("workouts")
+            .child(key)
+            .removeValue()
     }
 
 }

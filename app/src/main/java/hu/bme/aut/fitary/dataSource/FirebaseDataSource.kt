@@ -192,4 +192,6 @@ class FirebaseDataSource @Inject constructor(
         return userDAO.getKeyById(id)
     }
 
+    suspend fun deleteWorkoutByKey(key: String) = workoutDAO.deleteWorkout(key)
+
 }

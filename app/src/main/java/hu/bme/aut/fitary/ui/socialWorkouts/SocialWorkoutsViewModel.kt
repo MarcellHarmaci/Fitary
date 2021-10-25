@@ -1,8 +1,12 @@
 package hu.bme.aut.fitary.ui.socialWorkouts
 
+import android.os.Bundle
 import android.view.MenuItem
+import androidx.navigation.NavController
+import androidx.recyclerview.widget.RecyclerView
 import co.zsmb.rainbowcake.base.RainbowCakeViewModel
 import hu.bme.aut.fitary.R
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutFragment
 import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
@@ -18,19 +22,31 @@ class SocialWorkoutsViewModel @Inject constructor(
         }
     }
 
-    fun onPopupItemSelected(item: MenuItem) = execute {
+    fun onPopupItemSelected(item: MenuItem, navController: NavController) = execute {
         val position = item.intent.getIntExtra("position", 0)
-        // TODO position might be RecyclerView.NO_POSITION! Check when used!
+
+        if (position == RecyclerView.NO_POSITION)
+            return@execute
+
+        val workout = (viewState as SocialWorkoutsLoaded).workouts[position]
 
         when (item.itemId) {
             R.id.item_edit_workout -> {
-
+                val bundle = Bundle().apply {
+                    putInt("purpose", EditWorkoutFragment.Purpose.EDIT_WORKOUT)
+                    putString("workout_id", workout.id)
+                }
+                navController.navigate(R.id.nav_edit_or_create_workout, bundle)
             }
             R.id.item_delete_workout -> {
-                // TODO Delete workout
+                workout.id?.let { presenter.deleteWorkout(workoutId = it) }
             }
             R.id.item_copy_workout -> {
-                // TODO Create a copy of workout and open for editing
+                val bundle = Bundle().apply {
+                    putInt("purpose", EditWorkoutFragment.Purpose.COPY_WORKOUT)
+                    putString("workout_id", workout.id)
+                }
+                navController.navigate(R.id.nav_edit_or_create_workout, bundle)
             }
         }
     }

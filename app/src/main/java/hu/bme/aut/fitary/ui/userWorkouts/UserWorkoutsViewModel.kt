@@ -39,14 +39,14 @@ class UserWorkoutsViewModel @Inject constructor(
                 navController.navigate(R.id.nav_edit_or_create_workout, bundle)
             }
             R.id.item_delete_workout -> {
-                // TODO Delete workout
+                workout.id?.let { presenter.deleteWorkout(workoutId = it) }
             }
             R.id.item_copy_workout -> {
-                // TODO Create a copy of workout and open for editing
                 val bundle = Bundle().apply {
                     putInt("purpose", EditWorkoutFragment.Purpose.COPY_WORKOUT)
                     putString("workout_id", workout.id)
                 }
+                navController.navigate(R.id.nav_edit_or_create_workout, bundle)
             }
         }
     }

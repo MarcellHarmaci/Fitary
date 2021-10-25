@@ -51,4 +51,11 @@ class WorkoutInteractor @Inject constructor(
     suspend fun isWorkoutOwnedByCurrentUser(domainWorkout: DomainWorkout) =
         domainWorkout.uid == currentUserId
 
+    suspend fun deleteWorkoutById(workoutId: String) {
+        // Search in user workouts only, because those are the workouts the current user can delete
+        val workoutToDelete = userWorkoutsFlow.value.find { workout -> workout.id == workoutId }
+
+        workoutToDelete?.id?.let { key -> firebaseDataSource.deleteWorkoutByKey(key) }
+    }
+
 }
