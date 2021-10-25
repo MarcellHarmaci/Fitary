@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
@@ -13,19 +12,17 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var fab: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -57,22 +54,6 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        fab = findViewById(R.id.fab)
-        fab.setOnClickListener {
-            setFloatingActionButtonVisible(false)
-            val bundle = Bundle().apply {
-                putInt("purpose", EditWorkoutFragment.Purpose.CREATE_WORKOUT)
-            }
-            navController.navigate(R.id.nav_edit_or_create_workout, bundle)
-        }
-    }
-
-    fun setFloatingActionButtonVisible(isVisible: Boolean) {
-        when (isVisible) {
-            true -> fab.visibility = View.VISIBLE
-            false -> fab.visibility = View.INVISIBLE
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

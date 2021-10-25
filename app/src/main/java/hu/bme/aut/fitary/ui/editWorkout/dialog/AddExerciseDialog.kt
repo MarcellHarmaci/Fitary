@@ -45,7 +45,7 @@ class AddExerciseDialog(
 
         val spinner = dialogLayout.spinner
         val adapter = context?.let {
-            ArrayAdapter(it, android.R.layout.simple_spinner_item, exerciseNames)
+            ArrayAdapter(it, android.R.layout.simple_spinner_dropdown_item, exerciseNames)
         }
 
         spinner.adapter = adapter
@@ -100,8 +100,6 @@ class AddExerciseDialog(
         tvScore.text = exercise.score.toString()
     }
 
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        // TODO Implement method
-    }
+    override fun onNothingSelected(parent: AdapterView<*>?) { }
 
 }

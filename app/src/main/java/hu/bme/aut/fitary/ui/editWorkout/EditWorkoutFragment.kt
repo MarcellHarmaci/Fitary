@@ -50,8 +50,6 @@ class EditWorkoutFragment :
     override fun onStart() {
         super.onStart()
 
-        (activity as MainActivity).setFloatingActionButtonVisible(false)
-
         viewModel.setAddExerciseDialogHandler(this)
         viewModel.setSaveFinishedHandler(this)
 

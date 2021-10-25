@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
 import kotlinx.android.synthetic.main.fragment_charts.view.*
 
@@ -19,12 +18,6 @@ class ChartsFragment : Fragment() {
         root.viewPagerCharts.adapter = ChartPagerAdapter(childFragmentManager)
 
         return root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        (activity as MainActivity).setFloatingActionButtonVisible(false)
     }
 
 }
