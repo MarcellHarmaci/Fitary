@@ -18,6 +18,7 @@ import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutFragment
 import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutPresenter
 import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutViewModel
 import hu.bme.aut.fitary.ui.editWorkout.dialog.EditExerciseDialogHandler
+import hu.bme.aut.fitary.ui.editWorkout.helper.DragAndDropCallback
 import kotlinx.android.synthetic.main.list_item_exercise.view.*
 import java.util.*
 
@@ -26,7 +27,7 @@ class ExerciseListAdapter(
     private val fragment: EditWorkoutFragment
 ) : ListAdapter<EditWorkoutPresenter.Exercise, ExerciseListAdapter.ExerciseViewHolder>(
     ExerciseComparator
-) {
+), DragAndDropCallback.OnItemMovedHandler {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseViewHolder {
         val view = LayoutInflater
@@ -41,7 +42,7 @@ class ExerciseListAdapter(
         holder.bind(exercise)
     }
 
-    fun onItemMoved(from: Int, to: Int) {
+    override fun onItemMoved(from: Int, to: Int) {
         editWorkoutViewModel.swapExercises(from, to)
 
         val list = currentList.toMutableList()

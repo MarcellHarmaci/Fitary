@@ -10,7 +10,6 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
@@ -18,6 +17,7 @@ import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.editWorkout.adapter.ExerciseListAdapter
 import hu.bme.aut.fitary.ui.editWorkout.dialog.AddExerciseDialogHandler
+import hu.bme.aut.fitary.ui.editWorkout.helper.DragAndDropCallback
 import kotlinx.android.synthetic.main.fragment_edit_or_create_workout.*
 
 // TODO Hide keyboard on toolbar back pressed
@@ -101,30 +101,8 @@ class EditWorkoutFragment :
         rvExercises.adapter = exerciseAdapter
         rvExercises.layoutManager = LinearLayoutManager(view.context)
 
-        // TODO Extract overridden class
-        val simpleCallback: ItemTouchHelper.SimpleCallback =
-            object : ItemTouchHelper.SimpleCallback(
-                ItemTouchHelper.UP or ItemTouchHelper.DOWN or ItemTouchHelper.START or ItemTouchHelper.END,
-                0
-            ) {
-
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    val adapter = (recyclerView.adapter as ExerciseListAdapter)
-                    adapter.onItemMoved(
-                        from = viewHolder.adapterPosition,
-                        to = target.adapterPosition
-                    )
-
-                    return false
-                }
-
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {}
-            }
-        val itemTouchHelper = ItemTouchHelper(simpleCallback)
+        val dndCallback = DragAndDropCallback(exerciseAdapter)
+        val itemTouchHelper = ItemTouchHelper(dndCallback)
         itemTouchHelper.attachToRecyclerView(rvExercises)
     }
 
