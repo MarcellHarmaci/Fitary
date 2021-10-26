@@ -16,6 +16,10 @@
             android:id="@+id/nav_charts"
             android:icon="@drawable/ic_menu_chart_arc"
             android:title="@string/menu_charts" />
+        <item
+            android:id="@+id/nav_user_profile"
+            android:icon="@drawable/ic_manage_account"
+            android:title="@string/user_profile" />
     </group>
 
 </menu>

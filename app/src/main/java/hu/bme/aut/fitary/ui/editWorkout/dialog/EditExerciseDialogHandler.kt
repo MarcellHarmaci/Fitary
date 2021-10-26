@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout.dialog
+package hu.bme.aut.fitary.ui.editWorkout.dialog
 
 import androidx.fragment.app.DialogFragment
 

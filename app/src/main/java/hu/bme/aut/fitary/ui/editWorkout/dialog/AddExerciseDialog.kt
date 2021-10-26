@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout.dialog
+package hu.bme.aut.fitary.ui.editWorkout.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutPresenter
 import kotlinx.android.synthetic.main.dialog_add_exercise.*
 import kotlinx.android.synthetic.main.dialog_add_exercise.view.*
 
@@ -21,7 +21,7 @@ class AddExerciseDialog(
 ) : DialogFragment(), AdapterView.OnItemSelectedListener {
 
     private var resultHandler: ResultHandler? = null
-    private var exercise = CreateWorkoutPresenter.Exercise(
+    private var exercise = EditWorkoutPresenter.Exercise(
         name = exerciseNames[0],
         reps = 0,
         scorePerRep = exerciseScores[exerciseNames[0]]!!    // TODO handle exception
@@ -45,7 +45,7 @@ class AddExerciseDialog(
 
         val spinner = dialogLayout.spinner
         val adapter = context?.let {
-            ArrayAdapter(it, android.R.layout.simple_spinner_item, exerciseNames)
+            ArrayAdapter(it, android.R.layout.simple_spinner_dropdown_item, exerciseNames)
         }
 
         spinner.adapter = adapter
@@ -100,8 +100,6 @@ class AddExerciseDialog(
         tvScore.text = exercise.score.toString()
     }
 
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        // TODO Implement method
-    }
+    override fun onNothingSelected(parent: AdapterView<*>?) { }
 
 }

@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout.dialog
+package hu.bme.aut.fitary.ui.editWorkout.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,12 +9,12 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutPresenter
 import kotlinx.android.synthetic.main.dialog_edit_exercise.*
 import kotlinx.android.synthetic.main.dialog_edit_exercise.view.*
 
 class EditExerciseDialog(
-    private var exercise: CreateWorkoutPresenter.Exercise,
+    private var exercise: EditWorkoutPresenter.Exercise,
     private val position: Int,
 ) : DialogFragment() {
 

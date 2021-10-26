@@ -8,9 +8,15 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.UserProfile
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@ObsoleteCoroutinesApi
 @Singleton
 class UserDAO @Inject constructor() {
 
@@ -20,9 +26,16 @@ class UserDAO @Inject constructor() {
     val currentUser: UserProfile?
         get() = users[auth.currentUser?.uid]
 
-    private val _users = mutableMapOf<String?, UserProfile>()
-    val users: Map<String?, UserProfile>
+    private val _users = mutableMapOf<String, UserProfile>()
+    val users: Map<String, UserProfile>
         get() = _users.toMap()
+
+    val userFlow = MutableStateFlow<Map<String, UserProfile>>(mapOf())
+
+    private val keyLookup = mutableMapOf<String, String>()
+
+    @ObsoleteCoroutinesApi
+    val userDaoContext = newSingleThreadContext("UserDaoContext")
 
     init {
         database
@@ -32,7 +45,18 @@ class UserDAO @Inject constructor() {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
                     val newUser = dataSnapshot.getValue(UserProfile::class.java)
 
-                    newUser?.let { _users += Pair(it.id, it) }
+                    newUser?.let {
+                        if (it.id != null && it.key != null) {
+                            runBlocking {
+                                withContext(userDaoContext) {
+                                    _users += Pair(it.id, it)
+                                    userFlow.emit(users)
+
+                                    keyLookup += Pair(it.id, it.key)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 @RequiresApi(Build.VERSION_CODES.N)
@@ -41,7 +65,19 @@ class UserDAO @Inject constructor() {
                     previousChildName: String?
                 ) {
                     val user = dataSnapshot.getValue(UserProfile::class.java)
-                    user?.let { _users.replace(it.id, it) }
+
+                    user?.let {
+                        if (it.id != null && it.key != null) {
+                            runBlocking {
+                                withContext(userDaoContext) {
+                                    _users.replace(it.id, it)
+                                    userFlow.emit(users)
+
+                                    keyLookup.replace(it.id, it.key)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
@@ -59,19 +95,39 @@ class UserDAO @Inject constructor() {
             })
     }
 
-    suspend fun getCurrentUserId() = auth.currentUser?.uid
+    suspend fun getCurrentUserId() = auth.currentUser!!.uid
+
+    suspend fun getKeyById(id: String) = keyLookup[id]
 
     suspend fun saveUser(user: UserProfile) {
-        if (_users.containsKey(user.id) && _users[user.id] == user)
-            return
+        if (user.id != null && _users.containsKey(user.id))
+            return // Return if user id already exists
 
         val key = database.reference
             .child("users")
             .push().key ?: return
 
+        val newUser = user.copy(
+            key = key,
+            id = user.id,
+            mail = user.mail,
+            username = user.username,
+            avatar = user.avatar
+        )
+
         database.reference
             .child("users")
             .child(key)
+            .setValue(newUser)
+    }
+
+    suspend fun updateUser(user: UserProfile) {
+        if (user.key == null || !_users.containsKey(user.id))
+            return
+
+        database.reference
+            .child("users")
+            .child(user.key)
             .setValue(user)
     }
 

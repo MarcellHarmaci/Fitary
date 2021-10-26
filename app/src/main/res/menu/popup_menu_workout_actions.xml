@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/item_edit_workout"
+        android:title="@string/edit" />
+    <item
+        android:id="@+id/item_delete_workout"
+        android:title="@string/delete" />
+    <item
+        android:id="@+id/item_copy_workout"
+        android:title="@string/create_copy" />
+</menu>

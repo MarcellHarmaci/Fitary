@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,7 +19,10 @@ class WorkoutInteractor @Inject constructor(
     private val firebaseDataSource: FirebaseDataSource
 ) {
 
-    private var currentUserId: String? = null
+    // Block thread during initializing this, because I need this set later
+    private val currentUserId = runBlocking {
+        firebaseDataSource.getCurrentUserId()
+    }
 
     val allWorkoutsFlow: StateFlow<List<DomainWorkout>> = firebaseDataSource.workoutsFlow.stateIn(
         scope = CoroutineScope(Dispatchers.IO),
@@ -28,14 +32,11 @@ class WorkoutInteractor @Inject constructor(
 
     val userWorkoutsFlow: StateFlow<List<DomainWorkout>> = firebaseDataSource.workoutsFlow.map {
         it.filter { domainWorkout ->
-            if (currentUserId == null)
-                currentUserId = firebaseDataSource.getCurrentUserId()
-
             domainWorkout.uid == currentUserId
         }
     }.stateIn(
         scope = CoroutineScope(Dispatchers.IO),
-        started = SharingStarted.Lazily,
+        started = SharingStarted.Eagerly,
         initialValue = listOf()
     )
 
@@ -45,6 +46,16 @@ class WorkoutInteractor @Inject constructor(
         onFailureListener: OnFailureListener
     ) {
         firebaseDataSource.saveWorkout(workout, onSuccessListener, onFailureListener)
+    }
+
+    suspend fun isWorkoutOwnedByCurrentUser(domainWorkout: DomainWorkout) =
+        domainWorkout.uid == currentUserId
+
+    suspend fun deleteWorkoutById(workoutId: String) {
+        // Search in user workouts only, because those are the workouts the current user can delete
+        val workoutToDelete = userWorkoutsFlow.value.find { workout -> workout.id == workoutId }
+
+        workoutToDelete?.id?.let { key -> firebaseDataSource.deleteWorkoutByKey(key) }
     }
 
 }

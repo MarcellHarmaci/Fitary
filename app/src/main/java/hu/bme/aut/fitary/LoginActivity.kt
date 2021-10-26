@@ -63,8 +63,8 @@ class LoginActivity : BaseActivity() {
                     .build()
                 firebaseUser?.updateProfile(profileChangeRequest)
 
-                saveUser(firebaseUser)
                 toast("Registration successful")
+                saveUser(firebaseUser)
                 loginClick()
             }
             .addOnFailureListener { exception ->
@@ -110,13 +110,14 @@ class LoginActivity : BaseActivity() {
         }
 
         val newUser = UserProfile(
+            key = key,
             id = firebaseUser.uid,
             mail = firebaseUser.email ?: "No mail",
             username = firebaseUser.email?.substringBefore('@') ?: "No name"
         )
 
         FirebaseDatabase.getInstance().reference
-            .child("workouts")
+            .child("users")
             .child(key)
             .setValue(newUser)
     }

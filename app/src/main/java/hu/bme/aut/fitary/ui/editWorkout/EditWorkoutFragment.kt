@@ -1,48 +1,57 @@
-package hu.bme.aut.fitary.ui.createWorkout
+package hu.bme.aut.fitary.ui.editWorkout
 
 import android.app.ProgressDialog
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
-import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.ui.createWorkout.adapter.ExerciseListAdapter
-import hu.bme.aut.fitary.ui.createWorkout.dialog.AddExerciseDialogHandler
-import kotlinx.android.synthetic.main.fragment_create_workout.*
+import hu.bme.aut.fitary.ui.editWorkout.adapter.ExerciseListAdapter
+import hu.bme.aut.fitary.ui.editWorkout.dialog.AddExerciseDialogHandler
+import hu.bme.aut.fitary.ui.editWorkout.helper.DragAndDropCallback
+import kotlinx.android.synthetic.main.fragment_edit_or_create_workout.*
 
-class CreateWorkoutFragment :
-    RainbowCakeFragment<CreateWorkoutViewState, CreateWorkoutViewModel>(),
+// TODO Hide keyboard on toolbar back pressed
+class EditWorkoutFragment :
+    RainbowCakeFragment<EditWorkoutViewState, EditWorkoutViewModel>(),
     AddExerciseDialogHandler,
-    CreateWorkoutViewModel.WorkoutSavingFinishedHandler {
+    EditWorkoutViewModel.SavingWorkoutFinishedHandler,
+    PopupMenu.OnMenuItemClickListener {
+
+    object Purpose {
+        const val CREATE_WORKOUT = 10000
+        const val EDIT_WORKOUT = 10001
+        const val COPY_WORKOUT = 10002
+    }
 
     private lateinit var exerciseAdapter: ExerciseListAdapter
     private var progressDialog: ProgressDialog? = null
 
     override fun provideViewModel() = getViewModelFromFactory()
-    override fun getViewResource() = R.layout.fragment_create_workout
+    override fun getViewResource() = R.layout.fragment_edit_or_create_workout
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val purpose = arguments?.getInt("purpose")
+        val workoutId = arguments?.getString("workout_id")
+        viewModel.loadWorkout(purpose, workoutId)
+    }
 
     override fun onStart() {
         super.onStart()
 
         viewModel.setAddExerciseDialogHandler(this)
         viewModel.setSaveFinishedHandler(this)
-        viewModel.exercisesLiveData.observe(this, Observer {
-            it?.let {
-                exerciseAdapter.submitList(it)
-
-                // Weird behaviour here!
-                // Editing exercises doesn't update the UI unless notifyDataSetChanged() is called.
-                // Explained in more depth here: https://stackoverflow.com/a/50031492/10658813
-                exerciseAdapter.notifyDataSetChanged()
-            }
-        })
 
         btnAddExercise.setOnClickListener {
             viewModel.createAddExerciseDialog()
@@ -57,31 +66,29 @@ class CreateWorkoutFragment :
             }
         }
 
-        etComment.doOnTextChanged { text, _, _, _ ->
-            viewModel.comment = text.toString()
+        etTitle.doOnTextChanged { text, _, _, _ ->
+            viewModel.setTitle(text.toString())
         }
     }
 
-    override fun onStop() {
-        viewModel.exercisesLiveData.removeObservers(this)
-        hideProgressDialog()
-        (activity as MainActivity).setFloatingActionButtonVisible(true)
-
-        super.onStop()
-    }
-
-    override fun render(viewState: CreateWorkoutViewState) {
+    override fun render(viewState: EditWorkoutViewState) {
         when (viewState) {
             is Loading -> {
                 hideProgressDialog()
             }
-            is WorkoutCreationInProgress -> {
+            is Editing -> {
                 hideProgressDialog()
 
+                // Weird behaviour here!
+                // Editing exercises doesn't update the UI unless notifyDataSetChanged() is called.
+                // Explained in more depth here: https://stackoverflow.com/a/50031492/10658813
                 exerciseAdapter.submitList(viewState.exercises)
-                etComment.setText(viewState.comment ?: "")
+                exerciseAdapter.notifyDataSetChanged()
+
+                etTitle.setText(viewState.title)
+                etTitle.setSelection(etTitle.length())
             }
-            is SavingWorkout -> {
+            is Saving -> {
                 showProgressDialog()
             }
         }.exhaustive
@@ -90,9 +97,13 @@ class CreateWorkoutFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        exerciseAdapter = ExerciseListAdapter(viewModel, parentFragmentManager)
+        exerciseAdapter = ExerciseListAdapter(viewModel, this)
         rvExercises.adapter = exerciseAdapter
         rvExercises.layoutManager = LinearLayoutManager(view.context)
+
+        val dndCallback = DragAndDropCallback(exerciseAdapter)
+        val itemTouchHelper = ItemTouchHelper(dndCallback)
+        itemTouchHelper.attachToRecyclerView(rvExercises)
     }
 
     override fun onAddExerciseDialogReady(dialog: DialogFragment) {
@@ -121,14 +132,27 @@ class CreateWorkoutFragment :
     }
 
     override fun onSaveFinished(isSuccessful: Boolean) {
-        when(isSuccessful) {
-            true ->
+        when (isSuccessful) {
+            true -> {
+                hideProgressDialog()
                 (activity as MainActivity).onSupportNavigateUp()
+            }
             false -> {
                 val message = "Couldn't save workout\nTry again later"
                 Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             }
         }
     }
+
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        if (item.itemId !in setOf(R.id.item_duplicate_exercise, R.id.item_delete_exercise)) {
+            return false
+        }
+
+        viewModel.onPopupItemSelected(item)
+        return true
+    }
+
+    fun getListItemPosition(view: View) = rvExercises.getChildAdapterPosition(view)
 
 }

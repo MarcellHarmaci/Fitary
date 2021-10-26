@@ -3,6 +3,7 @@
     package="hu.bme.aut.fitary">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".FitaryApplication"

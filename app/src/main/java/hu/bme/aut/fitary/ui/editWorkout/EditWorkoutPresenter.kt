@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout
+package hu.bme.aut.fitary.ui.editWorkout
 
 import co.zsmb.rainbowcake.withIOContext
 import com.google.android.gms.tasks.OnFailureListener
@@ -12,7 +12,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import javax.inject.Inject
 
-class CreateWorkoutPresenter @Inject constructor(
+class EditWorkoutPresenter @Inject constructor(
     private val workoutInteractor: WorkoutInteractor,
     private val exerciseInteractor: ExerciseInteractor,
     private val userInteractor: UserInteractor
@@ -27,8 +27,9 @@ class CreateWorkoutPresenter @Inject constructor(
     }
 
     suspend fun saveWorkout(
+        id: String?,
         exercises: List<Exercise>,
-        comment: String?,
+        title: String?,
         onSuccessListener: OnSuccessListener<Void>,
         onFailureListener: OnFailureListener
     ) = withIOContext {
@@ -49,18 +50,50 @@ class CreateWorkoutPresenter @Inject constructor(
 
         currentUser?.id?.let {
             val workout = DomainWorkout(
+                id = id,
                 uid = it,
                 username = currentUser.username,
                 domainExercises = domainExercises.toMutableList(),
                 score = workoutScore.toDouble(),
-                comment = comment
+                title = title
             )
 
             workoutInteractor.saveWorkout(workout, onSuccessListener, onFailureListener)
         }
     }
 
+    suspend fun loadWorkout(id: String): Workout? = withIOContext {
+        val domainWorkout: DomainWorkout? = workoutInteractor.allWorkoutsFlow.value
+            .find { it.id == id }
+
+        domainWorkout?.let {
+            val exercises = it.domainExercises.map { domainExercise ->
+                Exercise(
+                    name = domainExercise.name,
+                    reps = domainExercise.reps,
+                    scorePerRep = domainExercise.scorePerRep
+                )
+            }
+
+            return@withIOContext Workout(
+                id = domainWorkout.id,
+                exercises = exercises,
+                title = domainWorkout.title
+            )
+        }
+    }
+
     // Presentation model
+    data class Workout(
+        val id: String?,
+        var exercises: List<Exercise> = listOf(),
+        var title: String?
+    ) {
+        val score: BigDecimal
+            get() = exercises.sumOf { it.score }
+                .setScale(1, RoundingMode.HALF_EVEN)
+    }
+
     data class Exercise(
         var name: String = "",
         var reps: Int = 0,
@@ -68,6 +101,6 @@ class CreateWorkoutPresenter @Inject constructor(
     ) {
         val score: BigDecimal
             get() = BigDecimal(reps.toDouble() * scorePerRep)
-                .setScale(2, RoundingMode.HALF_EVEN)
+                .setScale(1, RoundingMode.HALF_EVEN)
     }
 }

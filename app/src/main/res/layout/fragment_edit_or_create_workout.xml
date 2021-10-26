@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_write_post"
+    android:id="@+id/layout_edit_or_create_workout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,37 +11,56 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/activity_vertical_margin">
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/title_of_workout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/tvExercise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Exercises"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutTitle" />
 
     <TextView
         android:id="@+id/tvReps"
-        android:layout_width="64dp"
+        android:layout_width="56dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:text="Reps"
-        android:textAlignment="textEnd"
+        android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/tvScore"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutTitle" />
 
     <TextView
         android:id="@+id/tvScore"
-        android:layout_width="64dp"
+        android:layout_width="56dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="50dp"
         android:text="Score"
         android:textAlignment="textEnd"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayoutTitle" />
 
     <View
         android:id="@+id/divider"
@@ -56,33 +75,10 @@
         android:id="@+id/rvExercises"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/etComment"
+        app:layout_constraintBottom_toTopOf="@+id/btnSaveWorkout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvExercise" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:indeterminate="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/etComment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvExercises" />
-
-    <EditText
-        android:id="@+id/etComment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/write_a_comment"
-        android:inputType="textMultiLine"
-        android:maxLines="10"
-        android:scrollHorizontally="false"
-        app:layout_constraintBottom_toTopOf="@+id/btnSaveWorkout"
-        tools:layout_editor_absoluteX="16dp" />
 
     <Button
         android:id="@+id/btnAddExercise"
