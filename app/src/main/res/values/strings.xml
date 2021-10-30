@@ -34,4 +34,5 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="create_copy">Create copy</string>
+    <string name="failed_to_load_workout">Failed to load workout</string>
 </resources>
