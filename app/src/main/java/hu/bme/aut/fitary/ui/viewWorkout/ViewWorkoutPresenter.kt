@@ -11,7 +11,24 @@ class ViewWorkoutPresenter @Inject constructor(
 ) {
 
     suspend fun loadWorkout(workoutId: String): Workout? = withIOContext {
-        TODO("Not yet implemented")
+        val workout = workoutInteractor.getWorkoutById(workoutId)
+
+        workout?.let {
+            Workout(
+                id = workoutId,
+                title = it.title ?: "Awesome workout",
+                exercises = it.domainExercises.map { domainExercise ->
+                    Exercise(
+                        name = domainExercise.name,
+                        reps = domainExercise.reps,
+                        score = domainExercise.score
+                    )
+                },
+                score = it.domainExercises.sumOf { domainExercise -> domainExercise.score },
+                author = userInteractor.getUsernameById(it.uid) ?: "-",
+                avatar = userInteractor.getAvatarById(it.uid)
+            )
+        }
     }
 
     // Presentation model
@@ -29,7 +46,15 @@ class ViewWorkoutPresenter @Inject constructor(
             } else {
                 "notNull"
             }
-            return "Workout(id=$id, score=$score, title='$title', avatar=$isAvatarNull)"
+
+            return "Workout(" +
+                    "id=$id, " +
+                    "title='$title', " +
+                    "exercises=$exercises, " +
+                    "score=$score, " +
+                    "author='$author', " +
+                    "avatar=$isAvatarNull" +
+                    ")"
         }
     }
 

@@ -40,6 +40,11 @@ class WorkoutInteractor @Inject constructor(
         initialValue = listOf()
     )
 
+    suspend fun getWorkoutById(id: String): DomainWorkout? =
+        allWorkoutsFlow.value.firstOrNull {
+            it.id == id
+        }
+
     suspend fun saveWorkout(
         workout: DomainWorkout,
         onSuccessListener: OnSuccessListener<Void>,
