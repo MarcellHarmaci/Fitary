@@ -54,7 +54,6 @@
         android:id="@+id/tvScoreSum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Σ = "
         tools:text="Σ = 1234"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -73,7 +72,7 @@
         app:layout_constraintTop_toTopOf="@+id/rvWorkoutExercises" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/tvLoadFailed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/failed_to_load_workout"
