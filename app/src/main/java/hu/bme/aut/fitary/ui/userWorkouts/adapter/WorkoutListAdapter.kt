@@ -1,11 +1,13 @@
 package hu.bme.aut.fitary.ui.userWorkouts.adapter
 
 import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.core.view.iterator
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -70,6 +72,14 @@ class WorkoutListAdapter(
                     .load(R.drawable.ic_launcher_background)
                     .circleCrop()
                     .into(ivProfile)
+            }
+
+            itemView.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putString("workout_id", workout.id)
+
+                fragment.findNavController()
+                    .navigate(R.id.nav_view_workout, bundle)
             }
         }
 

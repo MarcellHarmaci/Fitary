@@ -34,4 +34,10 @@
         android:label="@string/user_profile"
         tools:layout="@layout/fragment_user_profile" />
 
+    <fragment
+        android:id="@+id/nav_view_workout"
+        android:name="hu.bme.aut.fitary.ui.viewWorkout.ViewWorkoutFragment"
+        android:label="@string/workout_details"
+        tools:layout="@layout/fragment_view_workout" />
+
 </navigation>
