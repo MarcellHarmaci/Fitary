@@ -23,18 +23,16 @@ class UserInteractor @Inject constructor(
     }
 
     suspend fun saveUser(firebaseUser: FirebaseUser?) {
-        firebaseDataSource.saveUser(
-            DomainUser(
-                firebaseUser?.uid ?: return,
-                firebaseUser.email ?: return,
-                firebaseUser.displayName ?: return
-            )
+        val user = DomainUser(
+            id = firebaseUser?.uid ?: return,
+            mail = firebaseUser.email ?: return,
+            username = firebaseUser.displayName ?: return
         )
+
+        firebaseDataSource.saveUser(user)
     }
 
-    suspend fun updateUser(domainUser: DomainUser) {
-        val key = firebaseDataSource.getUserKeyById(domainUser.id)
-        key?.let { firebaseDataSource.updateUser(key, domainUser) }
-    }
+    suspend fun updateUser(domainUser: DomainUser) =
+        firebaseDataSource.updateUser(domainUser)
 
 }

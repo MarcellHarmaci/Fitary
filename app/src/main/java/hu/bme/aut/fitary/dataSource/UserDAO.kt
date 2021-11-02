@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@ObsoleteCoroutinesApi
 @Singleton
 class UserDAO @Inject constructor() {
 
@@ -32,8 +32,7 @@ class UserDAO @Inject constructor() {
 
     val userFlow = MutableStateFlow<Map<String, UserProfile>>(mapOf())
 
-    private val keyLookup = mutableMapOf<String, String>()
-
+    // SingleThreadContext to avoid concurrent modification of user map
     @ObsoleteCoroutinesApi
     val userDaoContext = newSingleThreadContext("UserDaoContext")
 
@@ -45,15 +44,11 @@ class UserDAO @Inject constructor() {
                 override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
                     val newUser = dataSnapshot.getValue(UserProfile::class.java)
 
-                    newUser?.let {
-                        if (it.id != null && it.key != null) {
-                            runBlocking {
-                                withContext(userDaoContext) {
-                                    _users += Pair(it.id, it)
-                                    userFlow.emit(users)
-
-                                    keyLookup += Pair(it.id, it.key)
-                                }
+                    newUser?.id?.let {
+                        runBlocking {
+                            withContext(userDaoContext) {
+                                _users += Pair(newUser.id, newUser)
+                                userFlow.emit(users)
                             }
                         }
                     }
@@ -66,15 +61,11 @@ class UserDAO @Inject constructor() {
                 ) {
                     val user = dataSnapshot.getValue(UserProfile::class.java)
 
-                    user?.let {
-                        if (it.id != null && it.key != null) {
-                            runBlocking {
-                                withContext(userDaoContext) {
-                                    _users.replace(it.id, it)
-                                    userFlow.emit(users)
-
-                                    keyLookup.replace(it.id, it.key)
-                                }
+                    user?.id?.let {
+                        runBlocking {
+                            withContext(userDaoContext) {
+                                _users.replace(user.id, user)
+                                userFlow.emit(users)
                             }
                         }
                     }
@@ -85,49 +76,36 @@ class UserDAO @Inject constructor() {
                     user?.let { _users.remove(it.id) }
                 }
 
-                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
-                }
+                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {}
 
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+                    val dbException = error.toException()
+
+                    Timber.e(dbException, error.details)
+                    throw dbException
                 }
             })
     }
 
     suspend fun getCurrentUserId() = auth.currentUser!!.uid
 
-    suspend fun getKeyById(id: String) = keyLookup[id]
-
     suspend fun saveUser(user: UserProfile) {
-        if (user.id != null && _users.containsKey(user.id))
+        if (user.id == null || _users.containsKey(user.id))
             return // Return if user id already exists
-
-        val key = database.reference
-            .child("users")
-            .push().key ?: return
-
-        val newUser = user.copy(
-            key = key,
-            id = user.id,
-            mail = user.mail,
-            username = user.username,
-            avatar = user.avatar
-        )
 
         database.reference
             .child("users")
-            .child(key)
-            .setValue(newUser)
+            .child(user.id)
+            .setValue(user)
     }
 
     suspend fun updateUser(user: UserProfile) {
-        if (user.key == null || !_users.containsKey(user.id))
+        if (user.id == null || !_users.containsKey(user.id))
             return
 
         database.reference
             .child("users")
-            .child(user.key)
+            .child(user.id)
             .setValue(user)
     }
 

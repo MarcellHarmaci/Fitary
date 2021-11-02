@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.Exercise
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -43,15 +44,20 @@ class ExerciseDAO @Inject constructor() {
                 }
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-                    TODO("Not yet implemented")
+                    val newExercise = dataSnapshot.getValue(Exercise::class.java)
+
+                    newExercise?.let {
+                        _exercises.remove(it.id)
+                    }
                 }
 
-                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {
-                    TODO("Not yet implemented")
-                }
+                override fun onChildMoved(dataSnapshot: DataSnapshot, previousChildName: String?) {}
 
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+                    val dbException = error.toException()
+
+                    Timber.e(dbException, error.details)
+                    throw dbException
                 }
             })
     }

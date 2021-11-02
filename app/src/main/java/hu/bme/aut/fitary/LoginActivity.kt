@@ -96,21 +96,14 @@ class LoginActivity : BaseActivity() {
             }
     }
 
-    // TODO Remove when refactoring to use RainbowCake
+    // TODO Use UserInteractor to save user
     private fun saveUser(firebaseUser: FirebaseUser?) {
-        val key = FirebaseDatabase
-                .getInstance()
-                .reference
-                .child("users")
-                .push().key ?: return
-
         if (firebaseUser == null) {
             toast("User not yet logged in")
             return
         }
 
         val newUser = UserProfile(
-            key = key,
             id = firebaseUser.uid,
             mail = firebaseUser.email ?: "No mail",
             username = firebaseUser.email?.substringBefore('@') ?: "No name"
@@ -118,7 +111,7 @@ class LoginActivity : BaseActivity() {
 
         FirebaseDatabase.getInstance().reference
             .child("users")
-            .child(key)
+            .child(firebaseUser.uid)
             .setValue(newUser)
     }
 }

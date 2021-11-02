@@ -101,9 +101,8 @@ class FirebaseDataSource @Inject constructor(
         userDAO.saveUser(newUser)
     }
 
-    suspend fun updateUser(key: String, domainUser: DomainUser) {
+    suspend fun updateUser(domainUser: DomainUser) {
         val user = UserProfile(
-            key = key,
             id = domainUser.id,
             mail = domainUser.mail,
             username = domainUser.username,
@@ -184,12 +183,6 @@ class FirebaseDataSource @Inject constructor(
         else {
             workoutDAO.updateWorkout(key, newWorkout, onSuccessListener, onFailureListener)
         }
-    }
-
-    suspend fun getUserKeyById(id: String?): String? {
-        if (id == null) return null
-
-        return userDAO.getKeyById(id)
     }
 
     suspend fun deleteWorkoutByKey(key: String) = workoutDAO.deleteWorkout(key)
