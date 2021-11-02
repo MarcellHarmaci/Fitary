@@ -10,6 +10,7 @@ import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutViewModel
 import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsViewModel
 import hu.bme.aut.fitary.ui.userProfile.UserProfileViewModel
 import hu.bme.aut.fitary.ui.userWorkouts.UserWorkoutsViewModel
+import hu.bme.aut.fitary.ui.viewWorkout.ViewWorkoutViewModel
 
 @Suppress("unused")
 @Module
@@ -39,4 +40,10 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(UserProfileViewModel::class)
     abstract fun bindUserProfileViewModel(userProfileViewModel: UserProfileViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ViewWorkoutViewModel::class)
+    abstract fun bindViewWorkoutViewModel(viewWorkoutViewModel: ViewWorkoutViewModel): ViewModel
+
 }
