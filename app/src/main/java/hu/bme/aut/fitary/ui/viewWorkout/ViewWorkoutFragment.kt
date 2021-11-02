@@ -3,6 +3,7 @@ package hu.bme.aut.fitary.ui.viewWorkout
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
@@ -72,7 +73,11 @@ class ViewWorkoutFragment : RainbowCakeFragment<ViewWorkoutViewState, ViewWorkou
                             .into(ivProfile)
                     }
                 }
-                Unit
+
+                btnCreateCopy.setOnClickListener {
+                    val navController = findNavController()
+                    viewModel.createCopy(navController)
+                }
             }
         }.exhaustive
     }

@@ -70,7 +70,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
-        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        val startDestinationId = navController.currentDestination?.id
+
+        // Navigate up once
+        var didNavigate = navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+
+        // Navigate up a second time if it was (nav_edit_or_create_workout -> nav_view_workout)
+        if ((navController.currentDestination?.id == R.id.nav_view_workout)
+            && (startDestinationId == R.id.nav_edit_or_create_workout)
+        ) {
+            didNavigate = didNavigate && onSupportNavigateUp()
+        }
+
+        return didNavigate
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
