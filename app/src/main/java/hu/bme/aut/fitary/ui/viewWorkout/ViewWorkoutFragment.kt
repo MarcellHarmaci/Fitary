@@ -8,9 +8,12 @@ import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import com.bumptech.glide.Glide
 import hu.bme.aut.fitary.R
+import hu.bme.aut.fitary.ui.viewWorkout.adapter.ExerciseListAdapter
 import kotlinx.android.synthetic.main.fragment_view_workout.*
 
 class ViewWorkoutFragment : RainbowCakeFragment<ViewWorkoutViewState, ViewWorkoutViewModel>() {
+
+    private lateinit var exerciseAdapter: ExerciseListAdapter
 
     override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_view_workout
@@ -20,6 +23,13 @@ class ViewWorkoutFragment : RainbowCakeFragment<ViewWorkoutViewState, ViewWorkou
 
         val workoutId = arguments?.getString("workout_id")
         viewModel.loadWorkout(workoutId)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        exerciseAdapter = ExerciseListAdapter()
+        rvWorkoutExercises.adapter = exerciseAdapter
     }
 
     override fun render(viewState: ViewWorkoutViewState) {
@@ -35,6 +45,12 @@ class ViewWorkoutFragment : RainbowCakeFragment<ViewWorkoutViewState, ViewWorkou
             is WorkoutLoaded -> {
                 pbLoading.visibility = View.GONE
                 tvLoadFailed.visibility = View.GONE
+
+                tvTitle.text = viewState.workout.title
+                tvUsername.text = viewState.workout.author
+                tvScoreSum.text = getString(R.string.sum_equals, viewState.workout.score)
+
+                exerciseAdapter.submitList(viewState.workout.exercises)
 
                 context?.let {
                     if (viewState.workout.avatar != null) {
@@ -56,10 +72,7 @@ class ViewWorkoutFragment : RainbowCakeFragment<ViewWorkoutViewState, ViewWorkou
                             .into(ivProfile)
                     }
                 }
-
-                tvTitle.text = viewState.workout.title
-                tvUsername.text = viewState.workout.author
-                tvScoreSum.text = getString(R.string.sum_equals, viewState.workout.score)
+                Unit
             }
         }.exhaustive
     }
