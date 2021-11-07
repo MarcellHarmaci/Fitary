@@ -32,3 +32,11 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
+
+      # TODO Sign apk
+
+      - name: Upload apk
+        uses: actions/upload-artifact@v2
+        with:
+          name: fitary-debug.apk
+          path: app/build/outputs/apk/debug/
