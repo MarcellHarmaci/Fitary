@@ -43,8 +43,11 @@ jobs:
           keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
+      - name: Print signedReleaseFile
+        run: echo ${{steps.signArtifact.outputs.signedReleaseFile}}
+
       - name: Upload apk
         uses: actions/upload-artifact@v2
         with:
           name: release.apk
-          path: ${{steps.signArtifact.outputs.signedReleaseFile}}
+          path: app/build/outputs/apk/release
