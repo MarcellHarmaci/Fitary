@@ -44,10 +44,13 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Print signedReleaseFile
-        run: echo ${{steps.signArtifact.outputs.signedReleaseFile}}
+        run: echo "signedReleaseFile's value is ${{steps.signArtifact.outputs.signedReleaseFile}}."
+
+      - name: Print file system tree
+        run: tree
 
       - name: Upload apk
         uses: actions/upload-artifact@v2
         with:
-          name: release.apk
+          name: release-artifact
           path: app/build/outputs/apk/release
