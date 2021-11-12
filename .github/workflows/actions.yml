@@ -28,7 +28,7 @@ jobs:
         run: echo $FIREBASE_CONFIG > app/google-services.json
 
       - name: Decode Keystore
-        run: echo ${{ secrets.KEYSTORE }} | base64 -di > app/fitary_keystore.jks
+        run: echo "${{ secrets.KEYSTORE }}" | base64 -di > app/fitary_keystore.jks
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
