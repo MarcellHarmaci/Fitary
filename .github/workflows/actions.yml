@@ -28,7 +28,9 @@ jobs:
         run: echo $FIREBASE_CONFIG > app/google-services.json
 
       - name: Decode Keystore
-        run: echo "${{ secrets.KEYSTORE }}" | base64 -di > app/fitary_keystore.jks
+        env: 
+          ENCODED_KEYSTORE: ${{ secrets.KEYSTORE }}
+        run: echo $ENCODED_KEYSTORE | base64 -di > app/fitary_keystore.jks
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -40,8 +42,8 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
 
-      - name: Upload build artifacts
+      - name: Upload signed APK
         uses: actions/upload-artifact@v2
         with:
           name: Build Artifacts
-          path: app/build/outputs/
+          path: app/build/outputs/apk/release/app-release.apk
