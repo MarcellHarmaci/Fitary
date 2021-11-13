@@ -35,12 +35,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle and sign app bundle
+      - name: Build, align and sign app with Gradle
         run: ./gradlew app:assembleRelease
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+
+      - name: Check if APK is optimized with zipalign
+        run: zipalign -c -v 4 app/build/outputs/apk/release/app-release.apk
 
       - name: Upload signed APK
         uses: actions/upload-artifact@v2
