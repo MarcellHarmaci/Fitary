@@ -1,7 +1,6 @@
-name: Build
+name: Release
 
 on:
-  push:
   pull_request:
     branches:
       - main
@@ -41,9 +40,6 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-
-      - name: Check if APK is optimized with zipalign
-        run: zipalign -c -v 4 app/build/outputs/apk/release/app-release.apk
 
       - name: Upload signed APK
         uses: actions/upload-artifact@v2
