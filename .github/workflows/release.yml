@@ -7,7 +7,7 @@ on:
       - dev
 
 jobs:
-  Build:
+  Assemble-Release:
     runs-on: ubuntu-latest
 
     steps:
