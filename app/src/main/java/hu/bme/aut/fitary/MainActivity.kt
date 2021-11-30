@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.nav_header_main.view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -28,6 +29,15 @@ class MainActivity : AppCompatActivity() {
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)
+        navView.getHeaderView(0).let { navHeader ->
+            val user = FirebaseAuth.getInstance().currentUser
+
+            user?.email?.let { navHeader.tvNavUsername.text = it }
+            user?.displayName?.let { navHeader.tvNavEmail.text = it }
+
+            val ivAvatar = navHeader.ivNavAvatar // TODO Set image
+        }
+
         val navController = findNavController(R.id.nav_host_fragment)
 
         navController.addOnDestinationChangedListener { _, destination, arguments ->
