@@ -4,6 +4,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
         <item name="colorSecondary">@color/secondaryColor</item>
         <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
 
@@ -20,6 +21,10 @@
         <item name="colorNavItemBackgroundNotSelected">@color/colorWhite</item>
 
         <item name="drawableNavItemBackground">@drawable/nav_item_background</item>
+
+        <item name="colorNavBarStart">?attr/colorPrimaryVariant</item>
+        <item name="colorNavBarCenter">?attr/colorPrimary</item>
+        <item name="colorNavBarEnd">?attr/colorSecondaryVariant</item>
     </style>
 
     <style name="Widget.Custom.NavigationView" parent="Widget.Design.NavigationView">

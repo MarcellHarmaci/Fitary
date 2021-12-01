@@ -9,4 +9,8 @@
     <attr name="colorNavItemBackgroundNotSelected" format="color" />
 
     <attr name="drawableNavItemBackground" format="reference" />
+
+    <attr name="colorNavBarStart" format="color" />
+    <attr name="colorNavBarCenter" format="color" />
+    <attr name="colorNavBarEnd" format="color" />
 </resources>
