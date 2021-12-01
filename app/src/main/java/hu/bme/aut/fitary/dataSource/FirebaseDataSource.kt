@@ -139,7 +139,7 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun getExercises(): Map<Long?, DomainExercise> {
-        return exerciseDAO.exercises.map { dataExercise ->
+        val exercises = exerciseDAO.exercises.map { dataExercise ->
             Pair(
                 dataExercise.key,
                 DomainExercise(
@@ -149,6 +149,8 @@ class FirebaseDataSource @Inject constructor(
                 )
             )
         }.toMap().filter { pair -> pair.key != null }
+
+        return exercises.toSortedMap(compareBy { exercises[it]?.name })
     }
 
     suspend fun getExerciseScoreById(id: Long?) = exerciseDAO.exercises[id]?.score ?: 1.0
