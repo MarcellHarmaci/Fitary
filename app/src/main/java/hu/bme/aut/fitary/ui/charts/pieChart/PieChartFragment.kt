@@ -40,43 +40,13 @@ class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewMode
             is ExercisesLoaded -> {
                 if (viewState.exercises.isNotEmpty()) {
                     renderPieChart(viewState.exercises)
-                } else {
-                    // TODO Display loading indication
                 }
             }
         }.exhaustive
     }
 
-    private fun renderPieChart(exercises: List<PieChartPresenter.Exercise>) {
-        val pieEntries: MutableList<PieEntry> = mutableListOf()
-
-        var otherScore = 0.0
-
-        for ((index, exercise) in exercises.sortedByDescending { it.sumOfScore }.withIndex()) {
-            if (index < 5) {
-                pieEntries.add(
-                    PieEntry(
-                        exercise.sumOfScore.toFloat(),
-                        exercise.name
-                    )
-                )
-            } else {
-                otherScore += exercise.sumOfScore
-            }
-        }
-
-        if (otherScore != 0.0) {
-            pieEntries.add(
-                PieEntry(
-                    otherScore.toFloat(),
-                    "Other"
-                )
-            )
-        }
-
+    private fun renderPieChart(pieEntries: List<PieEntry>) {
         val colors = resources.getIntArray(R.array.beachColors).toMutableList()
-        if (otherScore == 0.0)
-            colors.removeLast()
 
         val dataSet = PieDataSet(pieEntries, "").apply {
             setColors(colors.toIntArray(), 255)
