@@ -14,7 +14,6 @@ import co.zsmb.rainbowcake.base.RainbowCakeFragment
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import com.bumptech.glide.Glide
-import hu.bme.aut.fitary.MainActivity
 import hu.bme.aut.fitary.R
 import kotlinx.android.synthetic.main.fragment_user_profile.*
 

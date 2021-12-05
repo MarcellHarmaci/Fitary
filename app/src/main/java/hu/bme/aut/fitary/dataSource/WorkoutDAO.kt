@@ -7,11 +7,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.Workout
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,29 +36,25 @@ class WorkoutDAO @Inject constructor() {
                 override fun onChildAdded(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) = workoutUpsertHandler(
-                    workout = dataSnapshot.getValue(Workout::class.java),
-                    previousChildName = previousChildName
-                )
+                ) = workoutUpsertHandler(dataSnapshot.getValue(Workout::class.java))
 
                 override fun onChildChanged(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) = workoutUpsertHandler(
-                    workout = dataSnapshot.getValue(Workout::class.java),
-                    previousChildName = previousChildName
-                )
+                ) = workoutUpsertHandler(dataSnapshot.getValue(Workout::class.java))
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                     val workout = dataSnapshot.getValue(Workout::class.java)
 
                     if (workout != null) {
-                        val pairToDelete = workoutMap.toList().find { it.second == workout }
-                        pairToDelete?.let {
-                            workoutMap.remove(it.first)
-                        }
+                        CoroutineScope(workoutDaoContext).launch {
+                            val pairToDelete = workoutMap.toList().find { it.second == workout }
+                            pairToDelete?.let {
+                                workoutMap.remove(it.first)
+                            }
 
-                        emitNewStateOfWorkouts()
+                            emitNewStateOfWorkouts()
+                        }
                     }
                 }
 
@@ -81,21 +77,18 @@ class WorkoutDAO @Inject constructor() {
             })
     }
 
-    private fun workoutUpsertHandler(workout: Workout?, previousChildName: String?) {
+    private fun workoutUpsertHandler(workout: Workout?) {
         if (workout != null) {
-            workoutMap[workout.id] = workout
-
-            emitNewStateOfWorkouts()
+            CoroutineScope(workoutDaoContext).launch {
+                workoutMap[workout.id] = workout
+                emitNewStateOfWorkouts()
+            }
         }
     }
 
-    private fun emitNewStateOfWorkouts() {
-        runBlocking {
-            withContext(workoutDaoContext) {
-                val newState = workoutMap.values.toList()
-                workoutsFlow.emit(newState)
-            }
-        }
+    private suspend fun emitNewStateOfWorkouts() {
+        val newState = workoutMap.values.toList()
+        workoutsFlow.emit(newState)
     }
 
     suspend fun saveWorkout(

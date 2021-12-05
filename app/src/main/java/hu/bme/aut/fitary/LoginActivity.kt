@@ -9,10 +9,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
-import hu.bme.aut.fitary.dataSource.model.UserProfile
+import hu.bme.aut.fitary.dataSource.model.User
 import hu.bme.aut.fitary.extensions.validateNonEmpty
 import kotlinx.android.synthetic.main.activity_login.*
-
+import kotlinx.coroutines.*
 
 class LoginActivity : BaseActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
@@ -55,8 +55,6 @@ class LoginActivity : BaseActivity() {
         firebaseAuth
             .createUserWithEmailAndPassword(etEmail.text.toString(), etPassword.text.toString())
             .addOnSuccessListener { result ->
-                hideProgressDialog()
-
                 val firebaseUser = result.user
                 val profileChangeRequest = UserProfileChangeRequest.Builder()
                     .setDisplayName(firebaseUser?.email?.substringBefore('@'))
@@ -103,7 +101,7 @@ class LoginActivity : BaseActivity() {
             return
         }
 
-        val newUser = UserProfile(
+        val newUser = User(
             id = firebaseUser.uid,
             mail = firebaseUser.email ?: "No mail",
             username = firebaseUser.email?.substringBefore('@') ?: "No name"

@@ -3,7 +3,7 @@ package hu.bme.aut.fitary.dataSource
 import android.util.Base64
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
-import hu.bme.aut.fitary.dataSource.model.UserProfile
+import hu.bme.aut.fitary.dataSource.model.User
 import hu.bme.aut.fitary.dataSource.model.Workout
 import hu.bme.aut.fitary.domainModel.DomainExercise
 import hu.bme.aut.fitary.domainModel.DomainUser
@@ -92,7 +92,7 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun saveUser(domainUser: DomainUser) {
-        val newUser = UserProfile(
+        val newUser = User(
             id = domainUser.id,
             mail = domainUser.mail,
             username = domainUser.username
@@ -102,7 +102,7 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun updateUser(domainUser: DomainUser) {
-        val user = UserProfile(
+        val user = User(
             id = domainUser.id,
             mail = domainUser.mail,
             username = domainUser.username,
