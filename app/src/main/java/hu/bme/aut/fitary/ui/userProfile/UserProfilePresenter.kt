@@ -50,14 +50,13 @@ class UserProfilePresenter @Inject constructor(
         return@withIOContext byteArray
     }
 
-    suspend fun save(userId: String?, username: String, userMail: String, avatar: ByteArray?) =
-        withIOContext {
+    suspend fun save(userProfile: UserProfile) = withIOContext {
             userInteractor.updateUser(
                 DomainUser(
-                    id = userId,
-                    username = username,
-                    mail = userMail,
-                    avatar = avatar
+                    id = userProfile.userId,
+                    username = userProfile.username,
+                    mail = userProfile.userMail,
+                    avatar = userProfile.avatar
                 )
             )
         }
@@ -69,6 +68,22 @@ class UserProfilePresenter @Inject constructor(
         val userMail: String,
         val numberOfWorkouts: Int,
         val fullScore: Double,
-        val avatar: ByteArray? = null
-    )
+        var avatar: ByteArray? = null
+    ) {
+        override fun toString(): String {
+            val isAvatarNull = if (avatar == null) {
+                "null"
+            } else {
+                "notNull"
+            }
+            return "UserProfile(" +
+                    "userId=$userId, " +
+                    "username='$username', " +
+                    "userMail='$userMail', " +
+                    "numberOfWorkouts=$numberOfWorkouts, " +
+                    "fullScore=$fullScore, " +
+                    "avatar=$isAvatarNull" +
+                    ")"
+        }
+    }
 }

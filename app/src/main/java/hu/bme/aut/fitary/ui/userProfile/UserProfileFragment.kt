@@ -51,17 +51,17 @@ class UserProfileFragment : RainbowCakeFragment<UserProfileViewState, UserProfil
                 // TODO Display something to indicate loading
             }
             is UserProfileLoaded -> {
-                tvUsernameDisplay.text = viewState.username
-                tvUserMailDisplay.text = viewState.userMail
-                tvNumberOfWorkoutsDisplay.text = viewState.numberOfWorkouts.toString()
-                tvScoreOfWorkoutsDisplay.text = viewState.fullScore.toString()
+                tvUsernameDisplay.text = viewState.profile.username
+                tvUserMailDisplay.text = viewState.profile.userMail
+                tvNumberOfWorkoutsDisplay.text = viewState.profile.numberOfWorkouts.toString()
+                tvScoreOfWorkoutsDisplay.text = viewState.profile.fullScore.toString()
 
                 context?.let {
-                    if (viewState.avatar != null) {
+                    if (viewState.profile.avatar != null) {
                         val avatarAsBitmap = BitmapFactory.decodeByteArray(
-                            viewState.avatar,
+                            viewState.profile.avatar,
                             0,
-                            viewState.avatar.size
+                            viewState.profile.avatar!!.size
                         )
 
                         Glide.with(it)

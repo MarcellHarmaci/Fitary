@@ -11,15 +11,7 @@ class UserProfileViewModel @Inject constructor(
     init {
         execute {
             val profile = presenter.loadUserProfile()
-
-            viewState = UserProfileLoaded(
-                userId = profile.userId,
-                username = profile.username,
-                userMail = profile.userMail,
-                numberOfWorkouts = profile.numberOfWorkouts,
-                fullScore = profile.fullScore,
-                avatar = profile.avatar
-            )
+            viewState = UserProfileLoaded(profile)
         }
     }
 
@@ -30,26 +22,15 @@ class UserProfileViewModel @Inject constructor(
 
         byteArray?.let {
             val oldState = viewState as UserProfileLoaded
+            val updatedProfile = oldState.profile.copy(avatar = byteArray)
 
-            viewState = oldState.copy(
-                userId = oldState.userId,
-                username = oldState.username,
-                numberOfWorkouts = oldState.numberOfWorkouts,
-                fullScore = oldState.fullScore,
-                avatar = byteArray
-            )
+            viewState = oldState.copy(profile = updatedProfile)
         }
     }
 
     fun save() = execute {
         val currentState = viewState as UserProfileLoaded
-
-        presenter.save(
-            currentState.userId,
-            currentState.username,
-            currentState.userMail,
-            currentState.avatar
-        )
+        presenter.save(currentState.profile)
     }
 
 }
