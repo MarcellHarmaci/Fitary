@@ -13,17 +13,17 @@ class UserProfilePresenter @Inject constructor(
 ) {
 
     suspend fun loadUserProfile() = withIOContext {
-        val user = userInteractor.getCurrentUser()
+        val domainUser = userInteractor.getCurrentUser()
         val numberOfWorkouts = workoutInteractor.userWorkoutsFlow.value.size
         val fullScore = workoutInteractor.userWorkoutsFlow.value.sumOf { it.score }
 
         UserProfile(
-            userId = user?.id,
-            username = user?.username ?: "No username",
-            userMail = user?.mail ?: "No email address",
+            userId = domainUser?.id,
+            username = domainUser?.username ?: "No username",
+            userMail = domainUser?.mail ?: "No email address",
             numberOfWorkouts = numberOfWorkouts,
             fullScore = fullScore,
-            avatar = user?.avatar
+            avatar = domainUser?.avatar
         )
     }
 

@@ -41,6 +41,7 @@ class PieChartFragment : RainbowCakeFragment<PieChartViewState, PieChartViewMode
                 if (viewState.exercises.isNotEmpty()) {
                     renderPieChart(viewState.exercises)
                 }
+                Unit
             }
         }.exhaustive
     }
