@@ -51,15 +51,15 @@ class UserProfilePresenter @Inject constructor(
     }
 
     suspend fun save(userProfile: UserProfile) = withIOContext {
-            userInteractor.updateUser(
-                DomainUser(
-                    id = userProfile.userId,
-                    username = userProfile.username,
-                    mail = userProfile.userMail,
-                    avatar = userProfile.avatar
-                )
+        userInteractor.updateUser(
+            DomainUser(
+                id = userProfile.userId,
+                username = userProfile.username,
+                mail = userProfile.userMail,
+                avatar = userProfile.avatar
             )
-        }
+        )
+    }
 
     // Presentation model
     data class UserProfile(

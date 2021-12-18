@@ -15,6 +15,8 @@ import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsFragment
 import hu.bme.aut.fitary.ui.socialWorkouts.SocialWorkoutsPresenter
 import kotlinx.android.synthetic.main.list_item_workout.view.*
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 class WorkoutListAdapter(
     val fragment: SocialWorkoutsFragment
@@ -43,7 +45,9 @@ class WorkoutListAdapter(
         fun bind(workout: SocialWorkoutsPresenter.Workout) {
             tvTitle.text = workout.title
             tvUsername.text = workout.username
-            tvScore.text = workout.score.toString()
+            tvScore.text = BigDecimal(workout.score)
+                .setScale(1, RoundingMode.HALF_EVEN)
+                .toString()
 
             val context = fragment.requireContext()
             if (workout.avatar != null) {

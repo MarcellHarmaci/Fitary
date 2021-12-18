@@ -14,6 +14,7 @@ import hu.bme.aut.fitary.R
 import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutPresenter
 import kotlinx.android.synthetic.main.dialog_add_exercise.*
 import kotlinx.android.synthetic.main.dialog_add_exercise.view.*
+import kotlin.math.roundToInt
 
 class AddExerciseDialog(
     private val exerciseNames: List<String>,
@@ -55,7 +56,7 @@ class AddExerciseDialog(
             if (currentText.isNullOrBlank())
                 exercise.reps = 0
             else
-                exercise.reps = currentText.toString().toInt()
+                exercise.reps = currentText.toString().toDouble().roundToInt()
 
             // Update displayed score
             dialogLayout.tvScore.text = exercise.score.toString()
@@ -88,7 +89,7 @@ class AddExerciseDialog(
     }
 
     private fun validateForm(): Boolean {
-        return !etReps.text.isNullOrBlank() && etReps.text.toString().toInt() != 0
+        return !etReps.text.isNullOrBlank() && etReps.text.toString().toDouble().roundToInt() != 0
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
