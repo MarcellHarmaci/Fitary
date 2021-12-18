@@ -1,20 +1,25 @@
 package hu.bme.aut.fitary.dataSource
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
+import android.util.Base64
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
-import hu.bme.aut.fitary.dataSource.model.UserProfile
+import hu.bme.aut.fitary.dataSource.model.User
 import hu.bme.aut.fitary.dataSource.model.Workout
 import hu.bme.aut.fitary.domainModel.DomainExercise
 import hu.bme.aut.fitary.domainModel.DomainUser
 import hu.bme.aut.fitary.domainModel.DomainWorkout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/* Responsibilities:
-    Mapping from data models to domain models
-    Providing access to CRUD operations
+/** Responsibilities:
+ * Mapping from data models to domain models;
+ * Providing access to CRUD operations.
  */
 @Singleton
 class FirebaseDataSource @Inject constructor(
@@ -23,34 +28,53 @@ class FirebaseDataSource @Inject constructor(
     private val workoutDAO: WorkoutDAO
 ) {
 
-    val workouts = MutableLiveData<MutableList<DomainWorkout>>()
-
-    private val workoutObserver = Observer<MutableList<Workout>> {
-        workouts.value = it.map { workout ->
-
+    var workoutsFlow: StateFlow<List<DomainWorkout>> = workoutDAO.workoutsFlow.map {
+        it.map { workout ->
             var score = 0.0
+
             for (i in 0 until workout.exercises.size) {
                 val scorePerRep = exerciseDAO.getExerciseScoreById(workout.exercises[i]) ?: 0.0
                 score += scorePerRep * workout.reps[i]
             }
 
             DomainWorkout(
+                id = workout.id,
                 uid = workout.uid ?: "Unknown user",
                 username = userDAO.users[workout.uid]?.username ?: "No username",
                 domainExercises = mapWorkoutExercisesToDomain(workout),
                 score = score,
-                comment = workout.comment
+                title = workout.title
             )
-        }.toMutableList()
-    }
+        }
+    }.stateIn(
+        scope = CoroutineScope(Dispatchers.IO),
+        started = SharingStarted.Eagerly,
+        initialValue = listOf()
+    )
 
-    init {
-        workoutDAO.workouts.observeForever(workoutObserver)
-    }
+    val userFlow: StateFlow<Map<String, DomainUser>> = userDAO.userFlow.map {
+        it.map { dataPair ->
+            Pair(
+                dataPair.key,
+                DomainUser(
+                    id = dataPair.key,
+                    mail = dataPair.value.mail,
+                    username = dataPair.value.username,
+                    avatar = dataPair.value.avatar?.let { encodedAvatar ->
+                        Base64.decode(encodedAvatar, Base64.DEFAULT)
+                    }
+                )
+            )
+        }.toMap()
+    }.stateIn(
+        scope = CoroutineScope(Dispatchers.IO),
+        started = SharingStarted.Eagerly,
+        initialValue = mapOf()
+    )
 
     // TODO Improve mapping code style
     //  docs: https://rainbowcake.dev/best-practices/mapping-code-style/
-    private fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
+    private suspend fun mapWorkoutExercisesToDomain(workout: Workout): MutableList<DomainExercise> {
         val domainExercises = mutableListOf<DomainExercise>()
 
         for (i in 0 until workout.exercises.size) {
@@ -58,8 +82,9 @@ class FirebaseDataSource @Inject constructor(
 
             domainExercises += DomainExercise(
                 id = exerciseId,
+                name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise",
                 reps = workout.reps[i],
-                name = exerciseDAO.getExerciseById(exerciseId)?.name ?: "Unknown exercise"
+                scorePerRep = exerciseDAO.getExerciseScoreById(exerciseId) ?: 1.0
             )
         }
 
@@ -67,7 +92,7 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun saveUser(domainUser: DomainUser) {
-        val newUser = UserProfile(
+        val newUser = User(
             id = domainUser.id,
             mail = domainUser.mail,
             username = domainUser.username
@@ -76,12 +101,28 @@ class FirebaseDataSource @Inject constructor(
         userDAO.saveUser(newUser)
     }
 
+    suspend fun updateUser(domainUser: DomainUser) {
+        val user = User(
+            id = domainUser.id,
+            mail = domainUser.mail,
+            username = domainUser.username,
+            avatar = Base64.encodeToString(domainUser.avatar, Base64.DEFAULT)
+        )
+
+        userDAO.updateUser(user)
+    }
+
+    suspend fun getCurrentUserId() = userDAO.getCurrentUserId()
+
     suspend fun getCurrentUser(): DomainUser? {
         return userDAO.currentUser?.let { userProfile ->
             DomainUser(
                 id = userProfile.id,
                 mail = userProfile.mail,
-                username = userProfile.username
+                username = userProfile.username,
+                avatar = userProfile.avatar?.let {
+                    Base64.decode(userProfile.avatar, Base64.DEFAULT)
+                }
             )
         }
     }
@@ -98,7 +139,7 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun getExercises(): Map<Long?, DomainExercise> {
-        return exerciseDAO.exercises.map { dataExercise ->
+        val exercises = exerciseDAO.exercises.map { dataExercise ->
             Pair(
                 dataExercise.key,
                 DomainExercise(
@@ -108,6 +149,8 @@ class FirebaseDataSource @Inject constructor(
                 )
             )
         }.toMap().filter { pair -> pair.key != null }
+
+        return exercises.toSortedMap(compareBy { exercises[it]?.name })
     }
 
     suspend fun getExerciseScoreById(id: Long?) = exerciseDAO.exercises[id]?.score ?: 1.0
@@ -128,13 +171,22 @@ class FirebaseDataSource @Inject constructor(
         }
 
         val newWorkout = Workout(
+            id = domainWorkout.id ?: "",
             uid = domainWorkout.uid,
             exercises = exerciseList,
             reps = repetitionList,
-            comment = domainWorkout.comment
+            title = domainWorkout.title
         )
 
-        workoutDAO.saveWorkout(newWorkout, onSuccessListener, onFailureListener)
+        val key = domainWorkout.id
+        if (key.isNullOrBlank()) {
+            workoutDAO.saveWorkout(newWorkout, onSuccessListener, onFailureListener)
+        }
+        else {
+            workoutDAO.updateWorkout(key, newWorkout, onSuccessListener, onFailureListener)
+        }
     }
+
+    suspend fun deleteWorkoutByKey(key: String) = workoutDAO.deleteWorkout(key)
 
 }

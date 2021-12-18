@@ -1,6 +1,5 @@
 package hu.bme.aut.fitary.dataSource
 
-import androidx.lifecycle.MutableLiveData
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.ChildEventListener
@@ -8,17 +7,26 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import hu.bme.aut.fitary.dataSource.model.Workout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.newSingleThreadContext
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@ObsoleteCoroutinesApi
 @Singleton
 class WorkoutDAO @Inject constructor() {
 
     private val database = FirebaseDatabase.getInstance()
 
+    @ObsoleteCoroutinesApi
+    val workoutDaoContext = newSingleThreadContext("WorkoutDaoContext")
+
     private val workoutMap = mutableMapOf<String?, Workout>()
-    val workouts = MutableLiveData<MutableList<Workout>>()
+    val workoutsFlow = MutableStateFlow<List<Workout>>(listOf())
 
     init {
         database
@@ -28,27 +36,26 @@ class WorkoutDAO @Inject constructor() {
                 override fun onChildAdded(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) = updateLocalWorkouts(dataSnapshot, previousChildName)
+                ) = workoutUpsertHandler(dataSnapshot.getValue(Workout::class.java))
 
                 override fun onChildChanged(
                     dataSnapshot: DataSnapshot,
                     previousChildName: String?
-                ) = updateLocalWorkouts(dataSnapshot, previousChildName)
+                ) = workoutUpsertHandler(dataSnapshot.getValue(Workout::class.java))
 
                 override fun onChildRemoved(dataSnapshot: DataSnapshot) {
                     val workout = dataSnapshot.getValue(Workout::class.java)
 
                     if (workout != null) {
-                        val keys = workoutMap.filterValues { it == workout }.keys
+                        CoroutineScope(workoutDaoContext).launch {
+                            val pairToDelete = workoutMap.toList().find { it.second == workout }
+                            pairToDelete?.let {
+                                workoutMap.remove(it.first)
+                            }
 
-                        // There can only be one workout matching the deleted one
-                        // UserId with the DateTime of creation can differentiate workouts
-                        // That's why it's safe to remove "all" matching keys
-                        for (key in keys) {
-                            workoutMap.remove(key)
+                            emitNewStateOfWorkouts()
                         }
                     }
-
                 }
 
                 override fun onChildMoved(
@@ -70,13 +77,18 @@ class WorkoutDAO @Inject constructor() {
             })
     }
 
-    private fun updateLocalWorkouts(dataSnapshot: DataSnapshot, previousChildName: String?) {
-        val workout = dataSnapshot.getValue(Workout::class.java)
-
+    private fun workoutUpsertHandler(workout: Workout?) {
         if (workout != null) {
-            workoutMap[previousChildName] = workout
-            workouts.value = workoutMap.values.toMutableList()
+            CoroutineScope(workoutDaoContext).launch {
+                workoutMap[workout.id] = workout
+                emitNewStateOfWorkouts()
+            }
         }
+    }
+
+    private suspend fun emitNewStateOfWorkouts() {
+        val newState = workoutMap.values.toList()
+        workoutsFlow.emit(newState)
     }
 
     suspend fun saveWorkout(
@@ -88,12 +100,35 @@ class WorkoutDAO @Inject constructor() {
             .child("workouts")
             .push().key ?: return
 
+        workout.id = key
+
         database.reference
             .child("workouts")
             .child(key)
             .setValue(workout)
             .addOnSuccessListener(onSuccessListener)
             .addOnFailureListener(onFailureListener)
+    }
+
+    suspend fun updateWorkout(
+        key: String,
+        workout: Workout,
+        onSuccessListener: OnSuccessListener<Void>,
+        onFailureListener: OnFailureListener
+    ) {
+        database.reference
+            .child("workouts")
+            .child(key)
+            .setValue(workout)
+            .addOnSuccessListener(onSuccessListener)
+            .addOnFailureListener(onFailureListener)
+    }
+
+    suspend fun deleteWorkout(key: String) {
+        database.reference
+            .child("workouts")
+            .child(key)
+            .removeValue()
     }
 
 }

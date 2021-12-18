@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorNavItemContentStateful" format="color" />
+    <attr name="colorNavItemContentSelected" format="color" />
+    <attr name="colorNavItemContentNotSelected" format="color" />
+
+    <attr name="colorNavItemBackgroundStateful" format="color" />
+    <attr name="colorNavItemBackgroundSelected" format="color" />
+    <attr name="colorNavItemBackgroundNotSelected" format="color" />
+
+    <attr name="drawableNavItemBackground" format="reference" />
+
+    <attr name="colorNavBarStart" format="color" />
+    <attr name="colorNavBarCenter" format="color" />
+    <attr name="colorNavBarEnd" format="color" />
+</resources>

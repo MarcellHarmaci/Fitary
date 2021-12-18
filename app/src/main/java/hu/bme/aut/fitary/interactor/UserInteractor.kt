@@ -10,19 +10,29 @@ import javax.inject.Singleton
 class UserInteractor @Inject constructor(
     private val firebaseDataSource: FirebaseDataSource
 ) {
+
+    suspend fun getCurrentUser() = firebaseDataSource.getCurrentUser()
+
     suspend fun getUsernameById(userId: String): String? =
         firebaseDataSource.getUserById(userId)?.username
 
-    suspend fun saveUser(firebaseUser: FirebaseUser?) {
-        firebaseDataSource.saveUser(
-            DomainUser(
-                firebaseUser?.uid ?: return,
-                firebaseUser.email ?: return,
-                firebaseUser.displayName ?: return
-            )
-        )
+    suspend fun getAvatarById(id: String?): ByteArray? {
+        id ?: return null
+
+        return firebaseDataSource.userFlow.value[id]?.avatar
     }
 
-    suspend fun getCurrentUser() = firebaseDataSource.getCurrentUser()
+    suspend fun saveUser(firebaseUser: FirebaseUser?) {
+        val user = DomainUser(
+            id = firebaseUser?.uid ?: return,
+            mail = firebaseUser.email ?: return,
+            username = firebaseUser.displayName ?: return
+        )
+
+        firebaseDataSource.saveUser(user)
+    }
+
+    suspend fun updateUser(domainUser: DomainUser) =
+        firebaseDataSource.updateUser(domainUser)
 
 }

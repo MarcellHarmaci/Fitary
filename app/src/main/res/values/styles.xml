@@ -2,9 +2,35 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryDarkColor</item>
+
+        <item name="colorAccent">?attr/colorPrimary</item>
+        <item name="colorButtonNormal">?attr/colorPrimary</item>
+
+        <!-- Nav Drawer Color Theme -->
+        <item name="colorNavItemContentStateful">@color/menu_item_content_color_state</item>
+        <item name="colorNavItemContentSelected">@color/colorWhite</item>
+        <item name="colorNavItemContentNotSelected">?attr/colorPrimaryDark</item>
+
+        <item name="colorNavItemBackgroundStateful">@color/menu_item_background_color_state</item>
+        <item name="colorNavItemBackgroundSelected">?attr/colorPrimaryDark</item>
+        <item name="colorNavItemBackgroundNotSelected">@color/colorWhite</item>
+
+        <item name="drawableNavItemBackground">@drawable/nav_item_background</item>
+
+        <item name="colorNavBarStart">?attr/colorPrimaryVariant</item>
+        <item name="colorNavBarCenter">?attr/colorPrimary</item>
+        <item name="colorNavBarEnd">?attr/colorSecondaryVariant</item>
+    </style>
+
+    <style name="Widget.Custom.NavigationView" parent="Widget.Design.NavigationView">
+        <item name="itemIconTint">?attr/colorNavItemContentStateful</item>
+        <item name="itemTextColor">?attr/colorNavItemContentStateful</item>
+        <item name="itemBackground">?attr/drawableNavItemBackground</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

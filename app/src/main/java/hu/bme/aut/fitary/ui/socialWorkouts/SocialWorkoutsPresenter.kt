@@ -1,12 +1,10 @@
 package hu.bme.aut.fitary.ui.socialWorkouts
 
+import co.zsmb.rainbowcake.withIOContext
 import hu.bme.aut.fitary.interactor.UserInteractor
 import hu.bme.aut.fitary.interactor.WorkoutInteractor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class SocialWorkoutsPresenter @Inject constructor(
@@ -14,33 +12,45 @@ class SocialWorkoutsPresenter @Inject constructor(
     private val userInteractor: UserInteractor
 ) {
 
-    val workoutsChannel = Channel<MutableList<Workout>>()
-
-    // TODO move to consumeEach function
-    private var workouts = mutableListOf<Workout>()
-
-    init {
-        CoroutineScope(Dispatchers.IO).launch {
-
-            workoutInteractor.workoutListChannel.consumeEach { consumedWorkouts ->
-
-                workouts = consumedWorkouts.map { domainWorkout ->
-                    Workout(
-                        username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
-                        score = domainWorkout.score,
-                        comment = domainWorkout.comment ?: "-"
-                    )
-                }.toMutableList()
-
-                workoutsChannel.send(workouts)
-            }
+    val workouts: Flow<List<Workout>> = workoutInteractor.allWorkoutsFlow.map {
+        it.map { domainWorkout ->
+            Workout(
+                id = domainWorkout.id,
+                username = userInteractor.getUsernameById(domainWorkout.uid) ?: "-",
+                score = domainWorkout.score,
+                title = domainWorkout.title ?: "Awesome workout",
+                avatar = userInteractor.getAvatarById(domainWorkout.uid),
+                isOwnedByUser = workoutInteractor.isWorkoutOwnedByCurrentUser(domainWorkout)
+            )
         }
+    }
+
+    suspend fun deleteWorkout(workoutId: String) = withIOContext {
+        workoutInteractor.deleteWorkoutById(workoutId)
     }
 
     // Presentation model
     data class Workout(
+        val id: String?,
         val username: String,
         val score: Double,
-        val comment: String
-    )
+        val title: String,
+        val avatar: ByteArray? = null,
+        val isOwnedByUser: Boolean = false
+    ) {
+        override fun toString(): String {
+            val isAvatarNull = if (avatar == null) {
+                "null"
+            } else {
+                "notNull"
+            }
+            return "Workout(" +
+                    "username='$username', " +
+                    "score=$score, " +
+                    "title='$title', " +
+                    "avatar=$isAvatarNull, " +
+                    "isOwnedByUser=$isOwnedByUser" +
+                    ")"
+        }
+    }
 }

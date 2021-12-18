@@ -9,10 +9,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.FirebaseDatabase
-import hu.bme.aut.fitary.dataSource.model.UserProfile
+import hu.bme.aut.fitary.dataSource.model.User
 import hu.bme.aut.fitary.extensions.validateNonEmpty
 import kotlinx.android.synthetic.main.activity_login.*
-
+import kotlinx.coroutines.*
 
 class LoginActivity : BaseActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
@@ -55,16 +55,14 @@ class LoginActivity : BaseActivity() {
         firebaseAuth
             .createUserWithEmailAndPassword(etEmail.text.toString(), etPassword.text.toString())
             .addOnSuccessListener { result ->
-                hideProgressDialog()
-
                 val firebaseUser = result.user
                 val profileChangeRequest = UserProfileChangeRequest.Builder()
                     .setDisplayName(firebaseUser?.email?.substringBefore('@'))
                     .build()
                 firebaseUser?.updateProfile(profileChangeRequest)
 
-                saveUser(firebaseUser)
                 toast("Registration successful")
+                saveUser(firebaseUser)
                 loginClick()
             }
             .addOnFailureListener { exception ->
@@ -96,28 +94,22 @@ class LoginActivity : BaseActivity() {
             }
     }
 
-    // TODO Remove when refactoring to use RainbowCake
+    // TODO Use UserInteractor to save user
     private fun saveUser(firebaseUser: FirebaseUser?) {
-        val key = FirebaseDatabase
-                .getInstance()
-                .reference
-                .child("users")
-                .push().key ?: return
-
         if (firebaseUser == null) {
             toast("User not yet logged in")
             return
         }
 
-        val newUser = UserProfile(
+        val newUser = User(
             id = firebaseUser.uid,
             mail = firebaseUser.email ?: "No mail",
             username = firebaseUser.email?.substringBefore('@') ?: "No name"
         )
 
         FirebaseDatabase.getInstance().reference
-            .child("workouts")
-            .child(key)
+            .child("users")
+            .child(firebaseUser.uid)
             .setValue(newUser)
     }
 }

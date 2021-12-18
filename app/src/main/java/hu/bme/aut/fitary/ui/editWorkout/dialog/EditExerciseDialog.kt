@@ -1,4 +1,4 @@
-package hu.bme.aut.fitary.ui.createWorkout.dialog
+package hu.bme.aut.fitary.ui.editWorkout.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,12 +9,13 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import hu.bme.aut.fitary.R
-import hu.bme.aut.fitary.ui.createWorkout.CreateWorkoutPresenter
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutPresenter
 import kotlinx.android.synthetic.main.dialog_edit_exercise.*
 import kotlinx.android.synthetic.main.dialog_edit_exercise.view.*
+import kotlin.math.roundToInt
 
 class EditExerciseDialog(
-    private var exercise: CreateWorkoutPresenter.Exercise,
+    private var exercise: EditWorkoutPresenter.Exercise,
     private val position: Int,
 ) : DialogFragment() {
 
@@ -44,7 +45,7 @@ class EditExerciseDialog(
             if (currentText.isNullOrBlank())
                 exercise.reps = 0
             else
-                exercise.reps = currentText.toString().toInt()
+                exercise.reps = currentText.toString().toDouble().roundToInt()
 
             // Update displayed score
             dialogLayout.tvScore.text = exercise.score.toString()
@@ -78,7 +79,7 @@ class EditExerciseDialog(
     }
 
     private fun validateForm(): Boolean {
-        return !etReps.text.isNullOrBlank() && etReps.text.toString().toInt() != 0
+        return !etReps.text.isNullOrBlank() && etReps.text.toString().toDouble().toInt() != 0
     }
 
 }

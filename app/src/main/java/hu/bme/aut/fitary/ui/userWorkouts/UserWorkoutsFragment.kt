@@ -1,41 +1,41 @@
 package hu.bme.aut.fitary.ui.userWorkouts
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import co.zsmb.rainbowcake.base.RainbowCakeFragment
-import co.zsmb.rainbowcake.base.ViewModelScope
 import co.zsmb.rainbowcake.dagger.getViewModelFromFactory
 import co.zsmb.rainbowcake.extensions.exhaustive
 import hu.bme.aut.fitary.R
+import hu.bme.aut.fitary.ui.editWorkout.EditWorkoutFragment
 import hu.bme.aut.fitary.ui.userWorkouts.adapter.WorkoutListAdapter
 import kotlinx.android.synthetic.main.fragment_workouts_user.*
 
 class UserWorkoutsFragment :
-    RainbowCakeFragment<UserWorkoutsViewState, UserWorkoutsViewModel>() {
+    RainbowCakeFragment<UserWorkoutsViewState, UserWorkoutsViewModel>(),
+    PopupMenu.OnMenuItemClickListener {
 
     private lateinit var workoutAdapter: WorkoutListAdapter
 
-    // VM Scope in bound to MainActivity to keep VM when this Fragment is destroyed
-    override fun provideViewModel() = getViewModelFromFactory(scope = ViewModelScope.Activity)
+    override fun provideViewModel() = getViewModelFromFactory()
     override fun getViewResource() = R.layout.fragment_workouts_user
-
-    override fun onStart() {
-        super.onStart()
-
-        viewModel.loadWorkouts()
-    }
 
     override fun render(viewState: UserWorkoutsViewState) {
         when (viewState) {
             is Loading -> {
-                //pbListLoading.visibility = View.VISIBLE
+                pbListLoading.visibility = View.VISIBLE
             }
             is UserWorkoutsLoaded -> {
-                //pbListLoading.visibility = View.GONE
+                pbListLoading.visibility = View.GONE
 
                 workoutAdapter.submitList(viewState.workouts)
-                rvUserWorkouts.smoothScrollToPosition(workoutAdapter.itemCount - 1)
+
+                if (workoutAdapter.itemCount > 0)
+                    rvUserWorkouts.smoothScrollToPosition(workoutAdapter.itemCount - 1)
+                return
             }
         }.exhaustive
     }
@@ -43,12 +43,30 @@ class UserWorkoutsFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        workoutAdapter = WorkoutListAdapter()
+        workoutAdapter = WorkoutListAdapter(this)
         rvUserWorkouts.adapter = workoutAdapter
         rvUserWorkouts.layoutManager = LinearLayoutManager(view.context).apply {
             reverseLayout = true
             stackFromEnd = true
         }
+
+        fabAddWorkout.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("purpose", EditWorkoutFragment.Purpose.CREATE_WORKOUT)
+            }
+            findNavController().navigate(R.id.nav_edit_or_create_workout, bundle)
+        }
+    }
+
+    override fun onMenuItemClick(item: MenuItem): Boolean {
+        if (item.itemId !in setOf(
+                R.id.item_edit_workout,
+                R.id.item_copy_workout,
+                R.id.item_delete_workout
+        )) return false
+
+        viewModel.onPopupItemSelected(item, findNavController())
+        return true
     }
 
 }

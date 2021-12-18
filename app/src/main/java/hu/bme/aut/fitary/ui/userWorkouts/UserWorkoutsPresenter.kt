@@ -1,42 +1,46 @@
 package hu.bme.aut.fitary.ui.userWorkouts
 
-import hu.bme.aut.fitary.domainModel.DomainWorkout
-import hu.bme.aut.fitary.interactor.Observer
+import co.zsmb.rainbowcake.withIOContext
+import hu.bme.aut.fitary.interactor.UserInteractor
 import hu.bme.aut.fitary.interactor.WorkoutInteractor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class UserWorkoutsPresenter @Inject constructor(
     private val workoutInteractor: WorkoutInteractor,
-) : Observer<MutableList<DomainWorkout>> {
+    private val userInteractor: UserInteractor
+) {
 
-    val workoutsChannel = Channel<MutableList<Workout>>()
-    private var workouts = mutableListOf<Workout>()
-
-    init {
-        workoutInteractor.addObserver(this)
+    val workouts: Flow<List<Workout>> = workoutInteractor.userWorkoutsFlow.map {
+        it.map { domainWorkout ->
+            Workout(
+                id = domainWorkout.id,
+                score = domainWorkout.score,
+                title = domainWorkout.title ?: "Awesome workout",
+                avatar = userInteractor.getAvatarById(domainWorkout.uid)
+            )
+        }
     }
 
-    override fun notify(newValue: MutableList<DomainWorkout>) {
-        CoroutineScope(Dispatchers.IO).launch {
-
-            workouts = newValue.map { domainWorkout ->
-                    Workout(
-                        score = domainWorkout.score,
-                        comment = domainWorkout.comment ?: "-"
-                    )
-            }.toMutableList()
-
-            workoutsChannel.send(workouts)
-        }
+    suspend fun deleteWorkout(workoutId: String) = withIOContext {
+        workoutInteractor.deleteWorkoutById(workoutId)
     }
 
     // Presentation model
     data class Workout(
+        val id: String?,
         val score: Double,
-        val comment: String
-    )
+        val title: String,
+        val avatar: ByteArray? = null
+    ) {
+        override fun toString(): String {
+            val isAvatarNull = if (avatar == null) {
+                "null"
+            } else {
+                "notNull"
+            }
+            return "Workout(id=$id, score=$score, title='$title', avatar=$isAvatarNull)"
+        }
+    }
 }
