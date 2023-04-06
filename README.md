@@ -1,4 +1,4 @@
-# Fitary
+# Fitary [![Release](https://github.com/MarcellHarmaci/Fitary/actions/workflows/release.yml/badge.svg)](https://github.com/MarcellHarmaci/Fitary/actions/workflows/release.yml)
 Fitary is a Kotlin Android workout diary app using RainbowCake, Google Firebase, Dagger DI and MPAndroidCharts.
 
 ## Workout list
