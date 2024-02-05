@@ -1,10 +1,9 @@
 name: Release
 
 on:
-  pull_request:
+  push:
     branches:
       - master
-      - dev
 
 jobs:
   Assemble-Release:
